@@ -1,0 +1,1 @@
+(Pendiente: aquí va la licencia real del proyecto Artonseley — la que había se perdió, era por error la licencia de la librería bcrypt.js.)

@@ -1,0 +1,152 @@
+/* documento.css
+   -------------------------------------------------------------------
+   Estilo compartido por las páginas tipo "hoja de documento oficial":
+   guia-de-uso.html, terminos-y-condiciones.html, avisos-de-privacidad.html.
+
+   Para agregar una página nueva con este mismo estilo, solo copia
+   cualquiera de esas 3 y enlaza este mismo archivo con:
+       <link rel="stylesheet" href="documento.css">
+   ------------------------------------------------------------------- */
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: #e9e9e9;
+  margin: 0;
+  padding: 40px 20px;
+}
+
+.hoja-documento {
+  max-width: 750px;
+  margin: 0 auto;
+  background: white;
+  padding: 50px 60px;
+  min-height: 70vh;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.hoja-documento h1 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #333;
+}
+
+.hoja-documento p {
+  line-height: 1.6;
+  color: #333;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #2b6cb0;
+  text-decoration: none;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+/* Aviso hasta arriba de avisos-de-privacidad.html y terminos-y-condiciones.html:
+   deja clarísimo que la página es un ESQUELETO de secciones, no texto
+   legal ya vigente, para que no se confunda con contenido revisado. */
+.aviso-pendiente-revision {
+  background: #fff8e1;
+  border: 1px solid #f0d375;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 28px;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #7a5c00;
+}
+
+.aviso-pendiente-revision strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13.5px;
+}
+
+.seccion-legal {
+  margin-bottom: 26px;
+}
+
+.seccion-legal h2 {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+}
+
+/* Cada párrafo de contenido todavía sin redactar por un abogado se ve
+   distinto al resto del texto (fondo e itálica), para que sea imposible
+   confundirlo con contenido ya revisado y publicarlo por accidente. */
+.marcador-pendiente {
+  background: #fff8e1;
+  border-left: 3px solid #f0d375;
+  padding: 8px 12px;
+  font-style: italic;
+  color: #555;
+}
+
+/* Cubre el contenido de una página pública cuando este dispositivo no
+   tiene sesión iniciada (ver Sistema/bloqueoDeAcceso.js). No borra el
+   contenido de abajo, solo lo tapa. */
+.bloqueo-acceso {
+  position: fixed;
+  inset: 0;
+  background: rgba(233, 233, 233, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.bloqueo-acceso-tarjeta {
+  max-width: 360px;
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 32px 28px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.bloqueo-acceso-tarjeta p {
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.bloqueo-acceso-boton {
+  display: inline-block;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background: #2b6cb0;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.bloqueo-acceso-boton:hover {
+  background: #235a91;
+}
+
+/* En pantallas de celular, el acolchado generoso pensado para escritorio
+   (60px a los lados) deja muy poco espacio para el texto — se reduce
+   para que la lectura no quede apretada contra el borde. */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 12px;
+  }
+
+  .hoja-documento {
+    padding: 26px 20px;
+  }
+}

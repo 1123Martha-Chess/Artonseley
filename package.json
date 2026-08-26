@@ -1,0 +1,23 @@
+{
+  "name": "artonseley-servidor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node servidor.js",
+    "migrar-datos": "node servidor/scripts/migrarDatosIniciales.js",
+    "crear-usuario": "node servidor/scripts/crearUsuario.js",
+    "actualizar-licencia": "node servidor/scripts/actualizarLicencia.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.6.2",
+    "helmet": "^8.3.0"
+  }
+}

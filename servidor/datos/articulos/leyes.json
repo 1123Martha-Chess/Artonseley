@@ -1,0 +1,13 @@
+{
+  "articulos": [
+    { "id": 1, "documento": "Código Penal", "numero": "Artículo 210", "titulo": "Robo simple", "palabrasClave": ["robo", "apoderamiento", "cosa mueble ajena", "hurto", "sin consentimiento"] },
+    { "id": 2, "documento": "Código Penal", "numero": "Artículo 211", "titulo": "Robo agravado", "palabrasClave": ["robo", "asalto", "violencia", "casa habitación", "atraco", "saqueo"] },
+    { "id": 3, "documento": "Código Penal", "numero": "Artículo 315", "titulo": "Fraude genérico", "palabrasClave": ["fraude", "engaño", "estafa", "timar", "lucro indebido", "trampa"] },
+    { "id": 4, "documento": "Código Penal", "numero": "Artículo 316", "titulo": "Fraude mediante medios electrónicos", "palabrasClave": ["fraude", "falsificación", "robo de identidad", "suplantación", "medios electrónicos"] },
+    { "id": 5, "documento": "Código Penal", "numero": "Artículo 130", "titulo": "Homicidio simple", "palabrasClave": ["homicidio", "asesinato", "matar", "quitar la vida", "privar de la vida"] },
+    { "id": 6, "documento": "Código Penal", "numero": "Artículo 131", "titulo": "Homicidio calificado", "palabrasClave": ["homicidio", "asesinato", "ejecución", "premeditación", "alevosía", "crimen"] },
+    { "id": 7, "documento": "Ley de Amparo", "numero": "Artículo 1", "titulo": "Objeto y procedencia del amparo", "palabrasClave": ["amparo", "protección", "derechos humanos", "garantías", "defensa"] },
+    { "id": 8, "documento": "Ley de Amparo", "numero": "Artículo 5", "titulo": "Amparo contra actos de autoridad", "palabrasClave": ["amparo", "resguardo legal", "ayuda", "derechos humanos", "protección"] },
+    { "id": 9, "documento": "Ley de Amparo", "numero": "Artículo 6", "titulo": "Penalización", "palabrasClave": ["salud", "homicidio", "pena", "penalización", "sanción", "castigo", "condena", "correctivo", "punición", "penalidad"] }
+  ]
+}

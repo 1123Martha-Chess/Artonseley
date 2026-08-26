@@ -1,0 +1,2763 @@
+{
+  "articulos": [
+  {
+    "id": "1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "ley reglamentaria",
+      "artículo 27 constitucional",
+      "aguas nacionales",
+      "explotación, uso o aprovechamiento",
+      "distribución del agua",
+      "control del agua",
+      "preservación de la calidad",
+      "desarrollo sustentable",
+      "orden público",
+      "interés social"
+    ]
+  },
+  {
+    "id": "2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "ámbito de aplicación",
+      "aguas superficiales",
+      "aguas del subsuelo",
+      "bienes nacionales",
+      "zonas marinas mexicanas",
+      "conservación de la calidad",
+      "jurisdicción"
+    ]
+  },
+  {
+    "id": "3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "definiciones legales",
+      "glosario de términos",
+      "aguas nacionales",
+      "acuífero",
+      "aguas residuales",
+      "concesión",
+      "asignación",
+      "permisos",
+      "cuenca hidrológica",
+      "organismo de cuenca",
+      "consejo de cuenca",
+      "desarrollo sustentable",
+      "disponibilidad de agua",
+      "distrito de riego",
+      "registro público del agua"
+    ]
+  },
+  {
+    "id": "4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "autoridad del agua",
+      "ejecutivo federal",
+      "comisión nacional del agua",
+      "consumo humano",
+      "uso doméstico",
+      "prioridad del agua potable",
+      "disponibilidad de agua",
+      "cancelación de concesión",
+      "riesgo de abasto"
+    ]
+  },
+  {
+    "id": "5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "coordinación intergubernamental",
+      "consejos de cuenca",
+      "participación de usuarios",
+      "descentralización",
+      "gestión de recursos hídricos",
+      "estados y municipios"
+    ]
+  },
+  {
+    "id": "6",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 6",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "zonas reglamentadas",
+      "zonas de veda",
+      "zonas de reserva de agua",
+      "declaratoria de rescate",
+      "extracción de agua",
+      "sustentabilidad hidrológica",
+      "ejecutivo federal"
+    ]
+  },
+  {
+    "id": "7",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 7",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "utilidad pública",
+      "gestión integrada de recursos hídricos",
+      "protección de cuencas",
+      "medición hidrológica",
+      "equilibrio hidrológico",
+      "ecosistemas vitales",
+      "recarga de acuíferos",
+      "modernización de servicios hidráulicos"
+    ]
+  },
+  {
+    "id": "7 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 7 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "interés público",
+      "unidad territorial de gestión",
+      "organismos de cuenca",
+      "consejos de cuenca",
+      "participación social",
+      "inventario de usuarios",
+      "ciclo hidrológico",
+      "descentralización"
+    ]
+  },
+  {
+    "id": "8",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 8",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "secretario de medio ambiente",
+      "política hídrica",
+      "consejo técnico",
+      "normas oficiales mexicanas",
+      "tratados internacionales",
+      "atribuciones"
+    ]
+  },
+  {
+    "id": "9",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 9",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "comisión nacional del agua",
+      "órgano administrativo desconcentrado",
+      "autoridad hídrica",
+      "nivel nacional",
+      "nivel regional hidrológico-administrativo",
+      "organismos de cuenca",
+      "gestión integrada"
+    ]
+  },
+  {
+    "id": "9 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 9 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "recursos financieros",
+      "presupuesto",
+      "rendición de cuentas",
+      "reglamento interior",
+      "comisión nacional del agua"
+    ]
+  },
+  {
+    "id": "9 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 9 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejo técnico",
+      "dirección general",
+      "estructura organizacional",
+      "comisión nacional del agua"
+    ]
+  },
+  {
+    "id": "10",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 10",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejo técnico",
+      "integración institucional",
+      "secretarías de estado",
+      "paridad de género",
+      "representantes estatales",
+      "participación ciudadana"
+    ]
+  },
+  {
+    "id": "11",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 11",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "atribuciones indelegables",
+      "consejo técnico",
+      "aprobación de presupuesto",
+      "nombramiento de servidores públicos",
+      "organismos de cuenca",
+      "supervisión"
+    ]
+  },
+  {
+    "id": "11 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 11 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "órgano interno de control",
+      "fiscalización",
+      "comisión nacional del agua",
+      "transparencia"
+    ]
+  },
+  {
+    "id": "11 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 11 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "solvencia acreditada",
+      "inembargabilidad",
+      "juicio de amparo",
+      "bienes de la comisión",
+      "fianzas"
+    ]
+  },
+  {
+    "id": "12",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "dirección general",
+      "facultades",
+      "representación legal",
+      "expedición de concesiones",
+      "expedición de permisos",
+      "delegación de facultades"
+    ]
+  },
+  {
+    "id": "12 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "organismos de cuenca",
+      "consejos de cuenca",
+      "gestión integrada",
+      "política hídrica nacional",
+      "programa nacional hídrico"
+    ]
+  },
+  {
+    "id": "12 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "organismos de cuenca",
+      "autonomía ejecutiva",
+      "unidad técnica administrativa",
+      "región hidrológico-administrativa"
+    ]
+  },
+  {
+    "id": "12 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "dirección general del organismo de cuenca",
+      "nombramiento",
+      "atribuciones",
+      "representación legal",
+      "expedición de títulos"
+    ]
+  },
+  {
+    "id": "12 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejo consultivo",
+      "política hídrica regional",
+      "presupuesto",
+      "programas hídricos",
+      "coordinación interinstitucional"
+    ]
+  },
+  {
+    "id": "12 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "integración institucional",
+      "reglamento interior",
+      "ámbito de competencia",
+      "autonomía regional",
+      "participación municipal"
+    ]
+  },
+  {
+    "id": "12 BIS 5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "recursos financieros",
+      "rendición de cuentas",
+      "organismos de cuenca"
+    ]
+  },
+  {
+    "id": "12 BIS 6",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 12 BIS 6",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "atribuciones territoriales",
+      "administración de aguas nacionales",
+      "obras hidráulicas federales",
+      "programas hídricos por cuenca",
+      "custodia de bienes nacionales",
+      "infraestructura hídrica"
+    ]
+  },
+  {
+    "id": "13",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 13",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejos de cuenca",
+      "órganos colegiados",
+      "integración mixta",
+      "autonomía",
+      "pluralidad de intereses"
+    ]
+  },
+  {
+    "id": "13 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 13 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejo de cuenca",
+      "presidencia",
+      "secretaría técnica",
+      "vocales",
+      "representación de usuarios",
+      "gobiernos estatales y municipales"
+    ]
+  },
+  {
+    "id": "13 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 13 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejo de cuenca",
+      "asamblea general de usuarios",
+      "delimitación territorial",
+      "reglas de integración",
+      "participación de usuarios"
+    ]
+  },
+  {
+    "id": "13 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 13 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "vocales",
+      "elección de representantes",
+      "organizaciones de usuarios",
+      "proporcionalidad",
+      "consejo de cuenca"
+    ]
+  },
+  {
+    "id": "13 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 13 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "gestión integrada de recursos hídricos",
+      "prioridades de uso del agua",
+      "uso doméstico y público urbano",
+      "política hídrica",
+      "desarrollo sustentable"
+    ]
+  },
+  {
+    "id": "13 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 13 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "limitaciones a derechos de agua",
+      "emergencia hídrica",
+      "escasez extrema",
+      "sobreexplotación",
+      "contaminación",
+      "zonas de veda",
+      "zonas de reserva",
+      "uso doméstico prioritario"
+    ]
+  },
+  {
+    "id": "14",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "organización de usuarios",
+      "aprovechamiento del agua",
+      "preservación de la calidad",
+      "participación ciudadana"
+    ]
+  },
+  {
+    "id": "14 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "participación social",
+      "planeación hídrica",
+      "organizaciones ciudadanas",
+      "consejos de cuenca",
+      "comités técnicos de aguas subterráneas"
+    ]
+  },
+  {
+    "id": "14 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "consejo consultivo del agua",
+      "órgano autónomo",
+      "asesoría",
+      "convenios internacionales",
+      "gestión integrada"
+    ]
+  },
+  {
+    "id": "14 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "servicio meteorológico nacional",
+      "información meteorológica",
+      "pronóstico",
+      "interés público"
+    ]
+  },
+  {
+    "id": "14 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "instituto mexicano de tecnología del agua",
+      "investigación",
+      "desarrollo tecnológico",
+      "capacitación",
+      "organismo público descentralizado"
+    ]
+  },
+  {
+    "id": "14 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "procuraduría federal de protección al ambiente",
+      "denuncias",
+      "sanciones",
+      "medidas correctivas y de seguridad",
+      "daño ambiental",
+      "cancelación de permisos"
+    ]
+  },
+  {
+    "id": "14 BIS 5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "política hídrica nacional",
+      "principios rectores",
+      "bien de dominio público",
+      "seguridad nacional",
+      "descentralización",
+      "sustentabilidad"
+    ]
+  },
+  {
+    "id": "14 BIS 6",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 14 BIS 6",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "instrumentos de política hídrica",
+      "planificación hídrica",
+      "régimen de concesiones y asignaciones",
+      "cobro de derechos",
+      "prevención y solución de conflictos"
+    ]
+  },
+  {
+    "id": "15",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 15",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "planificación hídrica",
+      "programa nacional hídrico",
+      "cambio climático",
+      "disponibilidad de agua",
+      "programación por fases"
+    ]
+  },
+  {
+    "id": "15 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 15 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "programas hídricos",
+      "coordinación estatal y municipal",
+      "descentralización",
+      "difusión de programas",
+      "ley de planeación"
+    ]
+  },
+  {
+    "id": "16",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 16",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "régimen de concesiones",
+      "propiedad nacional del agua",
+      "artículo 27 constitucional",
+      "aguas residuales",
+      "desviación de cauce"
+    ]
+  },
+  {
+    "id": "17",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 17",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso libre",
+      "uso doméstico",
+      "aguas marinas",
+      "exención de concesión",
+      "desalinización",
+      "pozos de agua salobre"
+    ]
+  },
+  {
+    "id": "18",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 18",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "libre alumbramiento",
+      "aguas del subsuelo",
+      "zona reglamentada",
+      "zona de veda",
+      "zona de reserva",
+      "acuíferos",
+      "extracción de agua"
+    ]
+  },
+  {
+    "id": "19",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 19",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "utilidad pública",
+      "control de extracción",
+      "aguas del subsuelo",
+      "libre alumbramiento"
+    ]
+  },
+  {
+    "id": "19 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 19 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "conocimiento hidrológico",
+      "estudios y evaluaciones",
+      "transparencia",
+      "acceso a la información",
+      "seguridad nacional",
+      "ciclo hidrológico"
+    ]
+  },
+  {
+    "id": "20",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 20",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "concesión",
+      "asignación",
+      "otorgamiento",
+      "organismos de cuenca",
+      "explotación, uso o aprovechamiento",
+      "dependencias públicas"
+    ]
+  },
+  {
+    "id": "21",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 21",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "solicitud de concesión",
+      "requisitos de solicitud",
+      "punto de extracción",
+      "volumen de extracción",
+      "uso del agua",
+      "punto de descarga"
+    ]
+  },
+  {
+    "id": "21 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 21 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "documentos anexos",
+      "acreditación de propiedad",
+      "servidumbres",
+      "manifestación de impacto ambiental",
+      "memoria técnica",
+      "proyecto de obras"
+    ]
+  },
+  {
+    "id": "22",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 22",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "plazo de resolución",
+      "disponibilidad media anual",
+      "registro público nacional del agua",
+      "transmisión de derechos",
+      "reasignación"
+    ]
+  },
+  {
+    "id": "23",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 23",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "título de concesión",
+      "contenido del título",
+      "punto de extracción",
+      "volumen autorizado",
+      "duración de la concesión",
+      "obras autorizadas"
+    ]
+  },
+  {
+    "id": "23 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 23 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "24",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 24",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "duración de la concesión",
+      "prórroga",
+      "plazo mínimo y máximo",
+      "prelación de usos",
+      "vigencia"
+    ]
+  },
+  {
+    "id": "25",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 25",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "derechos del concesionario",
+      "registro público nacional del agua",
+      "vigencia del título",
+      "derechos de terceros",
+      "obligaciones del concesionario"
+    ]
+  },
+  {
+    "id": "26",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 26",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "27",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 27",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "28",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 28",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "derechos del concesionario",
+      "servidumbres legales",
+      "reasignación de volúmenes",
+      "renuncia de concesión",
+      "prórroga"
+    ]
+  },
+  {
+    "id": "29",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obligaciones del concesionario",
+      "medidores de agua",
+      "ejecución de obras",
+      "normas oficiales mexicanas",
+      "aviso de conclusión de obras"
+    ]
+  },
+  {
+    "id": "29 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obligaciones del asignatario",
+      "calidad del agua",
+      "tratamiento de aguas residuales",
+      "reúso del agua",
+      "daño ambiental"
+    ]
+  },
+  {
+    "id": "29 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "derechos del asignatario",
+      "servidumbres legales",
+      "prórroga de títulos",
+      "corrección administrativa"
+    ]
+  },
+  {
+    "id": "29 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "suspensión de concesión",
+      "falta de pago",
+      "créditos fiscales",
+      "obstaculizar inspección",
+      "descarga de aguas residuales",
+      "salud pública"
+    ]
+  },
+  {
+    "id": "29 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "extinción de concesión",
+      "vencimiento",
+      "renuncia",
+      "cegamiento del aprovechamiento",
+      "muerte del titular",
+      "nulidad",
+      "información falsa"
+    ]
+  },
+  {
+    "id": "29 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "revocación de concesión",
+      "exceso de volumen",
+      "incumplimiento de normas oficiales",
+      "descarga contaminante",
+      "dilución ilegal"
+    ]
+  },
+  {
+    "id": "29 BIS 5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "negativa de concesión",
+      "programa nacional hídrico",
+      "zonas de veda",
+      "caudal ecológico",
+      "convenios internacionales",
+      "requisitos legales"
+    ]
+  },
+  {
+    "id": "29 BIS 6",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 29 BIS 6",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "servidumbres legales",
+      "servidumbres forzosas",
+      "código civil federal",
+      "obras hidráulicas",
+      "fundo dominante",
+      "fundo sirviente",
+      "protección de riberas"
+    ]
+  },
+  {
+    "id": "30",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 30",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "registro público nacional del agua",
+      "inscripción de títulos",
+      "prórrogas",
+      "modificaciones",
+      "suspensión",
+      "revocación",
+      "sentencias judiciales"
+    ]
+  },
+  {
+    "id": "30 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 30 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "registro público nacional del agua",
+      "certificaciones",
+      "anotaciones preventivas",
+      "información estadística",
+      "folios"
+    ]
+  },
+  {
+    "id": "31",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 31",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "registro público nacional del agua",
+      "prueba de titularidad",
+      "consulta pública",
+      "rectificación de inscripción",
+      "terceros"
+    ]
+  },
+  {
+    "id": "32",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 32",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "registro de obras de alumbramiento",
+      "aguas del subsuelo",
+      "acuíferos",
+      "obligación de informar",
+      "propietarios de tierras"
+    ]
+  },
+  {
+    "id": "33",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 33",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "34",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 34",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "35",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 35",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "36",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 36",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "37",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 37",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "artículo derogado"
+    ]
+  },
+  {
+    "id": "37 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 37 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "fondo de reserva de aguas nacionales",
+      "extinción de títulos",
+      "cesión de volúmenes",
+      "disponibilidad de agua"
+    ]
+  },
+  {
+    "id": "37 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 37 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reasignación de volúmenes",
+      "transmisión de dominio",
+      "fusión y escisión",
+      "derechos sucesorios",
+      "nuevo título de concesión"
+    ]
+  },
+  {
+    "id": "37 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 37 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "comité del fondo de reserva",
+      "derecho humano al agua",
+      "seguridad alimentaria",
+      "reasignación de volúmenes",
+      "secretarías integrantes"
+    ]
+  },
+  {
+    "id": "38",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 38",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "zonas reglamentadas",
+      "zonas de veda",
+      "reserva de aguas",
+      "zonas de desastre",
+      "ordenamiento territorial",
+      "estudios técnicos"
+    ]
+  },
+  {
+    "id": "39",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 39",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "decreto de zona reglamentada",
+      "volúmenes de extracción",
+      "sequía extraordinaria",
+      "sobreexplotación de acuíferos",
+      "fuerza mayor"
+    ]
+  },
+  {
+    "id": "39 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 39 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "zonas de veda",
+      "sobreexplotación",
+      "sequía",
+      "escasez extrema",
+      "contaminación del agua",
+      "calidad del agua"
+    ]
+  },
+  {
+    "id": "40",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 40",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "decreto de veda",
+      "delimitación de zona",
+      "diagnóstico de daños",
+      "ecosistema hídrico",
+      "vigencia de la veda"
+    ]
+  },
+  {
+    "id": "41",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 41",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reserva de aguas nacionales",
+      "uso doméstico",
+      "uso público urbano",
+      "generación de energía eléctrica",
+      "flujo ecológico mínimo",
+      "ecosistemas vitales"
+    ]
+  },
+  {
+    "id": "42",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 42",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "zonas reglamentadas",
+      "zonas de veda",
+      "concesión",
+      "programa integral de manejo",
+      "permisos de perforación",
+      "disponibilidad de agua"
+    ]
+  },
+  {
+    "id": "43",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 43",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "permiso de perforación",
+      "reposición de pozo",
+      "relocalización de pozo",
+      "cambio de equipo",
+      "extracciones permitidas"
+    ]
+  },
+  {
+    "id": "44",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 44",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "agua potable y alcantarillado",
+      "asignación",
+      "sistemas municipales de agua",
+      "tratamiento de aguas residuales",
+      "centros de población"
+    ]
+  },
+  {
+    "id": "45",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 45",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "competencia municipal",
+      "explotación de aguas asignadas",
+      "reúso de aguas residuales",
+      "registro público nacional del agua",
+      "entidades paraestatales"
+    ]
+  },
+  {
+    "id": "46",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 46",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obras de captación",
+      "abastecimiento de agua",
+      "convenios con estados y municipios",
+      "financiamiento federal",
+      "potabilización"
+    ]
+  },
+  {
+    "id": "47",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 47",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "descargas de aguas residuales",
+      "contaminación del subsuelo",
+      "aprovechamiento de aguas residuales",
+      "organismos operadores"
+    ]
+  },
+  {
+    "id": "47 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 47 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso eficiente del agua",
+      "sectores público, privado y social",
+      "reúso de aguas residuales",
+      "restauración",
+      "administración del agua urbana"
+    ]
+  },
+  {
+    "id": "48",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 48",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso agrícola",
+      "ejidatarios",
+      "comuneros",
+      "pequeños propietarios",
+      "concesión de riego",
+      "cambio de terreno"
+    ]
+  },
+  {
+    "id": "49",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 49",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "transmisión de dominio",
+      "tierras agrícolas",
+      "nuevo título de concesión",
+      "distritos de riego",
+      "cambio de uso agrícola"
+    ]
+  },
+  {
+    "id": "50",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 50",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "concesión agrícola",
+      "personas físicas o morales",
+      "sistema de riego",
+      "aprovechamiento común"
+    ]
+  },
+  {
+    "id": "51",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 51",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reglamento del sistema de riego",
+      "distribución del agua",
+      "cuotas de autosuficiencia",
+      "derechos de usuarios",
+      "mantenimiento de infraestructura"
+    ]
+  },
+  {
+    "id": "52",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 52",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "padrón de usuarios",
+      "sistema de riego",
+      "publicidad registral",
+      "derechos inscritos",
+      "audiencia previa"
+    ]
+  },
+  {
+    "id": "52 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 52 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "organización de usuarios agrícolas",
+      "infraestructura de riego",
+      "distrito de riego",
+      "censo de propietarios",
+      "programa hídrico por cuenca"
+    ]
+  },
+  {
+    "id": "53",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 53",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "unidades de riego",
+      "distritos de riego",
+      "ejidos",
+      "comunidades",
+      "reglamento interior"
+    ]
+  },
+  {
+    "id": "54",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 54",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reporte anual",
+      "volumen extraído",
+      "superficie cultivada",
+      "eficiencia del uso del agua",
+      "unidades y distritos de riego"
+    ]
+  },
+  {
+    "id": "55",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 55",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "ejidos y comunidades",
+      "reglamento interior ejidal",
+      "asamblea ejidal",
+      "consentimiento de ejidatarios",
+      "uso doméstico"
+    ]
+  },
+  {
+    "id": "56",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 56",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "dominio pleno",
+      "parcela ejidal",
+      "concesión individual",
+      "reasignación de volúmenes",
+      "ley agraria"
+    ]
+  },
+  {
+    "id": "56 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 56 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "transmisión de titularidad",
+      "reasignación de volúmenes",
+      "ejidatarios y comuneros",
+      "registro público nacional del agua",
+      "procedimiento abreviado"
+    ]
+  },
+  {
+    "id": "57",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 57",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "transmisión de dominio ejidal",
+      "sociedades civiles o mercantiles",
+      "ley agraria",
+      "autorización de derechos de agua"
+    ]
+  },
+  {
+    "id": "58",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 58",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "unidades de riego",
+      "asociación de productores rurales",
+      "certificados transmisibles",
+      "personas morales"
+    ]
+  },
+  {
+    "id": "59",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 59",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "unidad de riego",
+      "infraestructura de riego",
+      "coinversión",
+      "operación y mantenimiento",
+      "concesión de infraestructura pública"
+    ]
+  },
+  {
+    "id": "60",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 60",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "título de concesión",
+      "permiso de construcción",
+      "unidad de riego",
+      "estatuto social",
+      "reglamento de unidad de riego"
+    ]
+  },
+  {
+    "id": "61",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 61",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "inversión federal recuperable",
+      "garantías",
+      "normatividad de construcción",
+      "unidades de riego"
+    ]
+  },
+  {
+    "id": "62",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 62",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reglamento de operación",
+      "cuotas de autosuficiencia",
+      "medidas correctivas",
+      "sanción de la autoridad del agua"
+    ]
+  },
+  {
+    "id": "63",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 63",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "distrito de riego",
+      "unidades de riego",
+      "asociación libre"
+    ]
+  },
+  {
+    "id": "64",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 64",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "distrito de riego",
+      "infraestructura hidráulica",
+      "vasos de almacenamiento",
+      "perímetro del distrito"
+    ]
+  },
+  {
+    "id": "65",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 65",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "administración de distritos de riego",
+      "concesión de infraestructura",
+      "organismos de cuenca",
+      "adquisición de infraestructura"
+    ]
+  },
+  {
+    "id": "66",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 66",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "comité hidráulico",
+      "reglamento del distrito",
+      "órgano colegiado",
+      "manejo del agua e infraestructura"
+    ]
+  },
+  {
+    "id": "67",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 67",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "padrón de usuarios",
+      "permiso de siembra",
+      "registro público nacional del agua",
+      "distrito de riego"
+    ]
+  },
+  {
+    "id": "68",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 68",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obligaciones de usuarios",
+      "cuotas de autosuficiencia",
+      "suspensión del servicio de riego",
+      "incumplimiento de pago",
+      "ciclo agrícola"
+    ]
+  },
+  {
+    "id": "69",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 69",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "fuerza mayor",
+      "insuficiencia de agua",
+      "distribución de aguas disponibles",
+      "distrito de riego"
+    ]
+  },
+  {
+    "id": "69 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 69 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "programas de riego",
+      "suspensión del derecho de riego",
+      "escasez de agua",
+      "volúmenes excedentes",
+      "ciclo agrícola"
+    ]
+  },
+  {
+    "id": "70",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 70",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "derechos de explotación",
+      "asociación de usuarios",
+      "distrito de riego",
+      "uso concesionado"
+    ]
+  },
+  {
+    "id": "71",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 71",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "establecimiento de distrito de riego",
+      "diario oficial de la federación",
+      "fuentes de abastecimiento",
+      "financiamiento federal",
+      "perímetro de riego"
+    ]
+  },
+  {
+    "id": "72",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 72",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "constitución de distrito de riego",
+      "expropiación",
+      "plano catastral",
+      "censo de propietarios",
+      "audiencias públicas"
+    ]
+  },
+  {
+    "id": "73",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 73",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "audiencias públicas",
+      "recuperación de inversión federal",
+      "organización de usuarios",
+      "zona de riego"
+    ]
+  },
+  {
+    "id": "74",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 74",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "indemnización",
+      "expropiación de tierras",
+      "compensación en especie",
+      "reubicación de poblados"
+    ]
+  },
+  {
+    "id": "75",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 75",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "fusión de distritos de riego",
+      "escisión",
+      "interconexión",
+      "protección de derechos de usuarios"
+    ]
+  },
+  {
+    "id": "76",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 76",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "temporal tecnificado",
+      "unidades de drenaje",
+      "producción agropecuaria",
+      "diario oficial de la federación"
+    ]
+  },
+  {
+    "id": "77",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 77",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "distrito de temporal tecnificado",
+      "requisitos de usuarios",
+      "infraestructura agrícola federal",
+      "personas morales"
+    ]
+  },
+  {
+    "id": "78",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 78",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "comisión federal de electricidad",
+      "generación de energía eléctrica",
+      "concesión hidroeléctrica",
+      "impacto ambiental",
+      "programación hídrica"
+    ]
+  },
+  {
+    "id": "79",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 79",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obras hidroeléctricas",
+      "comisión federal de electricidad",
+      "concesión de infraestructura",
+      "energía eléctrica"
+    ]
+  },
+  {
+    "id": "80",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 80",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "concesión hidroeléctrica",
+      "generación de energía",
+      "pequeña escala",
+      "personas físicas o morales"
+    ]
+  },
+  {
+    "id": "81",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 81",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "exploración geotérmica",
+      "ley de geotermia",
+      "concesión de agua",
+      "impacto ambiental",
+      "yacimientos hidrotermales"
+    ]
+  },
+  {
+    "id": "81 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 81 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso industrial minero",
+      "concesión minera",
+      "agua de laboreo",
+      "pozos de monitoreo",
+      "restauración de minas",
+      "medición telemétrica"
+    ]
+  },
+  {
+    "id": "81 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 81 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso industrial minero",
+      "medición de agua",
+      "laboreo de minas",
+      "cuencas y acuíferos"
+    ]
+  },
+  {
+    "id": "81 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 81 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso industrial minero",
+      "aguas subterráneas",
+      "pozos de extracción",
+      "tomas de agua superficial"
+    ]
+  },
+  {
+    "id": "81 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 81 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso industrial minero",
+      "prohibición de transporte de materiales",
+      "profundidad de pozos",
+      "disponibilidad de agua"
+    ]
+  },
+  {
+    "id": "81 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 81 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso industrial minero",
+      "vigencia de la concesión",
+      "prórroga",
+      "restauración, cierre y post-cierre de minas"
+    ]
+  },
+  {
+    "id": "82",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 82",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "uso industrial",
+      "acuacultura",
+      "turismo",
+      "concesión",
+      "actividades productivas",
+      "infraestructura hidráulica federal"
+    ]
+  },
+  {
+    "id": "82 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 82 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "captación de agua pluvial",
+      "uso doméstico",
+      "uso agropecuario familiar",
+      "autorización",
+      "ley general de aguas"
+    ]
+  },
+  {
+    "id": "83",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 83",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "control de avenidas",
+      "protección contra inundaciones",
+      "zonas inundables",
+      "seguros contra daños",
+      "riesgo de inundación"
+    ]
+  },
+  {
+    "id": "84",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "control de avenidas",
+      "fenómenos climatológicos extremos",
+      "emergencia hidráulica",
+      "infraestructura hidráulica",
+      "acciones preventivas"
+    ]
+  },
+  {
+    "id": "84 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cultura del agua",
+      "educación ambiental",
+      "campañas de difusión",
+      "uso eficiente del agua",
+      "valor económico del agua"
+    ]
+  },
+  {
+    "id": "84 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cultura del agua",
+      "medios masivos de comunicación",
+      "ley federal de radio y televisión"
+    ]
+  },
+  {
+    "id": "84 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cultura del agua",
+      "población infantil",
+      "medios de comunicación",
+      "protección de ecosistemas"
+    ]
+  },
+  {
+    "id": "84 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reúso de aguas residuales",
+      "sustentabilidad",
+      "responsabilidad hídrica",
+      "protección ambiental"
+    ]
+  },
+  {
+    "id": "84 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "tratamiento de aguas residuales",
+      "reúso",
+      "normas oficiales mexicanas",
+      "condiciones particulares de descarga"
+    ]
+  },
+  {
+    "id": "84 BIS 5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 84 BIS 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reúso de aguas residuales",
+      "normatividad",
+      "condiciones de reúso"
+    ]
+  },
+  {
+    "id": "85",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 85",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "prevención de la contaminación",
+      "calidad del agua",
+      "responsabilidad ambiental",
+      "coordinación intergubernamental",
+      "descentralización"
+    ]
+  },
+  {
+    "id": "86",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 86",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "calidad del agua",
+      "monitoreo",
+      "condiciones particulares de descarga",
+      "programas de protección hídrica",
+      "contaminación del subsuelo"
+    ]
+  },
+  {
+    "id": "86 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 86 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "organismos de cuenca",
+      "prevención de la contaminación",
+      "reglamentos"
+    ]
+  },
+  {
+    "id": "86 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 86 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "preservación de humedales",
+      "inventario de humedales",
+      "reserva ecológica",
+      "restauración de ecosistemas",
+      "permisos de desecación"
+    ]
+  },
+  {
+    "id": "86 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 86 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "prohibición de contaminación",
+      "cuerpos receptores",
+      "residuos peligrosos",
+      "lodos de tratamiento",
+      "sanciones"
+    ]
+  },
+  {
+    "id": "87",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 87",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "declaratoria de clasificación",
+      "cuerpos de agua nacionales",
+      "parámetros de descarga",
+      "capacidad de dilución",
+      "diario oficial de la federación"
+    ]
+  },
+  {
+    "id": "88",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 88",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "permiso de descarga",
+      "aguas residuales",
+      "cuerpos receptores",
+      "drenaje y alcantarillado",
+      "competencia municipal"
+    ]
+  },
+  {
+    "id": "88 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 88 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "permiso de descarga",
+      "tratamiento previo",
+      "derecho federal por uso de bienes nacionales",
+      "medidores",
+      "contaminantes industriales"
+    ]
+  },
+  {
+    "id": "88 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 88 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "descarga doméstica",
+      "aviso por escrito",
+      "localidades sin alcantarillado",
+      "normas oficiales mexicanas"
+    ]
+  },
+  {
+    "id": "89",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 89",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "permiso de descarga",
+      "plazo de resolución",
+      "negativa ficta",
+      "condiciones particulares de descarga"
+    ]
+  },
+  {
+    "id": "90",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 90",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "permiso de descarga",
+      "duración del permiso",
+      "condiciones particulares de descarga",
+      "reasignación de volúmenes"
+    ]
+  },
+  {
+    "id": "91",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 91",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "infiltración de aguas residuales",
+      "recarga de acuíferos",
+      "permiso",
+      "normas oficiales mexicanas"
+    ]
+  },
+  {
+    "id": "91 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 91 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "descarga a drenaje municipal",
+      "tratamiento de aguas residuales",
+      "normas oficiales mexicanas",
+      "inspección municipal"
+    ]
+  },
+  {
+    "id": "91 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 91 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "descarga fortuita",
+      "aviso de emergencia",
+      "procuraduría federal de protección al ambiente",
+      "sanciones por omisión de aviso"
+    ]
+  },
+  {
+    "id": "92",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 92",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "suspensión de actividades",
+      "permiso de descarga",
+      "incumplimiento de normas oficiales",
+      "falta de pago",
+      "dilución",
+      "informe anual"
+    ]
+  },
+  {
+    "id": "93",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 93",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "revocación de permiso de descarga",
+      "descarga en lugar no autorizado",
+      "reincidencia",
+      "revocación de concesión",
+      "caducidad"
+    ]
+  },
+  {
+    "id": "93 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 93 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "revocación de permiso de descarga",
+      "falta de pago reincidente",
+      "derecho federal por uso de bienes nacionales"
+    ]
+  },
+  {
+    "id": "94",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 94",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "plantas de tratamiento",
+      "intervención administrativa",
+      "salud pública",
+      "ecosistemas vitales",
+      "crédito fiscal"
+    ]
+  },
+  {
+    "id": "94 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 94 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "análisis fisicoquímico",
+      "registro de control de contaminación",
+      "calidad ambiental",
+      "fuentes puntuales",
+      "autodepuración"
+    ]
+  },
+  {
+    "id": "95",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 95",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "inspección",
+      "fiscalización",
+      "descargas de aguas residuales",
+      "acta circunstanciada",
+      "sanciones"
+    ]
+  },
+  {
+    "id": "96",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 96",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "contaminación por sustancias químicas",
+      "zonas de riego",
+      "compatibilidad de usos de suelo",
+      "preservación de la calidad del agua"
+    ]
+  },
+  {
+    "id": "96 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 96 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "daño ambiental",
+      "reparación del daño",
+      "ecosistemas vitales",
+      "autoridad del agua"
+    ]
+  },
+  {
+    "id": "96 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 96 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "responsabilidad ambiental",
+      "reparación del daño",
+      "remoción de contaminantes",
+      "sanciones administrativas, penales o civiles"
+    ]
+  },
+  {
+    "id": "96 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 96 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obras públicas federales",
+      "infraestructura hidráulica",
+      "disponibilidad del agua",
+      "prevención de inundaciones y sequías",
+      "abastecimiento interestatal"
+    ]
+  },
+  {
+    "id": "97",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 97",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obras de infraestructura hidráulica",
+      "usuarios de aguas nacionales",
+      "administración y operación de obras"
+    ]
+  },
+  {
+    "id": "98",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 98",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "permiso de obra",
+      "régimen hidráulico",
+      "perforación de pozos",
+      "zonas reglamentadas o de veda",
+      "normas oficiales mexicanas"
+    ]
+  },
+  {
+    "id": "99",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 99",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "asistencia técnica",
+      "apoyo a concesionarios",
+      "modernización de infraestructura",
+      "conservación del agua y el suelo"
+    ]
+  },
+  {
+    "id": "100",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 100",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "alteración de condiciones hidráulicas",
+      "protección de vidas y bienes",
+      "ecosistemas vitales",
+      "normas de seguridad"
+    ]
+  },
+  {
+    "id": "101",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 101",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obras públicas federales",
+      "infraestructura hidráulica",
+      "programas de inversión",
+      "financiamiento no federal"
+    ]
+  },
+  {
+    "id": "102",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 102",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "participación privada",
+      "contratos de obra pública",
+      "concesión de infraestructura hidráulica",
+      "inversión recuperable"
+    ]
+  },
+  {
+    "id": "103",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 103",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "concurso público",
+      "concesión de infraestructura",
+      "bases mínimas",
+      "criterios de selección"
+    ]
+  },
+  {
+    "id": "104",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 104",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "tarifas mínimas",
+      "uso eficiente del agua",
+      "recuperación de costos",
+      "duración de la concesión"
+    ]
+  },
+  {
+    "id": "105",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 105",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "garantía de derechos",
+      "bienes concesionados",
+      "plazo de garantía"
+    ]
+  },
+  {
+    "id": "106",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 106",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "intervención administrativa",
+      "mantenimiento de infraestructura",
+      "persona interventora",
+      "servicio eficiente"
+    ]
+  },
+  {
+    "id": "107",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 107",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "terminación de la concesión",
+      "revocación",
+      "incumplimiento",
+      "rescate",
+      "transmisión sin autorización"
+    ]
+  },
+  {
+    "id": "108",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 108",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "recuperación de inversión",
+      "fideicomiso",
+      "obras públicas de infraestructura hidráulica",
+      "venta de energía eléctrica"
+    ]
+  },
+  {
+    "id": "109",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 109",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "contribución de mejoras",
+      "cuotas de autosuficiencia",
+      "recuperación de inversión pública",
+      "obras hidráulicas federales"
+    ]
+  },
+  {
+    "id": "110",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 110",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cuotas de autosuficiencia",
+      "operación y mantenimiento",
+      "eficiencia económica",
+      "saneamiento financiero"
+    ]
+  },
+  {
+    "id": "111",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 111",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "garantía",
+      "propiedad de tierras",
+      "ley agraria",
+      "recuperación de inversión",
+      "distritos y unidades de riego"
+    ]
+  },
+  {
+    "id": "111 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 111 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "sistema financiero del agua",
+      "gestión integrada de recursos hídricos",
+      "secretaría de hacienda",
+      "rendición de cuentas"
+    ]
+  },
+  {
+    "id": "112",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 112",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "ley federal de derechos",
+      "pago de derechos",
+      "explotación de aguas nacionales",
+      "cuerpos receptores",
+      "coordinación fiscal"
+    ]
+  },
+  {
+    "id": "112 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 112 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cuotas y tarifas",
+      "gestión de la demanda",
+      "uso eficiente del agua",
+      "recuperación de inversiones federales"
+    ]
+  },
+  {
+    "id": "113",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 113",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "bienes nacionales",
+      "zonas federales",
+      "cauces",
+      "vasos de lagos y lagunas",
+      "riberas",
+      "islas",
+      "obras de infraestructura hidráulica"
+    ]
+  },
+  {
+    "id": "113 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 113 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "materiales pétreos",
+      "concesión de extracción",
+      "revocación de concesión",
+      "cauces",
+      "normas oficiales mexicanas"
+    ]
+  },
+  {
+    "id": "113 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 113 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "organismos de cuenca",
+      "coordinación intergubernamental",
+      "bienes nacionales",
+      "descentralización"
+    ]
+  },
+  {
+    "id": "113 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 113 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "declaratoria de aguas nacionales",
+      "estudios técnicos",
+      "cauces, vasos y zonas federales",
+      "carácter nacional del agua"
+    ]
+  },
+  {
+    "id": "114",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 114",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cambio de cauce",
+      "dominio público de la nación",
+      "obras de defensa",
+      "zona federal marítimo-terrestre",
+      "impacto ambiental"
+    ]
+  },
+  {
+    "id": "115",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 115",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "cambio de cauce",
+      "propietarios afectados",
+      "cauce abandonado",
+      "sustitución de tierras"
+    ]
+  },
+  {
+    "id": "116",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 116",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "terrenos ganados",
+      "encauzamiento",
+      "dominio público de la federación",
+      "obras de limitación"
+    ]
+  },
+  {
+    "id": "117",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 117",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "reducción de zona federal",
+      "declaratoria",
+      "obras de control",
+      "subasta pública",
+      "custodia de zonas federales"
+    ]
+  },
+  {
+    "id": "118",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "concesión de bienes nacionales",
+      "zona federal",
+      "preferencia del colindante",
+      "prohibición de disposición de residuos mineros",
+      "materiales pétreos"
+    ]
+  },
+  {
+    "id": "118 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "obligaciones del concesionario",
+      "deslinde y amojonamiento",
+      "plazos de ejecución de obras",
+      "pagos fiscales",
+      "suspensión por incumplimiento"
+    ]
+  },
+  {
+    "id": "118 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "verificación",
+      "inspección",
+      "medidas de apremio",
+      "infracciones",
+      "sanciones administrativas",
+      "delitos"
+    ]
+  },
+  {
+    "id": "118 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "verificación e inspección",
+      "información confidencial",
+      "cumplimiento normativo",
+      "nuevas tecnologías"
+    ]
+  },
+  {
+    "id": "118 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "procedimiento administrativo sancionador",
+      "infracción",
+      "resolución administrativa",
+      "calificación de infracciones"
+    ]
+  },
+  {
+    "id": "118 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "resolución administrativa",
+      "medidas correctivas",
+      "reparación del daño ambiental",
+      "sanciones",
+      "plazos de cumplimiento"
+    ]
+  },
+  {
+    "id": "118 BIS 5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 BIS 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "ejecución de la resolución",
+      "plazo de cumplimiento",
+      "firmeza de la resolución",
+      "ejecución subsidiaria"
+    ]
+  },
+  {
+    "id": "118 TER",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 TER",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "auxilio de la fuerza pública",
+      "cumplimiento de determinaciones",
+      "autoridades federales, estatales y municipales"
+    ]
+  },
+  {
+    "id": "118 TER 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 TER 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "medidas de seguridad",
+      "riesgo inminente",
+      "clausura temporal",
+      "suspensión de actividades",
+      "protección civil",
+      "salud pública",
+      "biodiversidad"
+    ]
+  },
+  {
+    "id": "118 TER 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 118 TER 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "medidas de seguridad",
+      "subsanación de irregularidades",
+      "retiro de medida",
+      "plazos"
+    ]
+  },
+  {
+    "id": "119",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 119",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "infracciones administrativas",
+      "descarga ilegal",
+      "explotación sin concesión",
+      "alteración de infraestructura hidráulica",
+      "sanciones",
+      "faltas"
+    ]
+  },
+  {
+    "id": "120",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 120",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "sanciones administrativas",
+      "multas",
+      "unidades de medida y actualización",
+      "infracciones",
+      "código penal federal"
+    ]
+  },
+  {
+    "id": "121",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 121",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "calificación de infracciones",
+      "gravedad de la falta",
+      "reincidencia",
+      "responsabilidad hídrica",
+      "denegación de prórroga"
+    ]
+  },
+  {
+    "id": "121 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 121 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "abstención de sanción",
+      "regularización administrativa",
+      "medidas correctivas",
+      "transparencia",
+      "protección de datos personales"
+    ]
+  },
+  {
+    "id": "122",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 122",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "clausura",
+      "pozos clandestinos",
+      "explotación ilegal",
+      "suspensión de actividades",
+      "infracción grave"
+    ]
+  },
+  {
+    "id": "123",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "sanciones",
+      "crédito fiscal",
+      "adeudos",
+      "responsabilidad penal",
+      "destino de las multas"
+    ]
+  },
+  {
+    "id": "123 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "responsabilidad de servidores públicos",
+      "sanciones administrativas",
+      "ley federal de responsabilidades administrativas",
+      "código penal federal"
+    ]
+  },
+  {
+    "id": "123 BIS 1",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS 1",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "denuncia penal",
+      "ministerio público",
+      "dictamen técnico o pericial",
+      "víctima u ofendida",
+      "delitos contra las aguas nacionales"
+    ]
+  },
+  {
+    "id": "123 BIS 2",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS 2",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "persecución de oficio",
+      "ministerio público de la federación",
+      "delitos contra las aguas nacionales"
+    ]
+  },
+  {
+    "id": "123 BIS 3",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS 3",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "delito",
+      "traslado ilegal de agua",
+      "extracción ilegal",
+      "prisión",
+      "multa",
+      "fines de lucro"
+    ]
+  },
+  {
+    "id": "123 BIS 4",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS 4",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "delito",
+      "alteración de cauces",
+      "desvío de aguas",
+      "obstrucción",
+      "prisión",
+      "multa",
+      "riesgo a la vida",
+      "ecosistemas vitales"
+    ]
+  },
+  {
+    "id": "123 BIS 5",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS 5",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "delito",
+      "cohecho",
+      "servidor público",
+      "tráfico de influencias",
+      "prisión",
+      "multa",
+      "conflicto de interés"
+    ]
+  },
+  {
+    "id": "123 BIS 6",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 123 BIS 6",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "delito",
+      "soborno",
+      "dádivas",
+      "servidor público",
+      "prisión",
+      "multa",
+      "concesión ilegal"
+    ]
+  },
+  {
+    "id": "124",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 124",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "recurso de revisión",
+      "plazo de interposición",
+      "resolución administrativa",
+      "impugnación",
+      "suspensión de multa"
+    ]
+  },
+  {
+    "id": "124 BIS",
+    "documento": "Ley de Aguas Nacionales",
+    "numero": "Artículo 124 BIS",
+    "titulo": "Ley de Aguas Nacionales",
+    "palabrasClave": [
+      "denuncia popular",
+      "organizaciones ciudadanas",
+      "ley general del equilibrio ecológico",
+      "daño a recursos hídricos"
+    ]
+  }
+  ]
+}

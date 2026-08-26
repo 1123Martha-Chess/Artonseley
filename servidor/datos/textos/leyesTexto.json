@@ -1,0 +1,13 @@
+{
+  "textos": [
+    { "id": 1, "texto": "Comete el delito de robo quien se apodera de una cosa mueble ajena, sin derecho y sin consentimiento de la persona que legalmente puede disponer de ella. Se sancionará con pena de seis meses a tres años de prisión cuando el valor de lo robado no exceda de cien veces la Unidad de Medida y Actualización." },
+    { "id": 2, "texto": "El robo se considerará agravado y la pena se aumentará hasta en una mitad cuando se cometa con violencia física o moral, en casa habitación, o aprovechando la nocturnidad. También se agravará cuando el objeto del robo sea de uso indispensable para la subsistencia de la víctima." },
+    { "id": 3, "texto": "Comete fraude quien, engañando a otra persona o aprovechando el error en que ésta se encuentra, se hace ilícitamente de una cosa o alcanza un lucro indebido en perjuicio de aquélla o de un tercero. La pena será de seis meses a cinco años de prisión según el monto del perjuicio causado." },
+    { "id": 4, "texto": "Se impondrá pena de dos a ocho años de prisión a quien, mediante el uso indebido de sistemas informáticos, tarjetas de crédito, débito o cualquier otro medio electrónico, obtenga beneficio económico indebido o suplante la identidad de otra persona con fines de lucro." },
+    { "id": 5, "texto": "Comete el delito de homicidio quien priva de la vida a otra persona. Se impondrá pena de doce a veinticuatro años de prisión a quien cometa este delito sin que concurran las circunstancias que la ley señala para el homicidio calificado." },
+    { "id": 6, "texto": "El homicidio se calificará y la pena se elevará hasta cuarenta años de prisión cuando se cometa con premeditación, alevosía, ventaja, o mediante el uso de venenos u otros medios que impliquen especial peligrosidad para la vida de la víctima." },
+    { "id": 7, "texto": "El juicio de amparo tiene por objeto resolver toda controversia que se suscite por normas generales, actos u omisiones de autoridad que violen los derechos humanos reconocidos y las garantías otorgadas para su protección. Procede a instancia de la parte agraviada." },
+    { "id": 8, "texto": "Toda persona que se considere afectada por actos de autoridad que violen sus derechos fundamentales podrá solicitar el resguardo legal que ofrece el amparo, a fin de obtener la restitución del derecho violado o la protección contra su ejecución." },
+    { "id": 9, "texto": "We, si sirvió" }
+  ]
+}

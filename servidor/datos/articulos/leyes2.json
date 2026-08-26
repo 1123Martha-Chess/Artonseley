@@ -1,0 +1,7 @@
+{
+  "articulos": [
+    { "id": 101, "documento": "Ley Federal del Trabajo", "numero": "Artículo 47", "titulo": "Rescisión de la relación laboral", "palabrasClave": ["despido", "rescisión", "trabajo", "patrón", "causa justificada"] },
+    { "id": 102, "documento": "Ley Federal del Trabajo", "numero": "Artículo 61", "titulo": "Jornada máxima de trabajo", "palabrasClave": ["jornada", "trabajo", "horario", "descanso", "salario"] },
+    { "id": 103, "documento": "Ley General de Salud", "numero": "Artículo 77", "titulo": "Derecho a la protección de la salud", "palabrasClave": ["salud", "protección", "servicios médicos", "bienestar"] }
+  ]
+}

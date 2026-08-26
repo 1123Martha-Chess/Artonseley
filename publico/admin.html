@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de administración</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f7f7f7;
+            color: #222;
+        }
+
+        header.barra-admin {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 14px 24px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        header.barra-admin h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        header.barra-admin a,
+        header.barra-admin button {
+            font-size: 13px;
+            color: #2b6cb0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            margin-left: 16px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        section.tarjeta {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 22px 26px;
+            margin-bottom: 24px;
+        }
+
+        section.tarjeta h2 {
+            font-size: 16px;
+            margin: 0 0 4px 0;
+        }
+
+        section.tarjeta p.ayuda {
+            font-size: 12.5px;
+            color: #666;
+            margin: 0 0 16px 0;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 12px 0 4px 0;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 13px;
+            border: 1px solid #999;
+            border-radius: 6px;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 13px;
+            border: 1px solid #999;
+            border-radius: 6px;
+            background: white;
+        }
+
+        textarea {
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 8px 10px;
+            border: 1px solid #999;
+            border-radius: 6px;
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        button.boton-primario {
+            margin-top: 16px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            background: #2b6cb0;
+            border: 1px solid #2b6cb0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button.boton-primario:hover {
+            background: #235a91;
+        }
+
+        button.boton-secundario {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #2b6cb0;
+            background: white;
+            border: 1px solid #2b6cb0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button.boton-peligro {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #b02b2b;
+            background: white;
+            border: 1px solid #b02b2b;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button.boton-icono {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button.boton-icono.boton-icono-ok {
+            color: #1a7f37;
+            border: 1px solid #1a7f37;
+        }
+
+        button.boton-icono.boton-icono-descartar {
+            color: #b02b2b;
+            border: 1px solid #b02b2b;
+        }
+
+        .lista-errores {
+            margin-top: 14px;
+            padding: 12px 16px;
+            background: #fdecea;
+            border: 1px solid #f3b4ac;
+            border-radius: 8px;
+            color: #7a1f16;
+            font-size: 12.5px;
+        }
+
+        .lista-errores p.titulo {
+            font-weight: bold;
+            margin: 0 0 6px 0;
+        }
+
+        .lista-errores ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .mensaje-exito {
+            margin-top: 14px;
+            padding: 10px 16px;
+            background: #e7f6e7;
+            border: 1px solid #a8d8a8;
+            border-radius: 8px;
+            color: #1a5c1a;
+            font-size: 13px;
+        }
+
+        /* Las tablas (documentos, sugerencias, usuarios) no se encogen
+           bien en una pantalla angosta — en vez de aplastar el texto o
+           desbordar la página completa, cada tabla vive dentro de este
+           contenedor que scrollea solo ella, horizontalmente. */
+        .tabla-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 480px;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 14px;
+            }
+
+            section.tarjeta {
+                padding: 16px 18px;
+            }
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        th {
+            color: #555;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .etiqueta-estado {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .etiqueta-activa {
+            background: #e7f6e7;
+            color: #1a5c1a;
+        }
+
+        .etiqueta-vencida {
+            background: #fdecea;
+            color: #7a1f16;
+        }
+
+        .fila-notificacion {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .fila-notificacion.inactiva {
+            opacity: 0.5;
+        }
+
+        .mensaje-carga, .mensaje-error {
+            font-size: 13px;
+        }
+
+        .mensaje-error { color: #b02b2b; }
+
+        .fila-form-notificacion {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .fila-form-notificacion input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .fila-form-notificacion input[type="color"] {
+            width: 44px;
+            height: 36px;
+            padding: 2px;
+            border: 1px solid #999;
+            border-radius: 6px;
+        }
+
+        .etiqueta-suspendida {
+            background: #fff4e0;
+            color: #8a5a00;
+        }
+
+        /* Ventana de confirmación para suspender/eliminar/reactivar/restaurar
+           cuentas. Es un componente propio en vez de window.confirm()/prompt():
+           esos diálogos nativos del navegador se quedaban colgados o dejaban
+           botones sin responder después de cerrarse en algunos entornos, así
+           que aquí todo es HTML normal, sin diálogos bloqueantes. */
+        .fondo-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+
+        .caja-modal {
+            background: white;
+            border-radius: 10px;
+            padding: 22px 26px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .caja-modal h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .caja-modal p.mensaje-modal {
+            margin: 0 0 14px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .caja-modal label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 0 0 4px 0;
+        }
+
+        .caja-modal input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 13px;
+            border: 1px solid #999;
+            border-radius: 6px;
+        }
+
+        .error-modal {
+            color: #b02b2b;
+            font-size: 12.5px;
+            margin: 6px 0 0 0;
+            display: none;
+        }
+
+        .fila-botones-modal {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .aviso-flotante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1100;
+            max-width: 320px;
+        }
+
+        .aviso-flotante-error {
+            background: #fdecea;
+            border: 1px solid #f3b4ac;
+            color: #7a1f16;
+        }
+
+        .aviso-flotante-exito {
+            background: #e7f6e7;
+            border: 1px solid #a8d8a8;
+            color: #1a5c1a;
+        }
+    </style>
+</head>
+<body>
+    <header class="barra-admin">
+        <h1>Panel de administración</h1>
+        <div>
+            <a href="index.html">← Ir al buscador</a>
+            <button type="button" id="botonCerrarSesionAdmin">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="tarjeta">
+            <h2>Sectores</h2>
+            <p class="ayuda">
+                Un sector agrupa documentos relacionados (ej. "Sector Fiscal", "Sector Civil") y así
+                se muestran agrupados en la barra izquierda del buscador. Crea aquí los sectores que
+                necesites; luego podrás asignarle uno a cada documento al cargarlo o reemplazarlo, en
+                la sección de abajo.
+            </p>
+            <div id="listaSectores"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioSector" class="fila-form-notificacion">
+                <input type="text" id="campoNombreSector" placeholder='Nombre del sector, ej. "Sector Fiscal"' required>
+                <button type="submit" class="boton-primario" style="margin-top:0;">Agregar</button>
+            </form>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Cargar o reemplazar un documento legal</h2>
+            <p class="ayuda">
+                Pega o sube el JSON de "artículos" (id, documento, numero, titulo, palabrasClave)
+                y el JSON de "textos" (id, texto) de la misma ley. Se valida antes de guardar:
+                si algún artículo no tiene texto, tiene el texto vacío, o sobra algún texto sin
+                artículo correspondiente, no se guarda nada hasta que lo corrijas.
+            </p>
+
+            <form id="formularioDocumento">
+                <label for="campoReemplazar">Reemplazar un documento ya cargado (opcional)</label>
+                <select id="campoReemplazar">
+                    <option value="">— Cargar como documento nuevo —</option>
+                </select>
+
+                <label for="campoNombreDocumento">Nombre del documento</label>
+                <input type="text" id="campoNombreDocumento" placeholder='ej. "Código Penal"' required>
+
+                <label for="campoUltimaReforma">Última reforma (opcional)</label>
+                <input type="date" id="campoUltimaReforma">
+
+                <label for="campoSectorDocumento">Sector (opcional)</label>
+                <select id="campoSectorDocumento">
+                    <option value="">— Sin sector (aparecerá en "Otros") —</option>
+                </select>
+
+                <label for="campoJSONArticulos">JSON de artículos</label>
+                <input type="file" id="archivoArticulos" accept=".json">
+                <textarea id="campoJSONArticulos" rows="6" placeholder='{ "articulos": [ { "id": 1, "numero": "Artículo 1", "titulo": "...", "palabrasClave": ["..."] } ] }'></textarea>
+
+                <label for="campoJSONTextos">JSON de textos</label>
+                <input type="file" id="archivoTextos" accept=".json">
+                <textarea id="campoJSONTextos" rows="6" placeholder='{ "textos": [ { "id": 1, "texto": "..." } ] }'></textarea>
+
+                <button type="submit" class="boton-primario" id="botonGuardarDocumento">Validar y guardar</button>
+            </form>
+
+            <div id="resultadoCargaDocumento"></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Documentos legales cargados</h2>
+            <p class="ayuda">Reemplazar precarga el formulario de arriba con el nombre de este documento.</p>
+            <div id="listaDocumentos"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Solicitudes de cuenta nuevas</h2>
+            <p class="ayuda">
+                Vienen del formulario público "Crear Cuenta". Antes de dar de alta la cuenta con
+                "npm run crear-usuario", verifica que el correo sea el mismo con el que ya tuviste
+                contacto con ese cliente. "Descartar" solo la quita de esta bandeja.
+            </p>
+            <div id="listaSolicitudesRegistro"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Bandeja de sugerencias</h2>
+            <div id="listaSugerencias"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Usuarios y licencias</h2>
+            <p class="ayuda">
+                Cuentas activas registradas en la plataforma. "Licencia" es la fecha contratada.
+                "Suspender" corta el acceso por el tiempo que definas (o indefinidamente) sin
+                esperar a que venza la licencia; "Eliminar" manda la cuenta a la papelera de abajo,
+                de donde se puede recuperar tal cual si fue un error.
+            </p>
+            <div id="listaUsuariosActivos"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Cuentas suspendidas</h2>
+            <p class="ayuda">
+                Cuentas con el acceso cortado temporalmente. No se reactivan solas al cumplirse el
+                tiempo — reactívalas aquí a mano, sea porque fue un error o porque ya toca.
+            </p>
+            <div id="listaUsuariosSuspendidos"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Cuentas eliminadas (papelera)</h2>
+            <p class="ayuda">
+                Cuentas que ya no pueden iniciar sesión. Se conservan aquí, con su mismo correo e
+                id, por si eliminarlas fue un error — "Reactivar y reutilizar" las regresa a
+                cuentas activas tal como estaban.
+            </p>
+            <div id="listaUsuariosEliminados"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Notificaciones (panel 🔔 del buscador)</h2>
+            <div id="listaNotificaciones"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioNotificacion" class="fila-form-notificacion">
+                <input type="text" id="campoTextoNotificacion" placeholder="Texto de la notificación" required>
+                <input type="color" id="campoColorNotificacion" value="#222222" title="Color del texto">
+                <button type="submit" class="boton-primario" style="margin-top:0;">Agregar</button>
+            </form>
+        </section>
+    </main>
+
+    <script type="module" src="Sistema/manejaAdmin.js"></script>
+</body>
+</html>
