@@ -22,6 +22,7 @@ There is no test, lint, or build tooling in this project.
 The core design principle (see README.md) is a strict client/server split: **no legal data or search logic is ever sent to the browser.** The client only renders UI and calls the API.
 
 - **`publico/`** — everything the browser can see: `index.html` (single-page UI, inline `<style>`), `documento.css`, static info pages, and `publico/Sistema/*.js` (client-side ES modules, loaded via `<script type="module">` from `buscadorPrincipal.js`). This JS has no access to the law data — it only does `fetch('/api/...')` and DOM rendering.
+  - **Legal pages are NOT static files.** `/terminos-y-condiciones.html` and `/avisos-de-privacidad.html` are generated per-request by `servidor/paginasLegales.js` from two Markdown files at the repo root (`Terminos_y_Condiciones_Artonseley.md`, `Aviso_de_Privacidad_Artonseley.md`) via the tiny converter in `servidor/renderizarMarkdownLegal.js`. Edit the `.md` to change the text; there are no `.html` files for these two in `publico/`. Routes are registered before `express.static` in `servidor.js`.
 - **`servidor/`** — everything that stays server-side: the law JSON data (`servidor/datos/`), the synonym dictionary, the letter/prefix matcher, the article-text lookup, and the search orchestration (`procesarBusqueda.js`).
 - **`servidor.js`** — Express entry point. Serves `publico/` as static files and exposes:
   - `GET /api/documentos` — list of distinct document names (e.g. "Código Penal", "Ley de Amparo"), used to render the sector/document filter buttons.

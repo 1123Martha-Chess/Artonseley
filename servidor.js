@@ -45,6 +45,7 @@ import {
   restaurarUsuarioDePapelera
 } from './servidor/db/usuarios.js';
 import { calcularVigenciaLicencia } from './servidor/calcularVigenciaLicencia.js';
+import { manejarPaginaLegal } from './servidor/paginasLegales.js';
 import { crearSesion, borrarSesion, borrarSesionesDeUsuario } from './servidor/db/sesiones.js';
 import { verificarContrasena, hashContrasena } from './servidor/auth/contrasenas.js';
 import {
@@ -193,6 +194,18 @@ app.get(['/', '/index.html'], requiereSesionParaPagina, (peticion, respuesta) =>
 app.get('/admin.html', requiereAdminParaPagina, (peticion, respuesta) => {
   respuesta.sendFile(path.join(__dirname, 'publico', 'admin.html'));
 });
+
+// Términos y Condiciones y Aviso de Privacidad: su texto vive en los
+// .md de la raíz del proyecto (Terminos_y_Condiciones_Artonseley.md y
+// Aviso_de_Privacidad_Artonseley.md) y la página se genera a partir de
+// ahí en cada carga (ver servidor/paginasLegales.js). Para cambiar el
+// texto basta editar el .md y volver a desplegar — ya no hay archivos
+// .html de estas dos en publico/. Van antes de express.static para
+// ganarle a cualquier archivo con ese nombre que quedara ahí.
+app.get('/terminos-y-condiciones.html', (peticion, respuesta) =>
+  manejarPaginaLegal('terminos-y-condiciones.html', respuesta));
+app.get('/avisos-de-privacidad.html', (peticion, respuesta) =>
+  manejarPaginaLegal('avisos-de-privacidad.html', respuesta));
 
 app.use(express.static(path.join(__dirname, 'publico')));
 

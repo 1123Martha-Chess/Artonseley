@@ -2,3 +2,8 @@ node_modules/
 .env
 data/
 *.db
+
+# Capturas de pantalla sueltas en la raíz (las que dejas para mostrar algo).
+# No confundir con las imágenes reales del sitio en publico/imagenes/.
+/Screenshot*.png
+/Captura*.png

@@ -104,3 +104,32 @@ de meses a partir de hoy (`24`) o como una fecha exacta (`2027-08-28`).
 Los scripts de terminal (`npm run crear-usuario`, `npm run
 actualizar-licencia`) siguen existiendo y hacen lo mismo — útiles para el
 primer admin o para automatizar.
+
+## Editar los Términos y el Aviso de Privacidad
+
+El texto de esas dos páginas **no** está en HTML: vive en dos archivos
+Markdown (texto plano) en la raíz del proyecto:
+
+| Página | Archivo que se edita |
+|---|---|
+| `/terminos-y-condiciones.html` | `Terminos_y_Condiciones_Artonseley.md` |
+| `/avisos-de-privacidad.html` | `Aviso_de_Privacidad_Artonseley.md` |
+
+El servidor genera la página a partir del `.md` en cada carga (ver
+`servidor/paginasLegales.js`). Para publicar un cambio:
+
+1. Edita el `.md` — directamente en GitHub (botón del lápiz) o en tu copia
+   local. La fecha de "Última actualización" es la tercera línea del
+   archivo; cámbiala cuando el contenido cambie.
+2. Haz commit / push a `main`.
+3. Render redespliega solo (si el Auto-Deploy está encendido) y en 2-5
+   minutos la página ya muestra el texto nuevo.
+
+En local, al correr `npm start`, un cambio al `.md` se ve con solo
+recargar la página — no hace falta reiniciar el servidor.
+
+Formato admitido en el `.md`: títulos (`#`, `##`, `###`), **negritas**
+(`**texto**`), *cursivas* (`*texto*`), listas (`- ...`), tablas
+(`| a | b |` con la fila `|---|---|` debajo) y citas (`> ...`). Es lo que
+usan hoy los dos documentos; si necesitas algo más (enlaces, imágenes),
+pídelo y se agrega al convertidor (`servidor/renderizarMarkdownLegal.js`).
