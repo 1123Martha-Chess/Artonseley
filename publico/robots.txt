@@ -1,0 +1,13 @@
+# robots.txt de Artonseley
+# Se sirve tal cual desde publico/ (ver express.static en servidor.js).
+# Permite que Google y demás buscadores rastreen el sitio y les dice
+# dónde está el mapa del sitio.
+
+User-agent: *
+Allow: /
+
+# El panel de administración y la API no aportan nada a un buscador.
+Disallow: /admin.html
+Disallow: /api/
+
+Sitemap: https://www.artonseley.site/sitemap.xml
