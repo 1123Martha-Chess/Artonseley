@@ -22,26 +22,7 @@
 
 import { crearUsuario, buscarUsuarioPorEmail } from '../db/usuarios.js';
 import { hashContrasena } from '../auth/contrasenas.js';
-
-function calcularVigencia(valor) {
-  if (!valor) {
-    const fecha = new Date();
-    fecha.setMonth(fecha.getMonth() + 24);
-    return fecha.toISOString();
-  }
-
-  if (/^\d+$/.test(valor)) {
-    const fecha = new Date();
-    fecha.setMonth(fecha.getMonth() + Number(valor));
-    return fecha.toISOString();
-  }
-
-  const fecha = new Date(valor);
-  if (Number.isNaN(fecha.getTime())) {
-    throw new Error(`"${valor}" no es ni un número de meses ni una fecha válida (usa AAAA-MM-DD).`);
-  }
-  return fecha.toISOString();
-}
+import { calcularVigenciaLicencia } from '../calcularVigenciaLicencia.js';
 
 function main() {
   const [email, contrasena, rol = 'abogado', vigencia] = process.argv.slice(2);
@@ -63,7 +44,7 @@ function main() {
     process.exit(1);
   }
 
-  const licenciaVenceEn = calcularVigencia(vigencia);
+  const licenciaVenceEn = calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
   const usuario = crearUsuario({
     email,
     hashContrasena: hashContrasena(contrasena),

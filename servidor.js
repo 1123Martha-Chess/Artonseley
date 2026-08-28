@@ -34,6 +34,8 @@ import { SECRETO_COOKIES, DIAS_DURACION_SESION, MINUTOS_BLOQUEO_LOGIN, CONFIA_EN
 import {
   buscarUsuarioPorEmail,
   buscarUsuarioPorId,
+  crearUsuario,
+  actualizarLicencia,
   registrarIntentoFallido,
   resetearIntentosFallidos,
   listarUsuarios,
@@ -42,6 +44,7 @@ import {
   moverUsuarioAPapelera,
   restaurarUsuarioDePapelera
 } from './servidor/db/usuarios.js';
+import { calcularVigenciaLicencia } from './servidor/calcularVigenciaLicencia.js';
 import { crearSesion, borrarSesion, borrarSesionesDeUsuario } from './servidor/db/sesiones.js';
 import { verificarContrasena, hashContrasena } from './servidor/auth/contrasenas.js';
 import {
@@ -56,6 +59,7 @@ import { guardarSugerencia, listarSugerencias, eliminarSugerencia } from './serv
 import {
   guardarSolicitudRegistro,
   listarSolicitudesRegistro,
+  buscarSolicitudRegistroPorId,
   eliminarSolicitudRegistro
 } from './servidor/db/solicitudesRegistro.js';
 import {
@@ -575,6 +579,112 @@ app.post('/api/admin/usuarios/:id/restaurar', (peticion, respuesta) => {
 
   restaurarUsuarioDePapelera(id);
   respuesta.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------
+// Alta y renovación de cuentas DESDE EL PANEL (antes solo se podía con
+// "npm run crear-usuario" / "npm run actualizar-licencia" en la terminal
+// del servidor). Con decenas o cientos de usuarios eso es inviable, así
+// que estas tres rutas hacen lo mismo por HTTP, protegidas por sesión +
+// rol admin como todo lo demás bajo /api/admin.
+// ---------------------------------------------------------------------
+
+// Crear una cuenta a mano (cliente que ya pagó y se da de alta directo,
+// o un segundo administrador). La persona podrá iniciar sesión de
+// inmediato con el correo y la contraseña que ponga el admin.
+app.post('/api/admin/usuarios', jsonEstandar, (peticion, respuesta) => {
+  const { email, contrasena, rol = 'abogado', vigencia } = peticion.body ?? {};
+
+  const emailLimpio = String(email ?? '').trim().toLowerCase();
+  if (!emailLimpio || emailLimpio.length > 254 || !PATRON_EMAIL.test(emailLimpio)) {
+    return respuesta.status(400).json({ error: 'Escribe un correo electrónico válido.' });
+  }
+  if (String(contrasena ?? '').length < MINIMO_CONTRASENA_REGISTRO || String(contrasena ?? '').length > 200) {
+    return respuesta.status(400).json({
+      error: `La contraseña debe tener entre ${MINIMO_CONTRASENA_REGISTRO} y 200 caracteres.`
+    });
+  }
+  if (rol !== 'abogado' && rol !== 'admin') {
+    return respuesta.status(400).json({ error: 'El rol debe ser "abogado" o "admin".' });
+  }
+  if (buscarUsuarioPorEmail(emailLimpio)) {
+    return respuesta.status(409).json({ error: 'Ya existe una cuenta con este correo.' });
+  }
+
+  let licenciaVenceEn;
+  try {
+    licenciaVenceEn = calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
+  } catch (error) {
+    return respuesta.status(400).json({ error: error.message });
+  }
+
+  const usuario = crearUsuario({
+    email: emailLimpio,
+    hashContrasena: hashContrasena(String(contrasena)),
+    rol,
+    licenciaVenceEn
+  });
+
+  respuesta.json({ ok: true, usuario: usuarioAJSON(usuario) });
+});
+
+// Renovar (o corregir) la fecha de vencimiento de licencia de una cuenta
+// existente. "vigencia" = número de meses a partir de hoy, o una fecha
+// AAAA-MM-DD.
+app.post('/api/admin/usuarios/:id/licencia', jsonEstandar, (peticion, respuesta) => {
+  const id = Number(peticion.params.id);
+  const usuario = buscarUsuarioPorId(id);
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+
+  let licenciaVenceEn;
+  try {
+    licenciaVenceEn = calcularVigenciaLicencia(peticion.body?.vigencia);
+  } catch (error) {
+    return respuesta.status(400).json({ error: error.message });
+  }
+
+  actualizarLicencia(id, licenciaVenceEn);
+  respuesta.json({ ok: true, licenciaVenceEn });
+});
+
+// Aprobar una solicitud del formulario público "Crear Cuenta": crea la
+// cuenta real reutilizando la contraseña que la persona ya eligió (su
+// hash quedó guardado en la solicitud, ver solicitudesRegistro.js) y
+// quita la solicitud de la bandeja. El admin solo define rol y vigencia.
+app.post('/api/admin/solicitudes-registro/:id/aprobar', jsonEstandar, (peticion, respuesta) => {
+  const solicitud = buscarSolicitudRegistroPorId(Number(peticion.params.id));
+  if (!solicitud) {
+    return respuesta.status(404).json({ error: 'Esa solicitud ya no está en la bandeja.' });
+  }
+
+  const { rol = 'abogado', vigencia } = peticion.body ?? {};
+  if (rol !== 'abogado' && rol !== 'admin') {
+    return respuesta.status(400).json({ error: 'El rol debe ser "abogado" o "admin".' });
+  }
+  if (buscarUsuarioPorEmail(solicitud.email)) {
+    return respuesta.status(409).json({
+      error: 'Ya existe una cuenta con este correo. Descarta la solicitud.'
+    });
+  }
+
+  let licenciaVenceEn;
+  try {
+    licenciaVenceEn = calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
+  } catch (error) {
+    return respuesta.status(400).json({ error: error.message });
+  }
+
+  const usuario = crearUsuario({
+    email: solicitud.email,
+    hashContrasena: solicitud.hash_contrasena,
+    rol,
+    licenciaVenceEn
+  });
+  eliminarSolicitudRegistro(solicitud.id);
+
+  respuesta.json({ ok: true, usuario: usuarioAJSON(usuario) });
 });
 
 // Documentos legales cargados, con cuántos artículos tiene cada uno.

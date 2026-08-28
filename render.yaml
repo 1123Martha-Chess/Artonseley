@@ -1,0 +1,37 @@
+# render.yaml — "Blueprint" de infraestructura de Artonseley para Render.
+# -------------------------------------------------------------------
+# Lo importante de este archivo es el bloque "disk": sin un disco
+# persistente, Render borra TODO el árbol del proyecto en cada
+# despliegue, y con él la base de datos SQLite (data/artonseley.db) —
+# usuarios, licencias, sesiones y leyes cargadas. El disco montado en
+# /var/data sobrevive a los despliegues, y CARPETA_DATOS le dice a la
+# app que guarde ahí la base de datos.
+#
+# Si el servicio en Render YA existe y NO se creó desde este archivo,
+# Render no lo aplica solo: hay que poner los mismos valores a mano en
+# el panel (ver README, sección "Despliegue en Render"). Este archivo
+# queda como la referencia de qué debe estar configurado.
+# -------------------------------------------------------------------
+services:
+  - type: web
+    name: artonseley
+    runtime: node
+    plan: starter            # el plan Free NO permite discos persistentes
+    region: oregon           # ajústalo a la región donde ya está el servicio
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /login.html
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CARPETA_DATOS
+        value: /var/data
+      - key: CONFIA_EN_PROXY
+        value: "1"
+      - key: SECRETO_COOKIES
+        generateValue: true   # Render genera un valor aleatorio y lo fija
+    disk:
+      name: datos
+      mountPath: /var/data
+      sizeGB: 1

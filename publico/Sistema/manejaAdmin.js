@@ -364,13 +364,26 @@ async function cargarSolicitudesRegistro() {
       celdaIP.textContent = s.ip || '—';
 
       const celdaAcciones = document.createElement('td');
+      const contenedorBotones = document.createElement('div');
+      contenedorBotones.style.display = 'flex';
+      contenedorBotones.style.gap = '6px';
+
+      const botonAprobar = document.createElement('button');
+      botonAprobar.type = 'button';
+      botonAprobar.classList.add('boton-icono', 'boton-icono-ok');
+      botonAprobar.textContent = '✓';
+      botonAprobar.title = 'Aprobar y crear la cuenta';
+      botonAprobar.addEventListener('click', () => aprobarSolicitudRegistro(s));
+
       const botonDescartar = document.createElement('button');
       botonDescartar.type = 'button';
       botonDescartar.classList.add('boton-icono', 'boton-icono-descartar');
       botonDescartar.textContent = '✗';
-      botonDescartar.title = 'Descartar y quitar de la bandeja';
+      botonDescartar.title = 'Descartar y quitar de la bandeja (no crea ninguna cuenta)';
       botonDescartar.addEventListener('click', () => eliminarSolicitudRegistro(s.id));
-      celdaAcciones.appendChild(botonDescartar);
+
+      contenedorBotones.append(botonAprobar, botonDescartar);
+      celdaAcciones.appendChild(contenedorBotones);
 
       fila.append(celdaFecha, celdaCorreo, celdaIP, celdaAcciones);
       cuerpo.appendChild(fila);
@@ -390,6 +403,46 @@ async function eliminarSolicitudRegistro(id) {
     await cargarSolicitudesRegistro();
   } catch (error) {
     window.alert(error.message);
+  }
+}
+
+async function aprobarSolicitudRegistro(solicitud) {
+  const valores = await abrirModalConCampos({
+    titulo: 'Aprobar y crear la cuenta',
+    mensaje: `Se creará la cuenta de "${solicitud.email}" con la contraseña que esa persona ya eligió en el formulario. Solo falta su rol y la vigencia de la licencia.`,
+    campos: [
+      {
+        nombre: 'rol',
+        etiqueta: 'Rol',
+        tipo: 'select',
+        opciones: [
+          { valor: 'abogado', texto: 'Abogado (usuario normal)' },
+          { valor: 'admin', texto: 'Administrador' }
+        ]
+      },
+      {
+        nombre: 'vigencia',
+        etiqueta: 'Vigencia de la licencia',
+        tipo: 'text',
+        placeholder: 'Meses (ej. 24) o fecha AAAA-MM-DD',
+        valor: '24'
+      }
+    ],
+    textoConfirmar: 'Crear cuenta',
+    validar: valores => (valores.vigencia ? null : 'Escribe la vigencia (número de meses o fecha).')
+  });
+  if (!valores) return;
+
+  try {
+    await peticionAdmin(`/api/admin/solicitudes-registro/${solicitud.id}/aprobar`, {
+      method: 'POST',
+      body: JSON.stringify({ rol: valores.rol, vigencia: valores.vigencia })
+    });
+    mostrarAviso(`Cuenta de "${solicitud.email}" creada. Ya puede iniciar sesión.`, 'exito');
+    await cargarSolicitudesRegistro();
+    await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
   }
 }
 
@@ -578,6 +631,108 @@ function abrirModal({ titulo, mensaje, etiquetaCampo, placeholderCampo, textoCon
   });
 }
 
+// Variante de abrirModal para cuando hacen falta VARIOS campos (aprobar
+// una solicitud: rol + vigencia; renovar licencia: vigencia). Devuelve
+// null si se cancela, o un objeto { nombreCampo: valor, ... } si se
+// confirma. `campos` es un arreglo de objetos:
+//   { nombre, etiqueta, tipo: 'text'|'select', opciones?, placeholder?, valor? }
+// `validar(valores)` puede devolver un texto de error para mostrarlo sin
+// cerrar el modal, o null si todo está bien.
+function abrirModalConCampos({ titulo, mensaje, campos, textoConfirmar, claseBotonConfirmar = 'boton-primario', validar }) {
+  return new Promise(resolver => {
+    const fondo = document.createElement('div');
+    fondo.classList.add('fondo-modal');
+
+    const caja = document.createElement('div');
+    caja.classList.add('caja-modal');
+
+    const encabezado = document.createElement('h3');
+    encabezado.textContent = titulo;
+    caja.appendChild(encabezado);
+
+    if (mensaje) {
+      const parrafoMensaje = document.createElement('p');
+      parrafoMensaje.classList.add('mensaje-modal');
+      parrafoMensaje.textContent = mensaje;
+      caja.appendChild(parrafoMensaje);
+    }
+
+    const controles = {};
+    campos.forEach(campo => {
+      const etiqueta = document.createElement('label');
+      etiqueta.textContent = campo.etiqueta;
+      caja.appendChild(etiqueta);
+
+      let control;
+      if (campo.tipo === 'select') {
+        control = document.createElement('select');
+        campo.opciones.forEach(opcion => {
+          const option = document.createElement('option');
+          option.value = opcion.valor;
+          option.textContent = opcion.texto;
+          control.appendChild(option);
+        });
+      } else {
+        control = document.createElement('input');
+        control.type = 'text';
+        if (campo.placeholder) control.placeholder = campo.placeholder;
+      }
+      if (campo.valor !== undefined) control.value = campo.valor;
+      caja.appendChild(control);
+      controles[campo.nombre] = control;
+    });
+
+    const parrafoError = document.createElement('p');
+    parrafoError.classList.add('error-modal');
+    caja.appendChild(parrafoError);
+
+    const filaBotones = document.createElement('div');
+    filaBotones.classList.add('fila-botones-modal');
+
+    const botonCancelar = document.createElement('button');
+    botonCancelar.type = 'button';
+    botonCancelar.classList.add('boton-secundario');
+    botonCancelar.textContent = 'Cancelar';
+
+    const botonConfirmar = document.createElement('button');
+    botonConfirmar.type = 'button';
+    botonConfirmar.classList.add(claseBotonConfirmar);
+    botonConfirmar.style.marginTop = '0';
+    botonConfirmar.textContent = textoConfirmar;
+
+    filaBotones.append(botonCancelar, botonConfirmar);
+    caja.appendChild(filaBotones);
+    fondo.appendChild(caja);
+    document.body.appendChild(fondo);
+
+    const primerControl = Object.values(controles)[0];
+    if (primerControl) primerControl.focus();
+
+    function cerrar(resultado) {
+      fondo.remove();
+      resolver(resultado);
+    }
+
+    botonCancelar.addEventListener('click', () => cerrar(null));
+    fondo.addEventListener('click', evento => {
+      if (evento.target === fondo) cerrar(null);
+    });
+    botonConfirmar.addEventListener('click', () => {
+      const valores = {};
+      Object.entries(controles).forEach(([nombre, control]) => {
+        valores[nombre] = control.value.trim();
+      });
+      const error = validar ? validar(valores) : null;
+      if (error) {
+        parrafoError.textContent = error;
+        parrafoError.style.display = 'block';
+        return;
+      }
+      cerrar(valores);
+    });
+  });
+}
+
 function pintarBotonAccion(texto, clase, alHacerClick) {
   const boton = document.createElement('button');
   boton.type = 'button';
@@ -637,6 +792,7 @@ async function cargarCuentas() {
         contenedorBotones.style.display = 'flex';
         contenedorBotones.style.gap = '6px';
         contenedorBotones.append(
+          pintarBotonAccion('Renovar licencia', 'boton-secundario', () => renovarLicencia(u)),
           pintarBotonAccion('Suspender', 'boton-peligro', () => suspenderCuenta(u)),
           pintarBotonAccion('Eliminar', 'boton-peligro', () => eliminarCuenta(u))
         );
@@ -700,6 +856,38 @@ async function cargarCuentas() {
     [contenedorActivas, contenedorSuspendidas, contenedorEliminadas].forEach(contenedor => {
       contenedor.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
     });
+  }
+}
+
+async function renovarLicencia(usuario) {
+  const valores = await abrirModalConCampos({
+    titulo: 'Renovar licencia',
+    mensaje: `Licencia actual de "${usuario.email}": vence el ${new Date(usuario.licenciaVenceEn).toLocaleDateString('es-MX')}. Escribe la nueva vigencia.`,
+    campos: [
+      {
+        nombre: 'vigencia',
+        etiqueta: 'Nueva vigencia',
+        tipo: 'text',
+        placeholder: 'Meses desde hoy (ej. 24) o fecha AAAA-MM-DD'
+      }
+    ],
+    textoConfirmar: 'Actualizar licencia',
+    validar: valores => (valores.vigencia ? null : 'Escribe la nueva vigencia (número de meses o fecha).')
+  });
+  if (!valores) return;
+
+  try {
+    const datos = await peticionAdmin(`/api/admin/usuarios/${usuario.id}/licencia`, {
+      method: 'POST',
+      body: JSON.stringify({ vigencia: valores.vigencia })
+    });
+    mostrarAviso(
+      `Licencia de "${usuario.email}" actualizada: ahora vence el ${new Date(datos.licenciaVenceEn).toLocaleDateString('es-MX')}.`,
+      'exito'
+    );
+    await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
   }
 }
 
@@ -865,6 +1053,36 @@ document.getElementById('formularioNotificacion').addEventListener('submit', asy
     await cargarNotificaciones();
   } catch (error) {
     window.alert(error.message);
+  }
+});
+
+// ---------------------------------------------------------------------
+// Crear usuario manualmente (cliente que ya pagó, o segundo admin)
+// ---------------------------------------------------------------------
+
+document.getElementById('formularioCrearUsuario').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  const resultado = document.getElementById('resultadoCrearUsuario');
+  resultado.innerHTML = '<p class="mensaje-carga">Creando…</p>';
+
+  const campoVigencia = document.getElementById('campoNuevaVigencia');
+
+  try {
+    const datos = await peticionAdmin('/api/admin/usuarios', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: document.getElementById('campoNuevoEmail').value.trim(),
+        contrasena: document.getElementById('campoNuevaContrasena').value,
+        rol: document.getElementById('campoNuevoRol').value,
+        vigencia: campoVigencia.value.trim()
+      })
+    });
+    resultado.innerHTML = `<p class="mensaje-exito">Cuenta creada: ${datos.usuario.email} (${datos.usuario.rol}). Ya puede iniciar sesión.</p>`;
+    document.getElementById('formularioCrearUsuario').reset();
+    campoVigencia.value = '24';
+    await cargarCuentas();
+  } catch (error) {
+    resultado.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
   }
 });
 

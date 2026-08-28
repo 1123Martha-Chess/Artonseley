@@ -342,12 +342,24 @@
             margin: 0 0 4px 0;
         }
 
-        .caja-modal input[type="number"] {
+        .caja-modal input[type="number"],
+        .caja-modal input[type="text"],
+        .caja-modal select {
             width: 100%;
             padding: 8px 10px;
             font-size: 13px;
             border: 1px solid #999;
             border-radius: 6px;
+            background: white;
+        }
+
+        /* Cuando el modal lleva varios campos (ej. aprobar solicitud:
+           rol + vigencia), cada etiqueta a partir de la segunda necesita
+           un poco de aire arriba. */
+        .caja-modal label + label,
+        .caja-modal select + label,
+        .caja-modal input + label {
+            margin-top: 12px;
         }
 
         .error-modal {
@@ -464,11 +476,41 @@
         <section class="tarjeta">
             <h2>Solicitudes de cuenta nuevas</h2>
             <p class="ayuda">
-                Vienen del formulario público "Crear Cuenta". Antes de dar de alta la cuenta con
-                "npm run crear-usuario", verifica que el correo sea el mismo con el que ya tuviste
-                contacto con ese cliente. "Descartar" solo la quita de esta bandeja.
+                Vienen del formulario público "Crear Cuenta". Verifica que el correo sea el mismo
+                con el que ya tuviste contacto con ese cliente y que el pago esté confirmado; luego
+                pulsa <strong>✓ Aprobar</strong> para crear la cuenta (la persona iniciará sesión
+                con la contraseña que ya eligió). <strong>✗ Descartar</strong> solo la quita de esta
+                bandeja, sin crear nada.
             </p>
             <div id="listaSolicitudesRegistro"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Crear usuario manualmente</h2>
+            <p class="ayuda">
+                Para dar de alta a alguien sin pasar por el formulario público (un cliente que ya
+                pagó, o un segundo administrador). Podrá iniciar sesión de inmediato con el correo
+                y la contraseña que escribas aquí — anótala y compártesela por un medio seguro.
+            </p>
+            <form id="formularioCrearUsuario">
+                <label for="campoNuevoEmail">Correo electrónico</label>
+                <input type="text" id="campoNuevoEmail" placeholder="correo@ejemplo.com" required>
+
+                <label for="campoNuevaContrasena">Contraseña (mínimo 8 caracteres)</label>
+                <input type="text" id="campoNuevaContrasena" placeholder="Contraseña para esta cuenta" required>
+
+                <label for="campoNuevoRol">Rol</label>
+                <select id="campoNuevoRol">
+                    <option value="abogado">Abogado (usuario normal)</option>
+                    <option value="admin">Administrador</option>
+                </select>
+
+                <label for="campoNuevaVigencia">Vigencia de la licencia</label>
+                <input type="text" id="campoNuevaVigencia" placeholder="Meses (ej. 24) o fecha AAAA-MM-DD" value="24">
+
+                <button type="submit" class="boton-primario">Crear cuenta</button>
+            </form>
+            <div id="resultadoCrearUsuario"></div>
         </section>
 
         <section class="tarjeta">
@@ -480,6 +522,7 @@
             <h2>Usuarios y licencias</h2>
             <p class="ayuda">
                 Cuentas activas registradas en la plataforma. "Licencia" es la fecha contratada.
+                "Renovar licencia" cambia esa fecha (meses desde hoy o una fecha exacta).
                 "Suspender" corta el acceso por el tiempo que definas (o indefinidamente) sin
                 esperar a que venza la licencia; "Eliminar" manda la cuenta a la papelera de abajo,
                 de donde se puede recuperar tal cual si fue un error.

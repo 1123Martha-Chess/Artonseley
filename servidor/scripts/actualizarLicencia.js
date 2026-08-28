@@ -11,20 +11,7 @@
 // -------------------------------------------------------------------
 
 import { buscarUsuarioPorEmail, actualizarLicencia } from '../db/usuarios.js';
-
-function calcularVigencia(valor) {
-  if (/^\d+$/.test(valor)) {
-    const fecha = new Date();
-    fecha.setMonth(fecha.getMonth() + Number(valor));
-    return fecha.toISOString();
-  }
-
-  const fecha = new Date(valor);
-  if (Number.isNaN(fecha.getTime())) {
-    throw new Error(`"${valor}" no es ni un número de meses ni una fecha válida (usa AAAA-MM-DD).`);
-  }
-  return fecha.toISOString();
-}
+import { calcularVigenciaLicencia } from '../calcularVigenciaLicencia.js';
 
 function main() {
   const [email, vigencia] = process.argv.slice(2);
@@ -40,7 +27,7 @@ function main() {
     process.exit(1);
   }
 
-  const licenciaVenceEn = calcularVigencia(vigencia);
+  const licenciaVenceEn = calcularVigenciaLicencia(vigencia);
   actualizarLicencia(usuario.id, licenciaVenceEn);
 
   console.log(`Licencia de ${usuario.email} actualizada. Ahora vence: ${new Date(licenciaVenceEn).toLocaleString('es-MX')}`);

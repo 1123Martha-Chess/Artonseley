@@ -28,6 +28,15 @@ export function listarSolicitudesRegistro() {
   `).all();
 }
 
+// A diferencia de listarSolicitudesRegistro, esto SÍ trae hash_contrasena:
+// lo usa solo el servidor al aprobar la solicitud desde el panel (ruta
+// POST /api/admin/solicitudes-registro/:id/aprobar), para crear la cuenta
+// real reutilizando la contraseña que la persona ya eligió en el
+// formulario público. Ese hash nunca se manda de vuelta por la API.
+export function buscarSolicitudRegistroPorId(id) {
+  return db.prepare('SELECT * FROM solicitudes_registro WHERE id = ?').get(id);
+}
+
 // Se llama una vez que el admin ya dio de alta (o rechazó) la solicitud,
 // para quitarla de la bandeja — no hay un estado "atendida" que
 // conservar, igual que con las sugerencias.

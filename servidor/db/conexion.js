@@ -43,6 +43,23 @@ const RUTA_DB = path.join(CARPETA_DATOS, 'artonseley.db');
 
 mkdirSync(CARPETA_DATOS, { recursive: true });
 
+// Aviso al arrancar. En un hosting con disco efímero (Render, Railway…)
+// TODO lo que vive en el árbol del proyecto se borra en cada despliegue:
+// si la base de datos está ahí (porque CARPETA_DATOS no apunta a un disco
+// persistente montado aparte), en cada deploy se pierden los usuarios,
+// las licencias, las sesiones y las leyes cargadas. Se avisa fuerte en
+// producción para que no pase inadvertido. Ver README, sección
+// "Despliegue en Render (disco persistente)".
+if (process.env.NODE_ENV === 'production' && !process.env.CARPETA_DATOS) {
+  console.warn(
+    '\n⚠️  CARPETA_DATOS no está definida: la base de datos se está guardando en\n' +
+    `   "${RUTA_DB}", dentro del proyecto. En Render (o cualquier hosting con disco\n` +
+    '   efímero) ESTO SE BORRA EN CADA DESPLIEGUE y se pierden usuarios, licencias\n' +
+    '   y leyes. Configura un disco persistente y apunta CARPETA_DATOS a su ruta de\n' +
+    '   montaje (ver README).\n'
+  );
+}
+
 export const db = new DatabaseSync(RUTA_DB);
 db.exec('PRAGMA journal_mode = WAL');
 db.exec('PRAGMA foreign_keys = ON');
