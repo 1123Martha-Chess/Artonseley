@@ -49,7 +49,7 @@ El Responsable no vende, cede ni transmite los datos personales del Titular a te
 
 ## V. Ejercicio de Derechos ARCO y Revocación del Consentimiento
 
-El Titular tiene en todo momento el derecho de acceder, rectificar y cancelar sus datos personales, así como de oponerse a su tratamiento o de revocar el consentimiento que para tal fin haya otorgado (derechos ARCO). El Responsable no podrá negar al Titular el acceso a ningún dato que haya sido recabado con su consentimiento.
+El Titular tiene en todo momento el derecho de acceder, rectificar y cancelar sus datos personales, así como de oponerse a su tratamiento o de revocar el consentimiento que para tal fin haya otorgado (derechos ARCO). El Responsable no podrá negar al Titular el acceso a ningún dato que haya sido recabado con su consentimiento. El único dato que no se puede eliminar es el correo electrónico proporcionado ya que, sin este no existe ninguna cuenta o licencia; se puede solicitar cambiar el correo electrónico pero no eliminarlo definitivamente de nuestras bases de datos. Se borran los datos 30 días despues de la cancelación y no renovación de la licencia.
 
 Para ejercer cualquiera de los derechos ARCO, el Titular podrá enviar su solicitud, **en cualquier momento**, al correo electrónico **artonseley.contacto@gmail.com**, acompañada de:
 
