@@ -29,6 +29,27 @@
 
 import { PALABRAS_BIP39_ES } from './listaPalabrasBip39Es.js';
 
+// OJO — esto no es opcional, es la causa de un bug real que ya pasó: el
+// archivo oficial de la lista en español (igual que otras listas BIP-39
+// que no son inglés) guarda las tildes en Unicode "descompuesto" (NFD:
+// la "a" y el acento como DOS caracteres separados), pero cuando alguien
+// teclea una palabra con tilde en un teclado normal, el sistema casi
+// siempre produce la forma "compuesta" (NFC: "á" como UN solo
+// carácter). Las dos se VEN idénticas, pero en JavaScript
+// "'á' === 'á'" puede dar false si una viene de cada forma — por eso
+// hay que normalizar SIEMPRE antes de comparar (el propio estándar
+// BIP-39 pide NFKD para esto). Sin este normalizarPalabra(), una frase
+// escrita perfectamente bien podía rechazarse como "incorrecta" nada
+// más por tener alguna palabra con tilde.
+function normalizarPalabra(palabra) {
+  return String(palabra).trim().normalize('NFKD').toLowerCase();
+}
+
+// Se arma una sola vez: palabra normalizada -> su posición en la lista.
+const INDICE_POR_PALABRA_NORMALIZADA = new Map(
+  PALABRAS_BIP39_ES.map((palabra, indice) => [normalizarPalabra(palabra), indice])
+);
+
 const ITERACIONES_PBKDF2_LLAVE = 100000;
 const LARGO_IV_BYTES = 12;
 const LARGO_ENTROPIA_BITS = 128; // 128 bits de entropía -> 12 palabras BIP-39
@@ -64,7 +85,7 @@ export async function generarFraseDeRecuperacion() {
 export async function fraseEsValida(palabras) {
   if (!Array.isArray(palabras) || palabras.length !== 12) return false;
 
-  const indices = palabras.map((palabra) => PALABRAS_BIP39_ES.indexOf(String(palabra).trim().toLowerCase()));
+  const indices = palabras.map((palabra) => INDICE_POR_PALABRA_NORMALIZADA.get(normalizarPalabra(palabra)) ?? -1);
   if (indices.some((indice) => indice === -1)) return false;
 
   const bitsCompletos = indices.map((indice) => indice.toString(2).padStart(11, '0')).join('');

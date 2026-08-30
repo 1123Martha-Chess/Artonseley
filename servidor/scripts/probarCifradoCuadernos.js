@@ -45,6 +45,25 @@ async function derivarClaveDePrueba(palabras, sal) {
   return derivarClaveDesdeSemilla(semilla, sal);
 }
 
+// Regresión de un bug real: la lista oficial de palabras en español
+// guarda las tildes en Unicode "descompuesto" (NFD — la vocal y el
+// acento como dos caracteres separados), pero teclear una tilde en un
+// teclado normal produce la forma "compuesta" (NFC — un solo
+// carácter). Se ven idénticas, pero sin normalizar antes de comparar,
+// una frase escrita perfectamente bien se rechazaba como inválida en
+// cuanto tenía alguna palabra con tilde (ver criptografiaCuadernos.js).
+await prueba('fraseEsValida() acepta una palabra con tilde tecleada en forma NFC (normal)', async () => {
+  let frase = null;
+  for (let intento = 0; intento < 300 && !frase; intento++) {
+    const candidata = await generarFraseDeRecuperacion();
+    if (candidata.some((palabra) => palabra !== palabra.normalize('NFC'))) frase = candidata;
+  }
+  assert.ok(frase, 'no salió ninguna palabra con tilde en 300 intentos — revisa la lista');
+
+  const fraseTecleadaAMano = frase.map((palabra) => palabra.normalize('NFC'));
+  assert.equal(await fraseEsValida(fraseTecleadaAMano), true);
+});
+
 await prueba('generarFraseDeRecuperacion() da 12 palabras y es válida según BIP-39', async () => {
   const frase = await generarFraseDeRecuperacion();
   assert.equal(frase.length, 12);

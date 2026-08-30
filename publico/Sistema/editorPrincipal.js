@@ -27,7 +27,7 @@ import { inicializarConfiguracion } from './manejaConfiguracion.js';
 import { inicializarBuzonSugerencias } from './manejaBuzonSugerencias.js';
 import { inicializarPersonalizacion } from './manejaPersonalizacion.js';
 import { pintarResultados } from './pintarResultadosBusqueda.js';
-import { inicializarBoveda, exportarRespaldoArton, importarRespaldoArton } from './manejaBovedaCifrada.js';
+import { inicializarBoveda, exportarRespaldoArton, importarRespaldoArton, olvidarEnEsteDispositivo } from './manejaBovedaCifrada.js';
 import {
   inicializarCuadernos,
   listarCuadernos,
@@ -241,6 +241,7 @@ const inputImportarCuaderno = document.getElementById('inputImportarCuaderno');
 const botonExportarTodo = document.getElementById('botonExportarTodo');
 const botonImportarTodo = document.getElementById('botonImportarTodo');
 const inputImportarTodo = document.getElementById('inputImportarTodo');
+const botonOlvidarDispositivo = document.getElementById('botonOlvidarDispositivo');
 
 botonCrearCuaderno.addEventListener('click', async () => {
   try {
@@ -278,6 +279,20 @@ botonExportarTodo.addEventListener('click', async () => {
     console.error('editorPrincipal.js: error al exportar el respaldo:', error);
     window.alert('No se pudo exportar el respaldo.');
   }
+});
+
+// "Recordar en este dispositivo" es el comportamiento normal (ver
+// manejaBovedaCifrada.js) — este botón es la salida, para computadoras
+// compartidas/públicas donde no se quiere dejar la frase guardada.
+botonOlvidarDispositivo.addEventListener('click', () => {
+  if (
+    !window.confirm(
+      '¿Olvidar la frase de recuperación guardada en esta computadora? La próxima vez que entres a "Mis cuadernos" aquí, vas a tener que escribir tus 12 palabras completas de nuevo.'
+    )
+  ) {
+    return;
+  }
+  olvidarEnEsteDispositivo();
 });
 
 botonImportarTodo.addEventListener('click', () => inputImportarTodo.click());

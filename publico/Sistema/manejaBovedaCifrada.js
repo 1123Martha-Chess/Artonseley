@@ -9,18 +9,26 @@
 //
 // La llave de la bóveda vive en memoria mientras dura esta pestaña. La
 // SEMILLA de la que sale (ver criptografiaCuadernos.js) además se
-// guarda en sessionStorage — así, una vez que se escribe la frase de
-// recuperación una vez (justo después de iniciar sesión), NO hace falta
-// volver a escribirla cada vez que se entra a "Mis cuadernos" mientras
-// esa pestaña/navegador siga abierto. sessionStorage se borra solo al
-// cerrar la pestaña o el navegador — a partir de ahí, hay que volver a
-// escribir la frase. Nada de esto se guarda en disco de forma
-// permanente, en una cookie, ni se manda al servidor: sigue siendo
-// "cero-conocimiento" (ni Artonseley ni nadie con acceso solo al
-// servidor puede leer el contenido de un cuaderno), a cambio de que
-// quien tenga acceso a ESTA pestaña mientras sigue abierta sí puede
-// seguir viendo los cuadernos sin volver a teclear la frase — el mismo
-// trato que ya existe con la sesión del sitio en general.
+// guarda en localStorage — así, la frase de recuperación solo se pide
+// UNA VEZ, la primera vez que se usa "Mis cuadernos" en cada
+// dispositivo: cerrar la pestaña, cerrar el navegador por completo, o
+// hasta reiniciar la compu no la vuelve a pedir. Cada vez que se entra,
+// esa semilla guardada se verifica de nuevo contra el "verificador"
+// cifrado (AES-256-GCM) antes de confiar en ella — si alguien la
+// alterara a mano, el desbloqueo automático simplemente fallaría y
+// pediría la frase real.
+//
+// Esto sigue siendo "cero-conocimiento" en el sentido de que ni
+// Artonseley ni nadie con acceso solo al SERVIDOR puede leer un
+// cuaderno (la semilla nunca se manda a ningún lado, ni vive en una
+// cookie). El trato que sí cambia: quien tenga acceso a ESTE
+// NAVEGADOR/dispositivo (otra persona con la misma cuenta de Windows,
+// por ejemplo) podría abrir los cuadernos sin escribir la frase,
+// mientras esa semilla siga guardada aquí. Para una computadora
+// compartida o pública, está el botón "Olvidar en este dispositivo"
+// (ver editor.html, junto a "Importar documento" — llama a
+// olvidarEnEsteDispositivo() más abajo): borra la semilla guardada y
+// vuelve a pedir la frase completa la próxima vez.
 // -------------------------------------------------------------------
 
 import { estaEnNavegacionPrivada } from './deteccionIncognito.js';
@@ -49,6 +57,8 @@ let claveVaultEnMemoria = null;
 let semillaEnMemoria = null;
 let elementos = null;
 let usuarioEmailActual = null;
+let configuracionVaultActual = null;
+let alDesbloquearActual = null;
 
 // idPantalla: el contenedor que tapa todo hasta que la bóveda queda
 // lista. idsVistas: { incognito, cargando, configuracion, verificacion,
@@ -57,6 +67,7 @@ let usuarioEmailActual = null;
 // desbloqueada (para que editorPrincipal.js siga con lo suyo).
 export async function inicializarBoveda(usuarioEmail, idPantalla, idsVistas, alDesbloquear) {
   usuarioEmailActual = usuarioEmail;
+  alDesbloquearActual = alDesbloquear;
   elementos = {
     pantalla: document.getElementById(idPantalla),
     vistas: Object.fromEntries(Object.entries(idsVistas).map(([clave, id]) => [clave, document.getElementById(id)]))
@@ -75,63 +86,87 @@ export async function inicializarBoveda(usuarioEmail, idPantalla, idsVistas, alD
   }
 
   await inicializarAlmacenamiento(usuarioEmail);
-  const configuracionExistente = await obtenerConfiguracionVault();
+  configuracionVaultActual = await obtenerConfiguracionVault();
 
-  if (configuracionExistente) {
-    // Si ya se desbloqueó una vez en esta misma pestaña (la frase quedó
-    // guardada en sessionStorage, ver guardarSemillaEnSesion), se
-    // desbloquea solo, sin volver a pedirla.
-    const semillaGuardada = obtenerSemillaDeSesion();
-    if (semillaGuardada && (await intentarDesbloquearConSemilla(semillaGuardada, configuracionExistente))) {
+  if (configuracionVaultActual) {
+    // Si ya se desbloqueó antes en este dispositivo (la semilla quedó
+    // guardada en localStorage, ver guardarSemillaEnDispositivo), se
+    // desbloquea solo, sin volver a pedir la frase — ni siquiera hace
+    // falta que sea la misma pestaña: sigue funcionando aunque se haya
+    // cerrado el navegador por completo y se vuelva a entrar después.
+    const semillaGuardada = obtenerSemillaDelDispositivo();
+    if (semillaGuardada && (await intentarDesbloquearConSemilla(semillaGuardada, configuracionVaultActual))) {
       ocultarPantallaBoveda();
       alDesbloquear?.();
       return;
     }
-    if (semillaGuardada) borrarSemillaDeSesion(); // ya no sirve (ej. se restableció la bóveda) — no seguir intentando en vano
+    if (semillaGuardada) borrarSemillaDelDispositivo(); // ya no sirve (ej. se restableció la bóveda) — no seguir intentando en vano
 
-    mostrarPantallaDesbloqueo(configuracionExistente, alDesbloquear);
+    mostrarPantallaDesbloqueo(configuracionVaultActual, alDesbloquear);
   } else {
     await mostrarPantallaConfiguracionInicial(alDesbloquear);
   }
 }
 
-// ========================= Recordar el desbloqueo durante esta pestaña =========================
-// Namespacing por correo, igual que el resto del almacenamiento, para
-// que si dos cuentas comparten la misma pestaña (poco común, pero
-// posible en una compu compartida) no se mezclen.
+// ========================= Recordar el desbloqueo en este dispositivo =========================
+// Se guarda en localStorage (no sessionStorage): sobrevive a cerrar la
+// pestaña Y el navegador — solo se pide la frase la primera vez que se
+// usa "Mis cuadernos" en cada dispositivo, tal como se pidió. El
+// "costo" de esto: quien tenga acceso a los archivos de ESTE navegador
+// (ej. otra persona usando la misma cuenta de Windows, o malware en
+// esta compu) podría abrir los cuadernos sin la frase, mientras no se
+// use "Olvidar en este dispositivo" — por eso ese botón existe (ver
+// editor.html, junto a "Importar documento"), pensado para computadoras
+// compartidas o públicas. Namespacing por correo, igual que el resto
+// del almacenamiento, para que dos cuentas en el mismo navegador no se
+// mezclen.
 
-function claveSesion() {
-  return `artonseley::boveda_semilla_sesion::${usuarioEmailActual}`;
+function claveDispositivo() {
+  return `artonseley::boveda_semilla_dispositivo::${usuarioEmailActual}`;
 }
 
-function guardarSemillaEnSesion(semilla) {
+function guardarSemillaEnDispositivo(semilla) {
   try {
-    sessionStorage.setItem(claveSesion(), arrayBufferABase64(semilla));
+    localStorage.setItem(claveDispositivo(), arrayBufferABase64(semilla));
   } catch {
-    // Si sessionStorage no está disponible, simplemente se volverá a
+    // Si localStorage no está disponible, simplemente se volverá a
     // pedir la frase la próxima vez — no es motivo para interrumpir el
     // desbloqueo actual.
   }
 }
 
-function obtenerSemillaDeSesion() {
+function obtenerSemillaDelDispositivo() {
   try {
-    const guardada = sessionStorage.getItem(claveSesion());
+    const guardada = localStorage.getItem(claveDispositivo());
     return guardada ? base64AArrayBuffer(guardada) : null;
   } catch {
     return null;
   }
 }
 
-function borrarSemillaDeSesion() {
+function borrarSemillaDelDispositivo() {
   try {
-    sessionStorage.removeItem(claveSesion());
+    localStorage.removeItem(claveDispositivo());
   } catch {
     // nada que hacer
   }
 }
 
-// Intenta desbloquear con una semilla ya derivada (de sessionStorage, o
+// Botón "Olvidar en este dispositivo" (ver editor.html): borra la
+// semilla guardada y vuelve a tapar la pantalla pidiendo la frase de
+// nuevo — para cuando se usó "Mis cuadernos" en una computadora
+// compartida/pública y no se quiere dejar rastro.
+export function olvidarEnEsteDispositivo() {
+  borrarSemillaDelDispositivo();
+  semillaEnMemoria = null;
+  claveVaultEnMemoria = null;
+  if (elementos && configuracionVaultActual) {
+    elementos.pantalla.hidden = false;
+    mostrarPantallaDesbloqueo(configuracionVaultActual, alDesbloquearActual);
+  }
+}
+
+// Intenta desbloquear con una semilla ya derivada (de localStorage, o
 // recién calculada de una frase escrita a mano) contra la configuración
 // guardada de la bóveda. Si el verificador no cuadra, deja
 // claveVaultEnMemoria/semillaEnMemoria tal como estaban (sin
@@ -274,8 +309,15 @@ function mostrarPantallaVerificacion(frase, alDesbloquear) {
   botonConfirmar.classList.add('boton-boveda-principal');
   botonConfirmar.textContent = 'Confirmar y activar mis cuadernos';
   botonConfirmar.addEventListener('click', async () => {
+    // "normalize('NFKD')" en los dos lados es obligatorio, no cosmético:
+    // la lista oficial de palabras en español guarda las tildes en
+    // Unicode "descompuesto", pero teclear una tilde a mano casi
+    // siempre produce la forma "compuesta" — se ven idénticas pero son
+    // cadenas de texto distintas en JavaScript sin esto (ver el
+    // comentario grande en criptografiaCuadernos.js).
     const todasCorrectas = camposEntrada.every(
-      ({ posicion, entrada }) => entrada.value.trim().toLowerCase() === frase[posicion - 1]
+      ({ posicion, entrada }) =>
+        entrada.value.trim().normalize('NFKD').toLowerCase() === frase[posicion - 1].normalize('NFKD').toLowerCase()
     );
     if (!todasCorrectas) {
       mensajeError.textContent = 'Una o más palabras no coinciden. Revisa tu anotación e inténtalo de nuevo.';
@@ -301,16 +343,18 @@ async function activarBovedaNueva(frase, alDesbloquear) {
   const claveVault = await derivarClaveDesdeSemilla(semilla, salVault);
   const verificador = await cifrarTexto(claveVault, TEXTO_VERIFICADOR);
 
-  await guardarConfiguracionVault({
+  const configuracion = {
     salVault: arrayBufferABase64(salVault),
     verificadorIv: verificador.iv,
     verificadorCiphertext: verificador.ciphertext,
     creadoEn: new Date().toISOString()
-  });
+  };
+  await guardarConfiguracionVault(configuracion);
+  configuracionVaultActual = configuracion;
 
   semillaEnMemoria = semilla;
   claveVaultEnMemoria = claveVault;
-  guardarSemillaEnSesion(semilla);
+  guardarSemillaEnDispositivo(semilla);
   ocultarPantallaBoveda();
   alDesbloquear?.();
 }
@@ -372,9 +416,10 @@ async function intentarDesbloquear(areaTexto, mensajeError, botonDesbloquear, co
       return;
     }
 
-    // Para no volver a pedirla mientras siga abierta esta pestaña — ver
-    // el comentario grande al inicio del archivo.
-    guardarSemillaEnSesion(semilla);
+    // Para no volver a pedirla nunca más en este dispositivo (salvo que
+    // se use "Olvidar en este dispositivo") — ver el comentario grande
+    // junto a guardarSemillaEnDispositivo más arriba.
+    guardarSemillaEnDispositivo(semilla);
     ocultarPantallaBoveda();
     alDesbloquear?.();
   } finally {

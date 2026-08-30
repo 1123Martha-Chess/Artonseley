@@ -556,6 +556,20 @@
             cursor: not-allowed;
         }
 
+        /* "Olvidar en este dispositivo": es una acción de seguridad, no
+           una de trabajo normal como las demás — se diferencia con un
+           estilo más discreto (contorno, sin relleno) para que no
+           compita visualmente con "Crear Cuaderno"/"Importar"/"Exportar". */
+        .boton-accion-secundaria {
+            background: white;
+            color: #b02b2b;
+            border: 1px solid #b02b2b;
+        }
+
+        .boton-accion-secundaria:hover:not(:disabled) {
+            background: #fdf0f0;
+        }
+
         .lista-cuadernos {
             flex: 1 1 auto;
             min-height: 0;
@@ -1344,6 +1358,7 @@
                     <button id="botonCrearCuaderno" class="boton-accion-cuaderno" type="button">(+) Crear Cuaderno</button>
                     <button id="botonImportarCuaderno" class="boton-accion-cuaderno" type="button">Importar documento (.txt)</button>
                     <input type="file" id="inputImportarCuaderno" accept=".txt,text/plain" hidden>
+                    <button id="botonOlvidarDispositivo" class="boton-accion-cuaderno boton-accion-secundaria" type="button" title="Borra la frase guardada en esta computadora — la próxima vez habrá que volver a escribirla completa. Útil en computadoras compartidas o públicas.">🔒 Olvidar en este dispositivo</button>
                     <button id="botonExportarTodo" class="boton-accion-cuaderno" type="button">Exportar todo (.arton)</button>
                     <button id="botonImportarTodo" class="boton-accion-cuaderno" type="button">Importar respaldo (.arton)</button>
                     <input type="file" id="inputImportarTodo" accept=".arton,application/json" hidden>
