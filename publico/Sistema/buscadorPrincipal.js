@@ -15,6 +15,7 @@ import { inicializarSugerencias } from './manejaSugerencias.js';
 import { inicializarConfiguracion } from './manejaConfiguracion.js';
 import { inicializarBuzonSugerencias } from './manejaBuzonSugerencias.js';
 import { inicializarPersonalizacion, obtenerModoActual } from './manejaPersonalizacion.js';
+import { pintarResultados } from './pintarResultadosBusqueda.js';
 
 console.log('buscadorPrincipal.js (cliente) se cargó correctamente.');
 
@@ -109,7 +110,7 @@ async function procesarBusqueda(palabraEscrita) {
     if (datos.tipo === 'mensaje') {
       mostrarMensaje(datos.mensaje);
     } else {
-      mostrarResultados(datos.resultados, datos.avisos);
+      pintarResultados(contenedorResultados, datos.resultados, datos.avisos);
     }
   } catch (error) {
     console.error('Error al conectar con el servidor:', error);
@@ -136,40 +137,6 @@ function mostrarMensaje(texto, claseExtra = '') {
   contenedorResultados.appendChild(parrafo);
 }
 
-// Cada resultado que regresa el servidor tiene esta forma:
-//   [Documento: "Artículo 210" Título] (coincide con: ...) texto del artículo
-const PATRON_ENCABEZADO_RESULTADO = /^(\[.*?\](?:\s\([^)]*\))?)\s(.*)$/s;
-
-function mostrarResultados(resultados, avisos = []) {
-  contenedorResultados.innerHTML = '';
-
-  avisos.forEach((aviso) => {
-    const parrafoAviso = document.createElement('p');
-    parrafoAviso.classList.add('aviso-similares');
-    parrafoAviso.textContent = aviso;
-    contenedorResultados.appendChild(parrafoAviso);
-  });
-
-  resultados.forEach((resultado) => {
-    const tarjeta = document.createElement('div');
-    tarjeta.classList.add('tarjeta-articulo');
-
-    const coincidencia = resultado.match(PATRON_ENCABEZADO_RESULTADO);
-
-    if (coincidencia) {
-      const encabezado = document.createElement('p');
-      encabezado.classList.add('tarjeta-encabezado');
-      encabezado.textContent = coincidencia[1].trim();
-      tarjeta.appendChild(encabezado);
-
-      const cuerpo = document.createElement('p');
-      cuerpo.classList.add('tarjeta-cuerpo');
-      cuerpo.textContent = coincidencia[2].trim();
-      tarjeta.appendChild(cuerpo);
-    } else {
-      tarjeta.textContent = resultado;
-    }
-
-    contenedorResultados.appendChild(tarjeta);
-  });
-}
+// El formato de encabezado que regresa el servidor (y la lógica para
+// pintar cada tarjeta) vive en pintarResultadosBusqueda.js, compartido
+// con editorPrincipal.js — ver ese archivo si cambia el formato.

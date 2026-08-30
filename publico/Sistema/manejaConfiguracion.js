@@ -43,6 +43,12 @@ const OPCIONES = [
   // comentario sobre "accion: 'cerrarSesion'" más abajo): en vez de
   // navegar o abrir el buzón, abre el panel de modos de color.
   { texto: 'Personalización', pagina: null, accion: 'personalizacion' },
+  // Justo debajo de "Personalización": la nueva interfaz de edición de
+  // texto (cuadernos + notas). Es una página aparte (editor.html), no un
+  // panel — por eso simplemente navega, como "Guía de Uso" y las demás.
+  // Dentro de editor.html este texto cambia a "Volver al Buscador" y
+  // apunta a index.html (ver el reemplazo en inicializarConfiguracion).
+  { texto: 'Mis cuadernos', pagina: 'editor.html' },
   { texto: 'Guía de Uso', pagina: 'guia-de-uso.html' },
   { texto: 'Términos y condiciones', pagina: 'terminos-y-condiciones.html' },
   { texto: 'Avisos de privacidad', pagina: 'avisos-de-privacidad.html' },
@@ -63,20 +69,27 @@ export async function inicializarConfiguracion(idBotonConfig, idMenu) {
     return;
   }
 
-  // "Panel de administración" solo se agrega al menú si quien tiene la
-  // sesión abierta es admin — para cualquier otro usuario, ni siquiera
-  // aparece el botón (aunque la ruta ya está protegida del lado del
-  // servidor de todas formas, ver requiereAdminParaPagina). Se arma una
-  // copia de OPCIONES en vez de modificarlo directamente, para que ese
-  // arreglo siga siendo la lista fija que describe el comentario de
-  // arriba, sin sorpresas si esta función se llegara a llamar más de una vez.
-  let opcionesFinales = OPCIONES;
+  // Dentro de editor.html ("Mis cuadernos"), esa misma opción del menú
+  // debe decir "Volver al Buscador" y regresar a index.html en vez de
+  // navegar hacia editor.html (que es justo donde ya se está parado).
+  // Se arma una copia de OPCIONES en vez de modificarlo directamente,
+  // para que ese arreglo siga siendo la lista fija que describe el
+  // comentario de arriba, sin sorpresas si esta función se llegara a
+  // llamar más de una vez.
+  const estaEnEditor = window.location.pathname.endsWith('/editor.html');
+  let opcionesFinales = OPCIONES.map((opcion) => {
+    if (estaEnEditor && opcion.pagina === 'editor.html') {
+      return { texto: 'Volver al Buscador', pagina: 'index.html' };
+    }
+    return opcion;
+  });
+
   try {
     const respuesta = await fetch('/api/sesion');
     if (respuesta.ok) {
       const sesion = await respuesta.json();
       if (sesion.rol === 'admin') {
-        opcionesFinales = [...OPCIONES];
+        opcionesFinales = [...opcionesFinales];
         opcionesFinales.splice(1, 0, { texto: 'Panel de administración', pagina: 'admin.html' });
       }
     }

@@ -3,7 +3,13 @@ node_modules/
 data/
 *.db
 
-# Capturas de pantalla sueltas en la raíz (las que dejas para mostrar algo).
-# No confundir con las imágenes reales del sitio en publico/imagenes/.
-/Screenshot*.png
-/Captura*.png
+# Capturas de pantalla sueltas (las que dejas para mostrar algo, en la
+# raíz o dentro de IMAGENES/ — sin "/" adelante para que aplique en
+# cualquier carpeta). No confundir con las imágenes reales del sitio en
+# publico/imagenes/, ni con los diseños ya versionados dentro de IMAGENES/.
+Screenshot*.png
+Captura*.png
+
+# Referencias de diseño sueltas que no son parte del sitio (PDFs de
+# boceto, etc.) — se quedan en tu compu, no en el repo.
+*.pdf

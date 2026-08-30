@@ -195,6 +195,13 @@ app.get('/admin.html', requiereAdminParaPagina, (peticion, respuesta) => {
   respuesta.sendFile(path.join(__dirname, 'publico', 'admin.html'));
 });
 
+// "Mis cuadernos": la nueva interfaz de edición de texto (cuadernos +
+// notas), accesible desde Configuración ⚙️ (ver manejaConfiguracion.js).
+// Misma protección que index.html: solo requiere sesión, no rol admin.
+app.get('/editor.html', requiereSesionParaPagina, (peticion, respuesta) => {
+  respuesta.sendFile(path.join(__dirname, 'publico', 'editor.html'));
+});
+
 // Términos y Condiciones y Aviso de Privacidad: su texto vive en los
 // .md de la raíz del proyecto (Terminos_y_Condiciones_Artonseley.md y
 // Aviso_de_Privacidad_Artonseley.md) y la página se genera a partir de

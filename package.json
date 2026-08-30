@@ -10,7 +10,8 @@
     "start": "node servidor.js",
     "migrar-datos": "node servidor/scripts/migrarDatosIniciales.js",
     "crear-usuario": "node servidor/scripts/crearUsuario.js",
-    "actualizar-licencia": "node servidor/scripts/actualizarLicencia.js"
+    "actualizar-licencia": "node servidor/scripts/actualizarLicencia.js",
+    "probar-cifrado": "node servidor/scripts/probarCifradoCuadernos.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

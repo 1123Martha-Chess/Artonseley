@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artonseley — Mis cuadernos</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <style>
+        * { box-sizing: border-box; }
+
+        /* Los toggles de esta página (vistas, notas colapsadas/expandidas)
+           usan el atributo "hidden" en vez de una clase, pero varias de
+           esas mismas etiquetas también llevan "display: flex" propio (ver
+           más abajo) para armar columnas — sin esto, esa regla empataría
+           en especificidad con el "display: none" del navegador y a veces
+           ganaría ella, dejando el elemento "oculto" visible igual. */
+        [hidden] {
+            display: none !important;
+        }
+
+        :root {
+            --color-primario: #2A6BAF;
+            /* Ancho del sidebar izquierdo (buscador + resultados) y de la
+               columna de Notas a la derecha del editor — el mismo valor en
+               los dos para que, junto con "Documentos seleccionados"
+               arriba, las columnas del header y las del contenido queden
+               alineadas verticalmente (ver el PDF de referencia: el botón
+               de arriba y la columna de abajo miden lo mismo). */
+            --ancho-lateral: 300px;
+            --ancho-notas: 300px;
+
+            /* Medidas de una hoja carta (Letter) normal a 96dpi — igual
+               que Word/Google Docs por defecto: 8.5"×11" con 1" de margen
+               por lado. Con esto el área de escritura se ve y se comporta
+               como un documento de verdad, no como un cuadro de texto
+               cualquiera (ver .area-escritura y .lienzo-escritura). */
+            --ancho-pagina: 816px;
+            --alto-pagina: 1056px;
+            --margen-pagina: 96px;
+            /* Espacio gris entre una "hoja" y la siguiente, mientras se
+               sigue escribiendo — no hay límite de cuántas se pueden
+               generar, el patrón se repite solo (ver el comentario en
+               .area-escritura). */
+            --espacio-entre-paginas: 28px;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* =========================================================
+           BARRA SUPERIOR: "Documentos seleccionados" ocupa el mismo
+           ancho que el sidebar de abajo (--ancho-lateral); el resto de
+           la barra (logo + espacio + iconos) ocupa lo que queda.
+           ========================================================= */
+        /* Más compacta a propósito (menos alto/relleno que antes): la
+           barra superior es "chrome" de la interfaz, no contenido — que
+           ocupe lo mínimo posible dejaba más lugar a lo que el usuario
+           realmente usa, siguiendo la proporción del PDF de referencia. */
+        .barra-superior {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .celda-doc-seleccionados {
+            flex: 0 0 var(--ancho-lateral);
+            position: relative;
+            min-width: 0;
+        }
+
+        .boton-doc-seleccionados {
+            width: 100%;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            background: #2B6CB0;
+            border: 1px solid #999;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .boton-doc-seleccionados:hover {
+            background: #235a91;
+        }
+
+        .panel-doc-seleccionados {
+            display: none;
+            position: absolute;
+            top: 110%;
+            left: 0;
+            width: max(var(--ancho-lateral), 320px);
+            max-width: 90vw;
+            max-height: 70vh;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #999;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+            padding: 12px;
+            z-index: 1002;
+        }
+
+        .panel-doc-seleccionados.panel-abierto {
+            display: block;
+        }
+
+        .celda-resto-superior {
+            flex: 1 1 auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .marca {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .logo-marca {
+            height: 34px;
+            width: auto;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        .logo-letras {
+            height: 22px;
+            width: auto;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        /* El aviso de "cuidado al borrar la caché" vive AQUÍ, en el
+           espacio entre el logo y los iconos de la derecha (antes vacío)
+           — cubriendo todo ese ancho, como se pidió. No hay buscador
+           aquí arriba: el buscador vive en su propio espacio, en el
+           sidebar izquierdo. Mientras la bóveda no está desbloqueada
+           (queda "hidden"), este hueco simplemente no ocupa espacio —no
+           hace falta un espaciador aparte porque, hasta entonces, toda
+           esta barra queda tapada por la pantalla de la bóveda de
+           cualquier forma. */
+        /* Letra chica y poco relleno a propósito: el espacio disponible
+           (entre el logo y los iconos) es angosto y fijo — en vez de
+           agrandar ese hueco, se achica el texto lo que haga falta para
+           que quepa completo ahí, sin cortarse ni desbordar. Si aun así
+           el texto no entra en una sola línea (pantallas angostas),
+           puede pasar a una segunda línea: el logo (50px) ya deja
+           suficiente alto en la barra para dos líneas de este tamaño sin
+           que la barra tenga que crecer. */
+        .banner-advertencia-cache {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff8e1;
+            border: 1px solid #f0d375;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 10px;
+            line-height: 1.2;
+            color: #7a5c00;
+        }
+
+        .banner-advertencia-cache strong {
+            white-space: nowrap;
+        }
+
+        .grupo-iconos-superior {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .contenedor-configuracion {
+            position: relative;
+        }
+
+        .boton-icono {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            background: #2B6CB0;
+            border: 1px solid #999;
+            border-radius: 7px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .boton-icono img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .boton-icono:hover {
+            background: #235a91;
+        }
+
+        .menu-configuracion {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            min-width: 200px;
+            background: white;
+            border: 1px solid #999;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            z-index: 1002;
+        }
+
+        .menu-configuracion.menu-abierto {
+            display: block;
+        }
+
+        .opcion-menu-configuracion {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 14px;
+            background: white;
+            border: none;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .opcion-menu-configuracion:last-child {
+            border-bottom: none;
+        }
+
+        .opcion-menu-configuracion:hover {
+            background: #f2f2f2;
+        }
+
+        /* Panel lateral compartido por Configuración/Personalización y
+           Notificaciones (mismas clases e ids que index.html). */
+        .panel-sugerencias {
+            position: fixed;
+            top: var(--altura-barra-superior, 78px);
+            right: 0;
+            width: min(320px, 90vw);
+            height: calc(100vh - var(--altura-barra-superior, 78px));
+            box-sizing: border-box;
+            background: white;
+            border-left: 2px solid #ccc;
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 1000;
+        }
+
+        .panel-sugerencias.panel-abierto {
+            transform: translateX(0);
+        }
+
+        .mensaje-carga {
+            color: #555;
+            font-style: italic;
+        }
+
+        .mensaje-error {
+            color: #b02b2b;
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           FILA DE CONTENIDO: sidebar de búsqueda (izquierda, ancho fijo
+           igual que "Documentos seleccionados" arriba) + área principal
+           (derecha, lo que queda) — igual que en el PDF de referencia.
+           ========================================================= */
+        .fila-contenido {
+            flex: 1 1 auto;
+            display: flex;
+            min-height: 0;
+        }
+
+        /* =========================================================
+           Sidebar izquierdo: buscador arriba + resultados abajo. Es su
+           PROPIO espacio, siempre visible (no se esconde ni se
+           superpone a nada) — así se pidió explícitamente.
+           ========================================================= */
+        .barra-lateral-busqueda {
+            flex: 0 0 var(--ancho-lateral);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: white;
+            border-right: 2px solid #cbd5e0;
+        }
+
+        .buscador-lateral {
+            flex: 0 0 auto;
+            padding: 14px;
+            border-bottom: 1px solid #e2e2e2;
+        }
+
+        .buscador-lateral input {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 13px;
+            border: 1px solid #999;
+            border-radius: 8px;
+        }
+
+        .buscador-lateral button {
+            width: 100%;
+            margin-top: 8px;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            background: var(--color-primario);
+            border: 1px solid var(--color-primario);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .buscador-lateral button:hover {
+            filter: brightness(0.85);
+        }
+
+        .resultados-lateral {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 14px;
+        }
+
+        .aviso-sin-busqueda {
+            color: #666;
+            font-style: italic;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           Sistema de botones (documentos/sectores) reutilizado dentro
+           del desplegable — mismas clases que sistemaDeBotones.js ya
+           sabe pintar en index.html.
+           ========================================================= */
+        .barra-lateral {
+            width: 100%;
+        }
+
+        .titulo-sector {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .flecha-sector {
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .titulo-sector.abierto .flecha-sector {
+            transform: rotate(90deg);
+        }
+
+        .contenido-sector {
+            display: none;
+        }
+
+        .contenido-sector.abierto {
+            display: block;
+        }
+
+        .bloque-sector {
+            margin-bottom: 14px;
+            padding-left: 10px;
+            border-left: 3px solid #ddd;
+        }
+
+        .bloque-sector h3 {
+            margin: 8px 0 6px 0;
+            font-size: 14px;
+        }
+
+        .boton-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 4px 0;
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid #999;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .boton-checkbox::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            border: 1px solid #999;
+            border-radius: 3px;
+            background: white;
+        }
+
+        .boton-checkbox.activo {
+            background: var(--color-primario);
+            color: white;
+            border-color: var(--color-primario);
+        }
+
+        .boton-checkbox.activo::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: var(--color-primario);
+            border-color: white;
+        }
+
+        .boton-general {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .boton-sector {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .boton-documento-sector {
+            margin-left: 12px;
+            width: calc(100% - 12px);
+        }
+
+        /* Tarjetas de resultado (mismas que index.html, ver
+           pintarResultadosBusqueda.js) — aquí van apiladas y angostas,
+           dentro del sidebar. */
+        .tarjeta-articulo {
+            background: #eaf4fd;
+            border: 1px solid #bcdcf7;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .aviso-similares {
+            font-size: 12.5px;
+            font-style: italic;
+            color: #555;
+            margin: 0 0 10px 0;
+        }
+
+        .tarjeta-encabezado {
+            margin: 0 0 6px 0;
+            font-weight: bold;
+            font-size: 12.5px;
+            color: #1a4971;
+        }
+
+        .tarjeta-cuerpo {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #222;
+        }
+
+        /* =========================================================
+           Área principal (derecha del sidebar): aquí viven la vista de
+           Cuadernos y la vista de Editor, una a la vez.
+           ========================================================= */
+        .area-principal {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* =========================================================
+           Vista de Cuadernos: "+Crear Cuaderno"/"Importar" arriba, la
+           lista de cuadernos en medio (crece y hace scroll si hace
+           falta), y el aviso de máximo 10 pegado siempre hasta abajo.
+           ========================================================= */
+        .vista-cuadernos {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 20px 24px;
+        }
+
+        .acciones-cuadernos {
+            flex: 0 0 auto;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .boton-accion-cuaderno {
+            width: 100%;
+            max-width: 320px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            background: #2B6CB0;
+            border: 1px solid #235a91;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .boton-accion-cuaderno:hover:not(:disabled) {
+            background: #235a91;
+        }
+
+        .boton-accion-cuaderno:disabled {
+            background: #a9bfd6;
+            border-color: #a9bfd6;
+            cursor: not-allowed;
+        }
+
+        .lista-cuadernos {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .aviso-sin-cuadernos {
+            color: #666;
+            font-style: italic;
+        }
+
+        .tarjeta-cuaderno {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 460px;
+            background: #2B6CB0;
+            color: white;
+            border-radius: 10px;
+            padding: 18px 50px 18px 22px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            flex-shrink: 0;
+        }
+
+        .tarjeta-cuaderno:hover {
+            background: #235a91;
+        }
+
+        .nombre-cuaderno-editable {
+            display: inline-block;
+            max-width: 100%;
+            font-size: 15px;
+            font-weight: bold;
+            white-space: pre-wrap;
+            word-break: break-word;
+            outline: none;
+        }
+
+        .nombre-cuaderno-editable[contenteditable="true"] {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            padding: 2px 6px;
+            cursor: text;
+        }
+
+        .boton-borrar-cuaderno {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.85;
+        }
+
+        .boton-borrar-cuaderno:hover {
+            opacity: 1;
+        }
+
+        /* Pegado siempre hasta abajo del área (no sube aunque la lista
+           esté vacía o corta), igual que en el PDF de referencia. */
+        .aviso-max-cuadernos {
+            flex: 0 0 auto;
+            margin: 0;
+            max-width: 460px;
+            font-size: 12.5px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* =========================================================
+           Vista de Editor: cabecera arriba; debajo, una fila con el
+           bloque de escritura (herramientas + texto) a la izquierda y
+           la columna de Notas a la derecha — su PROPIO espacio, no una
+           ventana flotando encima.
+           ========================================================= */
+        .vista-editor {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px 20px 20px 20px;
+        }
+
+        .cabecera-editor {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cabecera-editor button {
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            background: #2B6CB0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .cabecera-editor button:hover {
+            background: #235a91;
+        }
+
+        .nombre-cuaderno-actual {
+            flex: 1;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #1a4971;
+        }
+
+        /* Cuadrícula de hasta 2 columnas × 2 filas: [herramientas+notas | ]
+           arriba, [texto | ] abajo. COLAPSADA, es una sola columna (1fr):
+           la barra de herramientas y el botón "(+) Notas" comparten la
+           fila de arriba en una fila flex propia (.fila-superior-editor,
+           sin espacio sobrante entre ellos), y el área de escritura usa
+           TODO el ancho — nada de espacio gris sin usar. Con la clase
+           "notas-abierta" en este contenedor aparece la segunda columna
+           (ancho fijo de siempre, --ancho-notas) para el panel completo
+           de notas, que entonces achica el área de escritura para hacerle
+           lugar. */
+        .cuerpo-editor {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 12px;
+        }
+
+        .cuerpo-editor.notas-abierta {
+            grid-template-columns: 1fr var(--ancho-notas);
+        }
+
+        /* Fila de arriba: la barra de herramientas y el botón "(+) Notas"
+           colapsado, uno junto al otro, sin espacio de más entre ellos ni
+           a la derecha — "align-items: stretch" (por defecto en flex) hace
+           que el botón, más bajo, se estire para medir lo mismo de alto
+           que la barra de dos filas ("al mismo nivel" que ella). */
+        .fila-superior-editor {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        /* Dos filas prolijas dentro de la barra: la primera trae lo más
+           usado (negrita... alineación); la segunda, listas/sangría/
+           superíndice-subíndice/deshacer-rehacer/limpiar formato.
+           "flex: 0 0 auto" + que sea un hijo flex (no un item de grid
+           estirado) hace que la barra mida solo lo que necesita su
+           contenido — así la fila 2, más corta, no deja un sobrante de
+           espacio raro a la derecha: como cada fila mide "100%" de esta
+           barra, las dos terminan midiendo lo mismo. */
+        /* Más chica que antes a propósito (menos relleno, letra más
+           chica) — es una barra de herramientas, no el protagonista de
+           la pantalla; el protagonista es la hoja de abajo. */
+        .barra-herramientas-edicion {
+            flex: 0 0 auto;
+            max-width: 100%;
+            background: #2B6CB0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 6px 8px;
+            border-radius: 8px;
+        }
+
+        .fila-herramientas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .boton-herramienta {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 5px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            min-width: 26px;
+        }
+
+        .boton-herramienta:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .boton-herramienta.activo {
+            background: white;
+            color: #2B6CB0;
+            font-weight: bold;
+        }
+
+        .selector-herramienta {
+            padding: 3px 5px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            background: white;
+            color: #222;
+        }
+
+        .entrada-color-herramienta {
+            width: 28px;
+            height: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 5px;
+            background: none;
+            padding: 2px;
+            cursor: pointer;
+        }
+
+        .separador-herramientas {
+            width: 1px;
+            align-self: stretch;
+            background: rgba(255, 255, 255, 0.35);
+            margin: 1px 2px;
+        }
+
+        /* =========================================================
+           "Lienzo": el fondo gris neutro donde flota la hoja, con scroll
+           propio — igual que el área de trabajo de Google Docs/Word.
+           ========================================================= */
+        .lienzo-escritura {
+            grid-column: 1;
+            grid-row: 2;
+            min-height: 0;
+            overflow-y: auto;
+            background: #e3e6e9;
+            border-radius: 8px;
+            padding: 20px 16px;
+        }
+
+        /* La "hoja": ancho y alto de una página carta normal (ver las
+           variables en :root), centrada, con los mismos márgenes de 1"
+           que tendría un documento de Word/Google Docs de verdad — el
+           azul clarito de siempre para el color (mismo que las tarjetas
+           de artículos encontrados), pero el TAMAÑO y el ESPACIADO ya
+           corresponden a un documento real, no a un cuadro de texto
+           cualquiera.
+           El fondo alterna franjas: una del alto de una hoja (azul) y
+           una angosta gris (el "borde" que separa una hoja de la
+           siguiente) — se repite solo, cuantas veces haga falta, así que
+           NO hay límite de cuánto se puede escribir: el patrón sigue
+           creciendo con el documento. */
+        .area-escritura {
+            width: 100%;
+            max-width: var(--ancho-pagina);
+            min-height: var(--alto-pagina);
+            margin: 0 auto;
+            box-sizing: border-box;
+            background-color: #eaf4fd;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                #eaf4fd 0,
+                #eaf4fd var(--alto-pagina),
+                #cfd4d9 var(--alto-pagina),
+                #cfd4d9 calc(var(--alto-pagina) + var(--espacio-entre-paginas))
+            );
+            background-size: 100% calc(var(--alto-pagina) + var(--espacio-entre-paginas));
+            border: 1px solid #bcdcf7;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+            padding: var(--margen-pagina);
+            font-size: 15px;
+            line-height: 1.6;
+            color: #222;
+            outline: none;
+        }
+
+        /* Botón "(+) Notas" colapsado: vive dentro de .fila-superior-editor,
+           justo junto a la barra de herramientas, sin espacio de más. */
+        .boton-notas-colapsado {
+            flex: 0 0 auto;
+            padding: 0 16px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            background: #2B6CB0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .boton-notas-colapsado:hover {
+            background: #235a91;
+        }
+
+        /* =========================================================
+           Columna de Notas EXPANDIDA: su propio espacio a la derecha del
+           editor, con el ancho fijo de siempre (--ancho-notas). Solo
+           aparece (y solo entonces existe la 2ª columna de la cuadrícula,
+           ver .cuerpo-editor.notas-abierta) cuando no tiene el atributo
+           "hidden" — colapsada, ni siquiera participa del layout, así que
+           no deja un hueco reservado de sobra.
+           ========================================================= */
+        .columna-notas {
+            grid-column: 2;
+            grid-row: 1 / 3;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cabecera-panel-notas {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: #2B6CB0;
+            color: white;
+            padding: 12px 14px;
+        }
+
+        .cabecera-panel-notas h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .boton-crear-nota {
+            padding: 8px 12px;
+            font-size: 12.5px;
+            font-weight: bold;
+            color: #2B6CB0;
+            background: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .boton-crear-nota:hover {
+            background: #e6eefa;
+        }
+
+        .lista-notas {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .aviso-sin-notas {
+            color: #666;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .formulario-nota {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .formulario-nota textarea {
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 13px;
+            padding: 8px;
+            resize: vertical;
+        }
+
+        .fila-colores-nota {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .swatch-color-nota {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .swatch-color-nota.elegido {
+            border-color: #2B6CB0;
+        }
+
+        .fila-botones-formulario-nota {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tarjeta-nota {
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        .texto-nota {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #222;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .fila-acciones-nota {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* El círculo que enciende/apaga "mostrar en todos los
+           cuadernos": relleno cuando está activo, hueco cuando no. */
+        .boton-circulo-global {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #2B6CB0;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .boton-circulo-global.activo {
+            background: #2B6CB0;
+        }
+
+        .boton-icono-nota {
+            background: none;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            opacity: 0.75;
+        }
+
+        .boton-icono-nota:hover {
+            opacity: 1;
+        }
+
+        .pie-aviso-legal {
+            flex: 0 0 auto;
+            background: white;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #777;
+            padding: 10px 20px;
+            border-top: 1px solid #e2e2e2;
+        }
+
+        /* En celular, todo pasa a apilarse en una sola columna: ya no
+           alcanza el ancho para sidebar + área principal + notas lado a
+           lado. */
+        @media (max-width: 900px) {
+            :root {
+                --ancho-lateral: 100%;
+                --ancho-notas: 100%;
+                /* En pantallas angostas, el margen de 1" completo (96px)
+                   dejaría casi sin espacio para escribir — se reduce el
+                   margen y el ancho "de hoja" se adapta al que haya. */
+                --margen-pagina: 20px;
+                --ancho-pagina: 100%;
+            }
+
+            .barra-superior {
+                flex-wrap: wrap;
+            }
+
+            .celda-doc-seleccionados {
+                flex-basis: 100%;
+                order: 2;
+            }
+
+            .celda-resto-superior {
+                order: 1;
+            }
+
+            .fila-contenido {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .barra-lateral-busqueda {
+                border-right: none;
+                border-bottom: 2px solid #cbd5e0;
+                max-height: 45vh;
+            }
+
+            /* Con la pantalla angosta, "notas-abierta" apila el panel
+               debajo en vez de ponerlo al lado (una sola columna, una
+               fila extra para él). Colapsada sigue siendo una sola
+               columna igual que en escritorio. */
+            .cuerpo-editor.notas-abierta {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr var(--ancho-notas);
+            }
+
+            .fila-superior-editor {
+                flex-wrap: wrap;
+            }
+
+            .cuerpo-editor.notas-abierta .columna-notas {
+                grid-column: 1;
+                grid-row: 3;
+            }
+
+            .columna-notas {
+                max-height: 45vh;
+            }
+
+            .logo-marca {
+                height: 32px;
+            }
+
+            .logo-letras {
+                height: 20px;
+            }
+        }
+
+        /* =========================================================
+           Pantalla de la bóveda cifrada: tapa todo hasta que se
+           resuelve (bloqueado por incógnito, configurar la frase de
+           recuperación, verificarla, o desbloquear una que ya existe).
+           Mismo lenguaje visual que .bloqueo-acceso de documento.css
+           (tarjeta blanca centrada sobre un fondo semi-transparente).
+           ========================================================= */
+        .pantalla-boveda {
+            position: fixed;
+            inset: 0;
+            background: rgba(247, 247, 247, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .tarjeta-boveda {
+            max-width: 560px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+            padding: 32px 36px;
+            margin: 20px 0;
+        }
+
+        .vista-boveda h2 {
+            margin: 0 0 12px 0;
+            font-size: 19px;
+            color: #1a4971;
+        }
+
+        .vista-boveda p {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .cuadricula-palabras {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 18px 0;
+        }
+
+        .chip-palabra {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            background: #eaf4fd;
+            border: 1px solid #bcdcf7;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #1a4971;
+        }
+
+        .numero-palabra {
+            font-size: 11px;
+            font-weight: normal;
+            color: #6b8caf;
+        }
+
+        .confirmacion-anotado {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13.5px;
+            margin: 14px 0;
+            cursor: pointer;
+        }
+
+        .fila-campos-verificacion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 14px 0;
+        }
+
+        .campo-verificacion {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1 1 140px;
+        }
+
+        .campo-verificacion label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .campo-verificacion input,
+        .area-frase-desbloqueo {
+            padding: 9px 10px;
+            font-size: 14px;
+            border: 1px solid #999;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .area-frase-desbloqueo {
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+            margin: 10px 0;
+        }
+
+        .mensaje-error-boveda {
+            color: #b02b2b;
+            font-weight: bold;
+            font-size: 13px;
+            min-height: 18px;
+        }
+
+        .fila-botones-boveda {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .boton-boveda-principal,
+        .boton-boveda-secundario {
+            padding: 11px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .boton-boveda-principal {
+            color: white;
+            background: #2B6CB0;
+            border: 1px solid #235a91;
+        }
+
+        .boton-boveda-principal:hover:not(:disabled) {
+            background: #235a91;
+        }
+
+        .boton-boveda-principal:disabled {
+            background: #a9bfd6;
+            border-color: #a9bfd6;
+            cursor: not-allowed;
+        }
+
+        .boton-boveda-secundario {
+            color: #2B6CB0;
+            background: white;
+            border: 1px solid #2B6CB0;
+        }
+
+        .boton-boveda-secundario:hover {
+            background: #eaf4fd;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="barra-superior">
+        <div class="celda-doc-seleccionados">
+            <button id="botonDocSeleccionados" class="boton-doc-seleccionados" type="button">📄 Documentos seleccionados</button>
+            <div id="panelDocSeleccionados" class="panel-doc-seleccionados">
+                <aside id="contenedorSectoresEditor" class="barra-lateral"></aside>
+            </div>
+        </div>
+
+        <div class="celda-resto-superior">
+            <div class="marca">
+                <img id="iconoMarca" class="logo-marca" src="imagenes/artonseley-logo-azul.jpg" alt="Ícono ARTONSELEY">
+                <img id="letrasMarca" class="logo-letras" src="imagenes/artonseley-letras-azul.png" alt="ARTONSELEY">
+            </div>
+
+            <div id="bannerAdvertenciaCache" class="banner-advertencia-cache" hidden>
+                <strong>⚠️ Cuidado:</strong> borrar la caché/datos/almacenamiento/cookies de este navegador borra los cuadernos que no hayas exportado. Procura que los cuadernos que desees guardar ya estén exportados.
+            </div>
+
+            <div class="grupo-iconos-superior">
+                <div class="contenedor-configuracion">
+                    <button id="botonConfiguracion" class="boton-icono" title="Configuración" type="button">
+                        <img src="imagenes/configuracion.png" alt="Configuración">
+                    </button>
+                    <div id="menuConfiguracion" class="menu-configuracion"></div>
+                </div>
+                <button id="botonSugerencias" class="boton-icono" title="Notificaciones" type="button">
+                    <img src="imagenes/notificaciones.png" alt="Notificaciones">
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <aside id="panelSugerencias" class="panel-sugerencias"></aside>
+
+    <!-- ============ Pantalla de la bóveda cifrada ============
+         Tapa todo hasta que se resuelve una de estas 4 situaciones
+         (ver manejaBovedaCifrada.js): modo incógnito detectado, hay que
+         configurar la frase de recuperación por primera vez, hay que
+         confirmarla, o hay que desbloquear una bóveda que ya existe. -->
+    <div id="pantallaBoveda" class="pantalla-boveda">
+        <div class="tarjeta-boveda">
+            <div id="vistaBovedaCargando" class="vista-boveda">
+                <p>Cargando…</p>
+            </div>
+            <div id="vistaBovedaIncognito" class="vista-boveda" hidden>
+                <h2>No se puede usar en navegación privada</h2>
+                <p>
+                    "Mis cuadernos" guarda todo cifrado en este navegador (nunca en el servidor) — en una ventana de
+                    incógnito/navegación privada, el navegador borra esos datos en cuanto la cierras, así que
+                    perderías tu trabajo sin aviso. Abre esta página en una ventana normal para usar los cuadernos.
+                </p>
+            </div>
+            <div id="vistaBovedaConfiguracion" class="vista-boveda" hidden></div>
+            <div id="vistaBovedaVerificacion" class="vista-boveda" hidden></div>
+            <div id="vistaBovedaDesbloqueo" class="vista-boveda" hidden></div>
+        </div>
+    </div>
+
+    <div class="fila-contenido">
+        <!-- ============ Sidebar: buscador + resultados (su propio espacio, siempre visible) ============ -->
+        <aside class="barra-lateral-busqueda">
+            <div class="buscador-lateral">
+                <input type="text" id="campoPalabraEditor" placeholder="Buscar una ley..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <button id="botonBuscarEditor" type="button">Buscar</button>
+            </div>
+            <div id="resultadosEditor" class="resultados-lateral">
+                <p class="aviso-sin-busqueda">Busca una palabra o un número de artículo — los resultados aparecen aquí, en el mismo formato que el buscador principal.</p>
+            </div>
+        </aside>
+
+        <!-- ============ Área principal: Cuadernos o Editor ============ -->
+        <div class="area-principal">
+            <!-- ============ Vista de Cuadernos ============ -->
+            <main id="vistaCuadernos" class="vista-cuadernos">
+                <div class="acciones-cuadernos">
+                    <button id="botonCrearCuaderno" class="boton-accion-cuaderno" type="button">(+) Crear Cuaderno</button>
+                    <button id="botonImportarCuaderno" class="boton-accion-cuaderno" type="button">Importar documento (.txt)</button>
+                    <input type="file" id="inputImportarCuaderno" accept=".txt,text/plain" hidden>
+                    <button id="botonExportarTodo" class="boton-accion-cuaderno" type="button">Exportar todo (.arton)</button>
+                    <button id="botonImportarTodo" class="boton-accion-cuaderno" type="button">Importar respaldo (.arton)</button>
+                    <input type="file" id="inputImportarTodo" accept=".arton,application/json" hidden>
+                </div>
+                <div id="listaCuadernos" class="lista-cuadernos"></div>
+                <p class="aviso-max-cuadernos">( Hasta máximo 10 cuadernos por usuario )</p>
+            </main>
+
+            <!-- ============ Vista de Editor ============ -->
+            <main id="vistaEditor" class="vista-editor" hidden>
+                <div class="cabecera-editor">
+                    <button id="botonVolverCuadernos" type="button">← Cuadernos</button>
+                    <span id="nombreCuadernoActual" class="nombre-cuaderno-actual"></span>
+                    <button id="botonExportarCuaderno" type="button">Exportar (.txt)</button>
+                </div>
+
+                <div id="cuerpoEditor" class="cuerpo-editor">
+                    <div class="fila-superior-editor">
+                        <div id="barraHerramientasEdicion" class="barra-herramientas-edicion"></div>
+                        <button id="botonAbrirNotas" class="boton-notas-colapsado" type="button">(+) Notas</button>
+                    </div>
+                    <div class="lienzo-escritura">
+                        <div id="areaEscritura" class="area-escritura" contenteditable="true"></div>
+                    </div>
+
+                    <!-- ============ Columna de Notas expandida: su propio espacio ============ -->
+                    <aside id="columnaNotas" class="columna-notas" hidden></aside>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="pie-aviso-legal">
+        Este sistema es una herramienta de búsqueda y consulta; no sustituye la asesoría de un abogado certificado. Para decisiones legales concretas, consulta siempre con un profesional.
+    </footer>
+
+    <script type="module" src="Sistema/editorPrincipal.js"></script>
+</body>
+</html>
