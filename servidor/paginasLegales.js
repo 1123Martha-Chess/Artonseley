@@ -38,7 +38,7 @@ const DOCUMENTOS = {
 
 // Mismo esqueleto que tenían las páginas .html estáticas: enlaza
 // documento.css (el estilo compartido de las "hojas de documento") y
-// Sistema/manejaPaginaLegal.js (ajusta el enlace "Volver" según haya o
+// Sistema/ajustaEnlaceVolver.js (ajusta el enlace "Volver" según haya o
 // no sesión). El cuerpo se inserta dentro de .hoja-documento.
 function armarPagina({ titulo, cuerpoHTML }) {
   return `<!DOCTYPE html>
@@ -55,7 +55,7 @@ function armarPagina({ titulo, cuerpoHTML }) {
         <a href="index.html" class="volver">← Volver al buscador</a>
 ${cuerpoHTML}
     </div>
-    <script type="module" src="Sistema/manejaPaginaLegal.js"></script>
+    <script type="module" src="Sistema/ajustaEnlaceVolver.js"></script>
 </body>
 </html>
 `;
