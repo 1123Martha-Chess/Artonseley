@@ -1277,6 +1277,50 @@
             background: #eaf4fd;
         }
 
+        /* Bloque "¿Perdiste tus 12 palabras?" al pie de las pantallas de
+           verificación y de desbloqueo (ver agregarSalidaFrasePerdida en
+           manejaBovedaCifrada.js): la salida para quien ya no tiene su
+           frase y necesita empezar de cero sin quedarse sin el servicio. */
+        .salida-frase-perdida {
+            margin-top: 22px;
+            padding-top: 14px;
+            border-top: 1px solid #e2e2e2;
+        }
+
+        .salida-frase-perdida summary {
+            font-size: 13px;
+            font-weight: bold;
+            color: #2B6CB0;
+            cursor: pointer;
+        }
+
+        .salida-frase-perdida p {
+            font-size: 12.5px;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        .salida-frase-perdida .confirmacion-anotado {
+            font-size: 12.5px;
+            align-items: flex-start;
+        }
+
+        .salida-frase-perdida .fila-botones-boveda {
+            margin-top: 10px;
+        }
+
+        .salida-frase-perdida .boton-boveda-secundario {
+            font-size: 12.5px;
+            padding: 9px 14px;
+            flex: 1 1 220px;
+        }
+
+        .salida-frase-perdida .boton-boveda-secundario:disabled {
+            color: #9bb4cc;
+            border-color: #c8d7e5;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>

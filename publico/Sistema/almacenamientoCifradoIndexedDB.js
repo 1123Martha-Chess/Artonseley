@@ -77,6 +77,29 @@ export function obtenerConfiguracionVault() {
   return promesaDeSolicitud(transaccion(ALMACEN_CONFIGURACION, 'readonly').get('vault'));
 }
 
+// Borra TODO el contenido de la bóveda de ESTE navegador: la
+// configuración (sal + verificador), los cuadernos y las notas
+// cifradas — todo en una sola transacción, así que o se borra completo
+// o no se borra nada. Se usa cuando el usuario perdió su frase de
+// recuperación y elige empezar de cero (ver
+// restablecerBovedaYCrearFraseNueva en manejaBovedaCifrada.js): lo que
+// se borra aquí estaba cifrado con una llave que ya nadie puede
+// reconstruir, así que no había forma de recuperarlo de todos modos.
+export function borrarContenidoVault() {
+  if (!bdAbierta) {
+    return Promise.reject(new Error('almacenamientoCifradoIndexedDB.js: llama primero a inicializarAlmacenamiento().'));
+  }
+  return new Promise((resolve, reject) => {
+    const tx = bdAbierta.transaction([ALMACEN_CONFIGURACION, ALMACEN_CUADERNOS, ALMACEN_NOTAS], 'readwrite');
+    tx.objectStore(ALMACEN_CONFIGURACION).clear();
+    tx.objectStore(ALMACEN_CUADERNOS).clear();
+    tx.objectStore(ALMACEN_NOTAS).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
 export function guardarConfiguracionVault(configuracion) {
   return promesaDeSolicitud(
     transaccion(ALMACEN_CONFIGURACION, 'readwrite').put({ clave: 'vault', ...configuracion })

@@ -29,10 +29,24 @@
 // (ver editor.html, junto a "Importar documento" — llama a
 // olvidarEnEsteDispositivo() más abajo): borra la semilla guardada y
 // vuelve a pedir la frase completa la próxima vez.
+//
+// Caso aparte: si alguien PERDIÓ su frase de recuperación (nunca la
+// anotó, o ya no la tiene), sus cuadernos de este navegador son
+// irrecuperables — así es el cero-conocimiento — pero no por eso se
+// queda sin poder usar "Mis cuadernos". Las pantallas de verificación y
+// de desbloqueo llevan un bloque plegable "¿Perdiste tus 12 palabras?"
+// (ver agregarSalidaFrasePerdida) que borra la bóveda ilegible de este
+// navegador y arranca de cero con una frase nueva
+// (restablecerBovedaYCrearFraseNueva).
 // -------------------------------------------------------------------
 
 import { estaEnNavegacionPrivada } from './deteccionIncognito.js';
-import { inicializarAlmacenamiento, obtenerConfiguracionVault, guardarConfiguracionVault } from './almacenamientoCifradoIndexedDB.js';
+import {
+  inicializarAlmacenamiento,
+  obtenerConfiguracionVault,
+  guardarConfiguracionVault,
+  borrarContenidoVault
+} from './almacenamientoCifradoIndexedDB.js';
 import {
   generarFraseDeRecuperacion,
   fraseEsValida,
@@ -164,6 +178,107 @@ export function olvidarEnEsteDispositivo() {
     elementos.pantalla.hidden = false;
     mostrarPantallaDesbloqueo(configuracionVaultActual, alDesbloquearActual);
   }
+}
+
+// ========================= Salida cuando se perdió la frase =========================
+// Si alguien nunca anotó sus 12 palabras, o las perdió, sus cuadernos
+// guardados en ESTE navegador quedaron cifrados con una llave que ya
+// nadie puede reconstruir — ni el usuario ni Artonseley — así que son
+// irrecuperables por diseño (cero-conocimiento). Eso NO puede dejar a
+// la persona sin poder volver a usar "Mis cuadernos": esta función
+// borra la bóveda ilegible de este navegador y arranca de cero con una
+// frase de recuperación nueva. La confirmación (una casilla antes de
+// habilitar los botones) vive en la interfaz, ver
+// agregarSalidaFrasePerdida más abajo.
+
+async function restablecerBovedaYCrearFraseNueva() {
+  await borrarContenidoVault();
+  borrarSemillaDelDispositivo();
+  semillaEnMemoria = null;
+  claveVaultEnMemoria = null;
+  configuracionVaultActual = null;
+  elementos.pantalla.hidden = false;
+  await mostrarPantallaConfiguracionInicial(alDesbloquearActual);
+}
+
+// Agrega, al final de una vista de la bóveda, un bloque plegable
+// "¿Perdiste tus 12 palabras?" con dos botones que llevan al mismo
+// restablecimiento (borrar lo de este navegador + frase nueva). Son dos
+// botones porque así lo pide la interfaz — mismo efecto, ya que con la
+// frase perdida los cuadernos de este navegador no se pueden salvar de
+// ninguna forma. contexto: 'verificacion' (primer uso, aún no hay
+// cuadernos guardados) o 'desbloqueo' (ya existe una bóveda con datos).
+function agregarSalidaFrasePerdida(vista, contexto) {
+  const bloque = document.createElement('details');
+  bloque.classList.add('salida-frase-perdida');
+
+  const resumen = document.createElement('summary');
+  resumen.textContent = '¿Perdiste tus 12 palabras?';
+  bloque.appendChild(resumen);
+
+  const aviso = document.createElement('p');
+  aviso.textContent =
+    contexto === 'desbloqueo'
+      ? 'Si ya no tienes tus 12 palabras, los cuadernos guardados en este navegador quedaron cifrados con una clave que nadie puede reconstruir — ni tú ni Artonseley — así que no hay forma de recuperarlos. Lo que sí puedes hacer es borrar esa bóveda de este navegador y empezar de nuevo con una clave nueva, para seguir usando "Mis cuadernos".'
+      : 'Si ya no tienes a la mano las palabras que te mostramos, puedes descartar esa frase y generar una nueva desde cero. Todavía no has guardado ningún cuaderno, así que no se pierde nada.';
+  bloque.appendChild(aviso);
+
+  const etiquetaEntiendo = document.createElement('label');
+  etiquetaEntiendo.classList.add('confirmacion-anotado');
+  const checkEntiendo = document.createElement('input');
+  checkEntiendo.type = 'checkbox';
+  etiquetaEntiendo.appendChild(checkEntiendo);
+  etiquetaEntiendo.append(
+    contexto === 'desbloqueo'
+      ? ' Entiendo que los cuadernos guardados en este navegador se borrarán y no se pueden recuperar.'
+      : ' Entiendo que la frase que me mostraron dejará de servir y se generará una nueva.'
+  );
+  bloque.appendChild(etiquetaEntiendo);
+
+  const mensajeError = document.createElement('p');
+  mensajeError.classList.add('mensaje-error-boveda');
+  bloque.appendChild(mensajeError);
+
+  const fila = document.createElement('div');
+  fila.classList.add('fila-botones-boveda');
+
+  const botonOlvidarSiempre = document.createElement('button');
+  botonOlvidarSiempre.type = 'button';
+  botonOlvidarSiempre.classList.add('boton-boveda-secundario');
+  botonOlvidarSiempre.textContent = 'Olvidar para siempre los cuadernos y la clave, y generar una clave nueva';
+
+  const botonOlvidarDispositivo = document.createElement('button');
+  botonOlvidarDispositivo.type = 'button';
+  botonOlvidarDispositivo.classList.add('boton-boveda-secundario');
+  botonOlvidarDispositivo.textContent = 'Olvidar en este dispositivo y generar una clave nueva';
+
+  const botones = [botonOlvidarSiempre, botonOlvidarDispositivo];
+  botones.forEach((boton) => (boton.disabled = true));
+  checkEntiendo.addEventListener('change', () => {
+    botones.forEach((boton) => (boton.disabled = !checkEntiendo.checked));
+  });
+
+  const alConfirmar = async () => {
+    botones.forEach((boton) => (boton.disabled = true));
+    checkEntiendo.disabled = true;
+    mensajeError.textContent = '';
+    try {
+      await restablecerBovedaYCrearFraseNueva();
+    } catch (error) {
+      console.error('manejaBovedaCifrada.js: error al restablecer la bóveda:', error);
+      mensajeError.textContent = 'No se pudo restablecer la bóveda. Recarga la página e inténtalo de nuevo.';
+      checkEntiendo.disabled = false;
+      botones.forEach((boton) => (boton.disabled = false));
+    }
+  };
+
+  botones.forEach((boton) => boton.addEventListener('click', alConfirmar));
+
+  fila.appendChild(botonOlvidarSiempre);
+  fila.appendChild(botonOlvidarDispositivo);
+  bloque.appendChild(fila);
+
+  vista.appendChild(bloque);
 }
 
 // Intenta desbloquear con una semilla ya derivada (de localStorage, o
@@ -335,6 +450,8 @@ function mostrarPantallaVerificacion(frase, alDesbloquear) {
   filaBotones.appendChild(botonConfirmar);
 
   vista.appendChild(filaBotones);
+
+  agregarSalidaFrasePerdida(vista, 'verificacion');
 }
 
 async function activarBovedaNueva(frase, alDesbloquear) {
@@ -397,6 +514,8 @@ function mostrarPantallaDesbloqueo(configuracion, alDesbloquear) {
     }
   });
   vista.appendChild(botonDesbloquear);
+
+  agregarSalidaFrasePerdida(vista, 'desbloqueo');
 }
 
 async function intentarDesbloquear(areaTexto, mensajeError, botonDesbloquear, configuracion, alDesbloquear) {
