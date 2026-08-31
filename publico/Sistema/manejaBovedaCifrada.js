@@ -202,11 +202,13 @@ async function restablecerBovedaYCrearFraseNueva() {
 }
 
 // Agrega, al final de una vista de la bóveda, un bloque plegable
-// "¿Perdiste tus 12 palabras?" con dos botones que llevan al mismo
-// restablecimiento (borrar lo de este navegador + frase nueva). Son dos
-// botones porque así lo pide la interfaz — mismo efecto, ya que con la
-// frase perdida los cuadernos de este navegador no se pueden salvar de
-// ninguna forma. contexto: 'verificacion' (primer uso, aún no hay
+// "¿Perdiste tus 12 palabras?" con un único botón que borra la bóveda
+// ilegible de este navegador (configuración + cuadernos + notas) más la
+// semilla guardada y arranca de cero con una frase nueva. Un solo botón
+// a propósito: con la frase perdida los cuadernos de este navegador no
+// se pueden salvar de ninguna forma, así que no hay una variante más
+// suave que ofrecer; la casilla de confirmación hace de doble
+// reconocimiento. contexto: 'verificacion' (primer uso, aún no hay
 // cuadernos guardados) o 'desbloqueo' (ya existe una bóveda con datos).
 function agregarSalidaFrasePerdida(vista, contexto) {
   const bloque = document.createElement('details');
@@ -246,20 +248,14 @@ function agregarSalidaFrasePerdida(vista, contexto) {
   botonOlvidarSiempre.type = 'button';
   botonOlvidarSiempre.classList.add('boton-boveda-secundario');
   botonOlvidarSiempre.textContent = 'Olvidar para siempre los cuadernos y la clave, y generar una clave nueva';
+  botonOlvidarSiempre.disabled = true;
 
-  const botonOlvidarDispositivo = document.createElement('button');
-  botonOlvidarDispositivo.type = 'button';
-  botonOlvidarDispositivo.classList.add('boton-boveda-secundario');
-  botonOlvidarDispositivo.textContent = 'Olvidar en este dispositivo y generar una clave nueva';
-
-  const botones = [botonOlvidarSiempre, botonOlvidarDispositivo];
-  botones.forEach((boton) => (boton.disabled = true));
   checkEntiendo.addEventListener('change', () => {
-    botones.forEach((boton) => (boton.disabled = !checkEntiendo.checked));
+    botonOlvidarSiempre.disabled = !checkEntiendo.checked;
   });
 
-  const alConfirmar = async () => {
-    botones.forEach((boton) => (boton.disabled = true));
+  botonOlvidarSiempre.addEventListener('click', async () => {
+    botonOlvidarSiempre.disabled = true;
     checkEntiendo.disabled = true;
     mensajeError.textContent = '';
     try {
@@ -268,14 +264,11 @@ function agregarSalidaFrasePerdida(vista, contexto) {
       console.error('manejaBovedaCifrada.js: error al restablecer la bóveda:', error);
       mensajeError.textContent = 'No se pudo restablecer la bóveda. Recarga la página e inténtalo de nuevo.';
       checkEntiendo.disabled = false;
-      botones.forEach((boton) => (boton.disabled = false));
+      botonOlvidarSiempre.disabled = false;
     }
-  };
-
-  botones.forEach((boton) => boton.addEventListener('click', alConfirmar));
+  });
 
   fila.appendChild(botonOlvidarSiempre);
-  fila.appendChild(botonOlvidarDispositivo);
   bloque.appendChild(fila);
 
   vista.appendChild(bloque);
