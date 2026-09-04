@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantillas y Documentos - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        /* =========================================================
+           GENERADOR DE PLANTILLAS Y DOCUMENTOS — Fase 1.
+           El servidor solo manda el texto de la plantilla (con
+           marcadores {{clave}}); el motor de fusión y los datos del
+           cliente viven en el navegador (Sistema/fusionPlantilla.js).
+           Distribución tipo buscador: barra lateral de categorías
+           colapsables + área principal.
+           ========================================================= */
+        [hidden] { display: none !important; }
+
+        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
+
+        .plt-barra-superior {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .plt-barra-superior .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .plt-barra-superior .marca img.icono { height: 40px; }
+        .plt-barra-superior .marca img.letras { height: 24px; }
+        .plt-barra-superior h1 { font-size: 18px; margin: 0; color: #1c2733; }
+        .plt-barra-superior .volver { margin-left: auto; font-size: 13px; color: var(--color-primario); text-decoration: none; }
+        .plt-barra-superior .volver:hover { text-decoration: underline; }
+
+        .plt-descargo {
+            background: #fff6e5;
+            border: 1px solid #f0d191;
+            color: #6b4e12;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        .plt-cuerpo {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            padding: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .plt-lateral {
+            width: 260px;
+            flex-shrink: 0;
+            border-right: 2px solid #cbd5e0;
+            padding-right: 16px;
+            max-height: 78vh;
+            overflow-y: auto;
+        }
+
+        .plt-categoria { margin-bottom: 14px; }
+        .plt-categoria-titulo {
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        .plt-flecha { display: inline-block; transition: transform 0.2s ease; }
+        .plt-categoria-titulo.abierta .plt-flecha { transform: rotate(90deg); }
+        .plt-categoria-lista { display: none; padding-left: 8px; }
+        .plt-categoria-lista.abierta { display: block; }
+
+        .plt-boton-plantilla {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 4px 0;
+            padding: 7px 10px;
+            font-size: 13px;
+            background: white;
+            border: 1px solid #999;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .plt-boton-plantilla:hover { background: #f0f6fc; }
+        .plt-boton-plantilla.activa { background: var(--color-primario); color: white; border-color: var(--color-primario); }
+
+        .plt-principal { flex: 1; min-width: 0; }
+
+        .plt-vacio { color: #667; font-size: 14px; padding: 30px 0; }
+
+        .plt-titulo-plantilla { font-size: 20px; margin: 0 0 2px 0; }
+        .plt-version { font-size: 12px; color: #888; margin: 0 0 18px 0; }
+
+        .plt-campo { margin-bottom: 12px; }
+        .plt-campo label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .plt-campo input {
+            width: 100%;
+            padding: 9px 11px;
+            font-size: 14px;
+            border: 1px solid #999;
+            border-radius: 8px;
+        }
+
+        .plt-acciones { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+        .plt-acciones button {
+            padding: 9px 16px;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .plt-btn-primario { color: white; background: var(--color-primario); border: 1px solid var(--color-primario); }
+        .plt-btn-secundario { color: var(--color-primario); background: white; border: 1px solid var(--color-primario); }
+        .plt-acciones button:disabled { opacity: 0.5; cursor: default; }
+
+        .plt-previa {
+            border: 1px solid #d8e0e8;
+            border-radius: 10px;
+            background: white;
+            padding: 20px 22px;
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #1c2733;
+        }
+        .plt-previa .falta {
+            background: #fde2e0;
+            color: #7a1f16;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+        .plt-aviso-faltantes { color: #7a1f16; font-size: 13px; margin: 8px 0 0 0; }
+
+        @media (max-width: 720px) {
+            .plt-cuerpo { flex-direction: column; }
+            .plt-lateral { width: 100%; border-right: none; border-bottom: 2px solid #cbd5e0; padding-right: 0; padding-bottom: 12px; max-height: none; }
+        }
+
+        /* ---- Solo impresión: el documento y nada más ---- */
+        #paraImprimir { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #paraImprimir, #paraImprimir * { visibility: visible; }
+            #paraImprimir {
+                display: block;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                font-family: 'Times New Roman', serif;
+                font-size: 12pt;
+                line-height: 1.5;
+                white-space: pre-wrap;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="plt-barra-superior">
+        <a class="marca" href="index.html" title="Volver al inicio">
+            <img class="icono" src="imagenes/artonseley-logo-azul.jpg" alt="">
+            <img class="letras" src="imagenes/artonseley-letras-azul.png" alt="ARTONSELEY">
+        </a>
+        <h1>Plantillas y Documentos</h1>
+        <a class="volver" href="index.html">← Inicio</a>
+    </header>
+
+    <div class="plt-descargo">
+        Estas plantillas son un <strong>punto de partida</strong>. Revísalas y ajústalas antes de
+        usarlas ante cualquier autoridad; no sustituyen el criterio de un abogado. Los datos que
+        captures aquí <strong>no se envían a ningún servidor</strong>: el documento se arma en tu navegador.
+    </div>
+
+    <div class="plt-cuerpo">
+        <aside id="listaCategorias" class="plt-lateral">
+            <p class="mensaje-carga">Cargando plantillas…</p>
+        </aside>
+
+        <main class="plt-principal">
+            <div id="areaPlantilla">
+                <p class="plt-vacio">Elige una plantilla de la lista para empezar.</p>
+            </div>
+        </main>
+    </div>
+
+    <div id="paraImprimir"></div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/plantillasPrincipal.js"></script>
+</body>
+</html>
