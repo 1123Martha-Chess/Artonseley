@@ -143,6 +143,14 @@ function pintarFormulario() {
 
   const form = document.createElement('form');
   form.id = 'formPlantilla';
+  // Estos campos son datos del cliente/expediente que el dueño nunca
+  // quiere que el navegador ofrezca completar con información guardada
+  // (tarjetas, direcciones, contraseñas...) ni que guarde para sugerirla
+  // después. autocomplete="off" en cada <input> (más abajo) ya evita que
+  // el navegador RECUERDE lo capturado aquí; ponerlo también en el <form>
+  // apaga el "cuadrito" flotante de autocompletar que algunos navegadores
+  // muestran por formulario (no por campo) al enfocar cualquier input.
+  form.autocomplete = 'off';
 
   if (variables.length === 0) {
     const p = document.createElement('p');
