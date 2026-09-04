@@ -835,3 +835,21 @@ dueño** (sin extensión de Chrome conectada en esta sesión): confirmar que el
 botón "+" se ve pegado a la última pestaña y se corre al agregar una nueva, y
 que ya no aparece el cuadrito de autocompletar en el campo de Expediente de
 "Recibo de honorarios".
+
+### Corrección — `autocomplete="off"` no bastaba, seguía saliendo el cuadrito
+
+El dueño probó en su navegador y el cuadrito de "tarjetas guardadas" seguía
+apareciendo pese al `autocomplete="off"` del `<input>` y del `<form>`. Esto es
+un comportamiento CONOCIDO y a propósito de Chrome/Edge: para los campos que
+el navegador clasifica como de pago o dirección, ignora deliberadamente el
+valor `"off"` (tanto en el campo como en el formulario) para "ayudar" al
+usuario — no es un descuido del sitio.
+
+El truco que sí respetan: darle al `autocomplete` un valor que NO sea `"off"`
+ni ningún término reconocido (p. ej. `no-autocompletar-expediente-numero`).
+Al no reconocerlo como "apagado" ni como un tipo de campo conocido, el
+navegador no le aplica su clasificación automática y dejar de ofrecer datos
+guardados. Se cambió en `publico/Sistema/plantillasPrincipal.js` →
+`pintarFormulario()`: el `<form>` usa `no-autocompletar-formulario-plantilla`
+y cada `<input>` usa `no-autocompletar-<clave del marcador>` (un valor
+distinto por campo).

@@ -146,11 +146,15 @@ function pintarFormulario() {
   // Estos campos son datos del cliente/expediente que el dueño nunca
   // quiere que el navegador ofrezca completar con información guardada
   // (tarjetas, direcciones, contraseñas...) ni que guarde para sugerirla
-  // después. autocomplete="off" en cada <input> (más abajo) ya evita que
-  // el navegador RECUERDE lo capturado aquí; ponerlo también en el <form>
-  // apaga el "cuadrito" flotante de autocompletar que algunos navegadores
-  // muestran por formulario (no por campo) al enfocar cualquier input.
-  form.autocomplete = 'off';
+  // después. Chrome/Edge, para los campos que clasifican como de pago o
+  // dirección, IGNORAN a propósito autocomplete="off" (tanto en el <input>
+  // como en el <form>) — por diseño, no por descuido — así que ese valor
+  // por sí solo no basta (se comprobó en vivo). Lo que sí respetan: un
+  // valor de autocomplete que NO sea "off" ni ningún término reconocido
+  // (ver el <input> más abajo); al no reconocerlo como "apagado" ni como
+  // un tipo de campo conocido, el navegador no le aplica su clasificación
+  // automática y no ofrece nada guardado.
+  form.setAttribute('autocomplete', 'no-autocompletar-formulario-plantilla');
 
   if (variables.length === 0) {
     const p = document.createElement('p');
@@ -171,7 +175,10 @@ function pintarFormulario() {
     input.type = 'text';
     input.id = `v_${variable.clave}`;
     input.dataset.clave = variable.clave;
-    input.autocomplete = 'off';
+    // Token inventado, distinto en cada campo, en vez de "off" (ver el
+    // comentario junto a form.setAttribute más arriba: "off" se ignora a
+    // propósito en campos que el navegador cree de pago o dirección).
+    input.setAttribute('autocomplete', `no-autocompletar-${variable.clave.replace(/[^a-z0-9]/gi, '-')}`);
 
     campo.append(label, input);
     form.appendChild(campo);
