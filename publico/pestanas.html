@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pestañas - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        /* =========================================================
+           PESTAÑAS: un navegador interno. Arriba una tira de pestañas
+           tipo Chrome/Edge; abajo, a pantalla completa, el contenido de
+           la pestaña activa (un <iframe> de su área: buscador.html, etc.).
+           Se permiten pestañas repetidas de la misma área. Qué pestañas
+           hay y cuál está activa se guarda en localStorage.
+           Toda la lógica vive en Sistema/pestanasPrincipal.js.
+           ========================================================= */
+        html, body { height: 100%; }
+        body { overflow: hidden; background: #eef4f9; }
+        [hidden] { display: none !important; }
+
+        .pestanas-barra {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px;
+            background: white;
+            border-bottom: 1px solid #dbe3ea;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+            z-index: 60;
+            font-family: Arial, sans-serif;
+        }
+
+        .pestanas-barra .marca-mini {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .pestanas-barra .marca-mini img.icono { height: 22px; }
+        .pestanas-barra .marca-mini img.letras { height: 12px; }
+
+        /* La tira de pestañas ocupa el espacio libre y se desplaza en
+           horizontal si hay muchas. */
+        .tira-pestanas {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: stretch;
+            gap: 4px;
+            height: 44px;
+            padding-top: 7px;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        .tira-pestanas::-webkit-scrollbar { height: 5px; }
+        .tira-pestanas::-webkit-scrollbar-thumb { background: #cdd8e1; border-radius: 3px; }
+
+        .pestana {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            flex-shrink: 0;
+            max-width: 190px;
+            padding: 0 6px 0 11px;
+            background: #e9edf1;
+            border: 1px solid #dbe3ea;
+            border-bottom: none;
+            border-radius: 9px 9px 0 0;
+            font-size: 12px;
+            color: #33404a;
+            cursor: pointer;
+            user-select: none;
+        }
+        .pestana:hover { background: #eef2f6; }
+        .pestana.activa {
+            background: white;
+            color: #000;
+            border-color: var(--color-primario);
+        }
+
+        .pestana .icono { flex-shrink: 0; font-size: 13px; }
+        .pestana .etiqueta {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .pestana .cerrar {
+            flex-shrink: 0;
+            width: 18px; height: 18px;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font-size: 11px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .pestana .cerrar:hover { background: rgba(0, 0, 0, 0.14); }
+
+        .boton-nueva {
+            flex-shrink: 0;
+            width: 30px; height: 30px;
+            border: none;
+            background: #e9edf1;
+            color: #33404a;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .boton-nueva:hover { background: #dde4ea; }
+
+        .pestanas-barra .enlace-inicio {
+            flex-shrink: 0;
+            font-size: 13px;
+            color: var(--color-primario);
+            text-decoration: none;
+        }
+        .pestanas-barra .enlace-inicio:hover { text-decoration: underline; }
+
+        /* Menú del botón "+" (se coloca bajo el botón desde el JS). */
+        .menu-nueva {
+            position: fixed;
+            left: 12px; top: 46px;
+            background: white;
+            border: 1px solid #dbe3ea;
+            border-radius: 10px;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.20);
+            padding: 8px;
+            z-index: 80;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            width: 320px;
+            max-width: calc(100vw - 24px);
+        }
+        .menu-nueva button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 11px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            text-align: left;
+        }
+        .menu-nueva button:hover { background: #f0f6fc; }
+        .menu-nueva button span { font-size: 16px; }
+
+        /* El área grande de abajo: los iframes de las pestañas, apilados,
+           solo el activo visible. */
+        .area-contenido {
+            position: fixed;
+            top: 44px; left: 0; right: 0; bottom: 0;
+            background: white;
+        }
+        .area-contenido iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: white;
+        }
+
+        /* Pantalla cuando no hay ninguna pestaña abierta (también al
+           cerrar la última). */
+        .sin-pestanas {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .sin-pestanas h2 { font-size: 17px; margin: 0; color: #33404a; }
+        .sin-pestanas p { font-size: 13px; color: #667; margin: 0; max-width: 420px; }
+
+        .rejilla-areas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            max-width: 500px;
+            width: 100%;
+        }
+        .rejilla-areas button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            border: 2px solid var(--color-primario);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .rejilla-areas button:hover { background: #f0f6fc; }
+        .rejilla-areas button span { font-size: 18px; }
+    </style>
+</head>
+<body>
+    <header class="pestanas-barra">
+        <a class="marca-mini" href="index.html" title="Volver al inicio">
+            <img class="icono" src="imagenes/artonseley-pagina.png" alt="">
+            <img class="letras" src="imagenes/artonseley-letras.png" alt="ARTONSELEY">
+        </a>
+        <div id="tiraPestanas" class="tira-pestanas"></div>
+        <button id="botonNueva" class="boton-nueva" type="button" title="Nueva pestaña" aria-label="Nueva pestaña">+</button>
+        <a class="enlace-inicio" href="index.html">← Inicio</a>
+    </header>
+
+    <div id="menuNueva" class="menu-nueva" role="menu" aria-label="Abrir en una pestaña nueva" hidden></div>
+
+    <main id="areaContenido" class="area-contenido">
+        <div id="sinPestanas" class="sin-pestanas" hidden>
+            <h2>No tienes pestañas abiertas</h2>
+            <p>Elige una herramienta para empezar. También puedes usar el botón <strong>+</strong> de la barra de arriba en cualquier momento.</p>
+            <div id="rejillaAreas" class="rejilla-areas"></div>
+        </div>
+    </main>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/pestanasPrincipal.js"></script>
+</body>
+</html>
