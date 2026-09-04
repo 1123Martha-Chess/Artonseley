@@ -187,6 +187,13 @@ function render() {
     tira.appendChild(elemento);
   });
 
+  // El botón "+" siempre queda como última pieza de la tira, pegado a la
+  // pestaña de más a la derecha (se reinserta en cada render porque
+  // tira.innerHTML = '' lo quitó junto con las pestañas viejas). Así se
+  // va recorriendo hacia la derecha con cada pestaña nueva, en vez de
+  // quedar fijo del lado derecho de la barra — como en Chrome/Edge.
+  tira.appendChild(botonNueva);
+
   // --- iframes (uno por pestaña, solo el activo visible) ---
   for (const [uid, marco] of marcos) {
     if (!pestanas.some((p) => p.uid === uid)) {

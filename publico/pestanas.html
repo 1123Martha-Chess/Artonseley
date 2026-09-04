@@ -102,8 +102,16 @@
         }
         .pestana .cerrar:hover { background: rgba(0, 0, 0, 0.14); }
 
+        /* Vive DENTRO de .tira-pestanas, como última pieza (ver render() en
+           pestanasPrincipal.js): queda pegada a la pestaña de más a la
+           derecha y se recorre con ella al agregar pestañas nuevas, en vez
+           de quedar fija del lado derecho de la barra. align-self la nivela
+           con el borde inferior de las pestañas, que se estiran a toda la
+           tira (align-items: stretch). */
         .boton-nueva {
             flex-shrink: 0;
+            align-self: flex-end;
+            margin-left: 2px;
             width: 30px; height: 30px;
             border: none;
             background: #e9edf1;
@@ -217,8 +225,13 @@
             <img class="icono" src="imagenes/artonseley-pagina.png" alt="">
             <img class="letras" src="imagenes/artonseley-letras.png" alt="ARTONSELEY">
         </a>
-        <div id="tiraPestanas" class="tira-pestanas"></div>
-        <button id="botonNueva" class="boton-nueva" type="button" title="Nueva pestaña" aria-label="Nueva pestaña">+</button>
+        <div id="tiraPestanas" class="tira-pestanas">
+            <!-- Las pestañas se pintan aquí, y el botón "+" se reinserta
+                 siempre al final (pestanasPrincipal.js): así queda pegado a
+                 la pestaña de más a la derecha y se va recorriendo hacia la
+                 derecha con cada pestaña nueva, como en Chrome/Edge. -->
+            <button id="botonNueva" class="boton-nueva" type="button" title="Nueva pestaña" aria-label="Nueva pestaña">+</button>
+        </div>
         <a class="enlace-inicio" href="index.html">← Inicio</a>
     </header>
 

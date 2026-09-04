@@ -798,3 +798,40 @@ Ninguno.
    orden en que se abrieron; no hay drag para reordenar).
 3. Si molesta el scroll interno de los iframes, aplica el mismo pendiente que
    el Escritorio (migrar a componentes nativos en vez de iframe).
+
+## Etapa 8 (continuación) — dos ajustes pedidos por el dueño
+
+Fecha: 2026-09-04.
+
+1. **Botón "+" de Pestañas, más a la izquierda y que se recorra.** Estaba fijo
+   del lado derecho de la barra (la tira de pestañas tenía `flex: 1` y lo
+   empujaba). Ahora el botón vive DENTRO de `#tiraPestanas`, como última pieza
+   (`pestanasPrincipal.js` lo reinserta al final en cada `render()`): queda
+   pegado a la pestaña de más a la derecha y se va corriendo hacia la derecha
+   con cada pestaña nueva, igual que en Chrome/Edge. Con 0 pestañas queda
+   pegado a la marca, del lado izquierdo.
+2. **Plantillas: quitar el autocompletado del navegador (tarjetas guardadas,
+   etc.) en el formulario de captura.** Cada `<input>` ya llevaba
+   `autocomplete="off"` (evita que el navegador RECUERDE lo capturado), pero
+   el dueño reportó que en "Recibo de honorarios" → campo de Expediente
+   seguía apareciendo el "cuadrito" flotante para rellenar con datos ya
+   guardados (tarjetas bancarias). Se agregó `autocomplete="off"` también al
+   `<form>` (`plantillasPrincipal.js` → `pintarFormulario()`): ese atributo a
+   nivel de formulario es el que apaga esa sugerencia flotante en los
+   navegadores que la muestran por formulario y no por campo.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---|---|
+| `publico/pestanas.html` | El botón `#botonNueva` pasa a vivir dentro de `#tiraPestanas`; `.boton-nueva` usa `align-self: flex-end` para nivelarse con el borde inferior de las pestañas (que se estiran a toda la tira). |
+| `publico/Sistema/pestanasPrincipal.js` | `render()` reinserta `botonNueva` como último hijo de `tira` después de pintar las pestañas (se había ido con el `tira.innerHTML = ''`). |
+| `publico/Sistema/plantillasPrincipal.js` | `pintarFormulario()` agrega `form.autocomplete = 'off'`. |
+
+### Verificado
+
+`node --check` de los tres archivos: OK. **Pendiente de prueba visual del
+dueño** (sin extensión de Chrome conectada en esta sesión): confirmar que el
+botón "+" se ve pegado a la última pestaña y se corre al agregar una nueva, y
+que ya no aparece el cuadrito de autocompletar en el campo de Expediente de
+"Recibo de honorarios".
