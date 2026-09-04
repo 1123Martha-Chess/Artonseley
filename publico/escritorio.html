@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escritorio - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        /* =========================================================
+           ESCRITORIO: un "lienzo" con una cuadrícula de cuadros fijos
+           (ver cuadritosMios.png). El usuario suelta ventanas desde la
+           "caja de piezas" (botón +) y las agranda arrastrando bordes y
+           esquinas, con snap a la cuadrícula, sin que se encimen. Cada
+           ventana es un <iframe> de su página (buscador.html, etc.).
+           La distribución se guarda en localStorage.
+           La geometría (tamaño de celda + separación) también vive en
+           escritorioPrincipal.js — si cambias una, cambia la otra.
+           ========================================================= */
+        html, body { height: 100%; }
+        body { overflow: hidden; background: #eef4f9; }
+
+        /* Varias reglas de esta página ponen display: flex en elementos
+           que también se ocultan con el atributo "hidden" (la caja de
+           piezas). Sin esto, "display: flex" le gana al "display: none"
+           del navegador y el elemento "oculto" se ve igual. */
+        [hidden] { display: none !important; }
+
+        .escritorio-barra {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 14px;
+            background: white;
+            border-bottom: 1px solid #dbe3ea;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+            z-index: 60;
+            font-family: Arial, sans-serif;
+        }
+
+        .escritorio-barra .marca-mini {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .escritorio-barra .marca-mini img.icono { height: 24px; }
+        .escritorio-barra .marca-mini img.letras { height: 13px; }
+
+        .boton-agregar {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            background: var(--color-primario);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .boton-agregar .signo { font-size: 16px; line-height: 1; }
+        .boton-agregar:hover { filter: brightness(0.92); }
+
+        .escritorio-barra .enlace-inicio {
+            margin-left: auto;
+            font-size: 13px;
+            color: var(--color-primario);
+            text-decoration: none;
+        }
+        .escritorio-barra .enlace-inicio:hover { text-decoration: underline; }
+
+        /* Área desplazable que contiene el lienzo. Deja 22px libres abajo
+           para el pie fijo (.escritorio-pie). */
+        .lienzo-scroll {
+            position: fixed;
+            top: 48px; left: 0; right: 0; bottom: 22px;
+            overflow: auto;
+        }
+
+        /* Pie chiquito, siempre visible, que recuerda que agrandando la
+           ventana del navegador el lienzo gana columnas. */
+        .escritorio-pie {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-top: 1px solid #dbe3ea;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: #5b6b78;
+            z-index: 60;
+            pointer-events: none;
+        }
+
+        .lienzo {
+            position: relative;
+            margin: 14px;
+        }
+
+        /* Cada cuadro vacío de la cuadrícula (se repintan al cambiar el
+           tamaño de la ventana del navegador). */
+        .celda {
+            position: absolute;
+            box-sizing: border-box;
+            border: 2px solid #29ABE2;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        /* Texto de ayuda cuando el lienzo está vacío. */
+        .pista-vacio {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            color: #5b6b78;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 10px 18px;
+            border-radius: 10px;
+            pointer-events: none;
+            z-index: 30;
+            text-align: center;
+        }
+
+        /* Una ventana colocada. */
+        .ventana {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border: 2px solid var(--color-primario);
+            border-radius: 10px;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.16);
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .barra-ventana {
+            height: 30px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 4px 0 8px;
+            background: var(--color-primario);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            cursor: move;
+            user-select: none;
+        }
+
+        .barra-ventana .titulo {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .barra-ventana button {
+            width: 22px; height: 22px;
+            flex-shrink: 0;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 13px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .barra-ventana button:hover { background: rgba(255, 255, 255, 0.22); }
+
+        .ventana iframe {
+            flex: 1;
+            width: 100%;
+            border: 0;
+            background: white;
+        }
+
+        /* Asas de redimensión (4 bordes + 4 esquinas). */
+        .asa { position: absolute; z-index: 15; }
+        .asa-n { top: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }
+        .asa-s { bottom: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }
+        .asa-e { right: -4px; top: 8px; bottom: 8px; width: 8px; cursor: ew-resize; }
+        .asa-w { left: -4px; top: 8px; bottom: 8px; width: 8px; cursor: ew-resize; }
+        .asa-ne { top: -5px; right: -5px; width: 14px; height: 14px; cursor: nesw-resize; }
+        .asa-nw { top: -5px; left: -5px; width: 14px; height: 14px; cursor: nwse-resize; }
+        .asa-se { bottom: -5px; right: -5px; width: 14px; height: 14px; cursor: nwse-resize; }
+        .asa-sw { bottom: -5px; left: -5px; width: 14px; height: 14px; cursor: nesw-resize; }
+
+        /* Vista previa de dónde caería / cómo quedaría una ventana. */
+        .fantasma {
+            position: absolute;
+            box-sizing: border-box;
+            border-radius: 9px;
+            border: 2px dashed;
+            z-index: 40;
+            pointer-events: none;
+        }
+        .fantasma.ok { border-color: #1a7a1a; background: rgba(26, 122, 26, 0.14); }
+        .fantasma.no { border-color: #b02b2b; background: rgba(176, 43, 43, 0.14); }
+
+        /* Capa transparente que se pone encima de todo mientras se
+           arrastra, para que los iframes no se "coman" el puntero. */
+        .capa-arrastre {
+            position: fixed;
+            inset: 0;
+            z-index: 55;
+        }
+
+        /* Caja de piezas (ventana emergente tipo "lego"). */
+        .caja-fondo {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 70;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .caja-piezas {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px 22px;
+            max-width: 420px;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .caja-piezas h2 {
+            font-size: 17px;
+            margin: 0 0 4px 0;
+        }
+
+        .caja-piezas .ayuda {
+            font-size: 12px;
+            color: #667;
+            margin: 0 0 14px 0;
+        }
+
+        .lista-piezas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pieza {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            background: white;
+            border: 2px solid var(--color-primario);
+            border-radius: 12px;
+            cursor: grab;
+            touch-action: none;
+        }
+        .pieza:hover { background: #f0f6fc; }
+        .pieza span { font-size: 18px; }
+
+        .lista-piezas .vacio {
+            font-size: 13px;
+            color: #555;
+            margin: 0;
+        }
+
+        .caja-piezas .cerrar {
+            margin-top: 16px;
+            padding: 8px 16px;
+            font-size: 13px;
+            background: white;
+            color: var(--color-primario);
+            border: 1px solid var(--color-primario);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="escritorio-barra">
+        <a class="marca-mini" href="index.html" title="Volver al inicio">
+            <img class="icono" src="imagenes/artonseley-pagina.png" alt="">
+            <img class="letras" src="imagenes/artonseley-letras.png" alt="ARTONSELEY">
+        </a>
+        <button id="botonAgregar" class="boton-agregar" type="button">
+            <span class="signo">+</span> Agregar ventana
+        </button>
+        <a class="enlace-inicio" href="index.html">← Inicio</a>
+    </header>
+
+    <div id="lienzoScroll" class="lienzo-scroll">
+        <div id="lienzo" class="lienzo">
+            <div id="celdas"></div>
+            <p id="pistaVacio" class="pista-vacio">Toca <strong>“+ Agregar ventana”</strong> y arrastra una pieza al lienzo.</p>
+            <div id="fantasma" class="fantasma" hidden></div>
+        </div>
+    </div>
+
+    <div id="cajaFondo" class="caja-fondo" hidden>
+        <div class="caja-piezas" role="dialog" aria-label="Caja de piezas">
+            <h2>Ventanas disponibles</h2>
+            <p class="ayuda">Arrastra una pieza hasta el lienzo. Empieza ocupando un cuadro; luego agrándala por los bordes o las esquinas.</p>
+            <div id="listaPiezas" class="lista-piezas"></div>
+            <button id="cerrarCaja" class="cerrar" type="button">Cerrar</button>
+        </div>
+    </div>
+
+    <footer class="escritorio-pie">
+        Puedes usar más espacio hacia los lados agrandando la ventana. ¡Inténtalo!
+    </footer>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/escritorioPrincipal.js"></script>
+</body>
+</html>
