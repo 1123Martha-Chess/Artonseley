@@ -1087,7 +1087,367 @@ document.getElementById('formularioCrearUsuario').addEventListener('submit', asy
 });
 
 // ---------------------------------------------------------------------
-// Arranque: cargar las seis secciones en paralelo.
+// Música: canciones del apartado "Música". El audio y la imagen se suben
+// como multipart (FormData), no como JSON — por eso este fetch no pasa
+// por peticionAdmin(), que fija Content-Type: application/json.
+// ---------------------------------------------------------------------
+
+async function cargarCanciones() {
+  const contenedor = document.getElementById('listaCancionesAdmin');
+  try {
+    const { canciones } = await peticionAdmin('/api/admin/canciones');
+    contenedor.innerHTML = '';
+
+    if (canciones.length === 0) {
+      contenedor.innerHTML = '<p>Todavía no hay ninguna canción.</p>';
+      return;
+    }
+
+    canciones.forEach((cancion, indice) => {
+      const fila = document.createElement('div');
+      fila.classList.add('fila-notificacion');
+
+      const bloque = document.createElement('div');
+      bloque.style.display = 'flex';
+      bloque.style.alignItems = 'center';
+      bloque.style.gap = '10px';
+
+      if (cancion.tieneImagen) {
+        const miniatura = document.createElement('img');
+        miniatura.src = `/api/musica/imagen/${cancion.id}`;
+        miniatura.alt = '';
+        miniatura.style.width = '40px';
+        miniatura.style.height = '40px';
+        miniatura.style.objectFit = 'cover';
+        miniatura.style.borderRadius = '6px';
+        bloque.appendChild(miniatura);
+      }
+
+      const texto = document.createElement('span');
+      texto.textContent = cancion.titulo;
+      bloque.appendChild(texto);
+
+      const contenedorBotones = document.createElement('div');
+      contenedorBotones.style.display = 'flex';
+      contenedorBotones.style.gap = '6px';
+
+      const botonSubir = document.createElement('button');
+      botonSubir.type = 'button';
+      botonSubir.classList.add('boton-icono');
+      botonSubir.textContent = '↑';
+      botonSubir.title = 'Subir en la lista';
+      botonSubir.disabled = indice === 0;
+      botonSubir.addEventListener('click', () => moverCancion(cancion.id, 'subir'));
+
+      const botonBajar = document.createElement('button');
+      botonBajar.type = 'button';
+      botonBajar.classList.add('boton-icono');
+      botonBajar.textContent = '↓';
+      botonBajar.title = 'Bajar en la lista';
+      botonBajar.disabled = indice === canciones.length - 1;
+      botonBajar.addEventListener('click', () => moverCancion(cancion.id, 'bajar'));
+
+      const botonRenombrar = document.createElement('button');
+      botonRenombrar.type = 'button';
+      botonRenombrar.classList.add('boton-secundario');
+      botonRenombrar.textContent = 'Renombrar';
+      botonRenombrar.addEventListener('click', () => renombrarCancion(cancion));
+
+      const botonEliminar = document.createElement('button');
+      botonEliminar.type = 'button';
+      botonEliminar.classList.add('boton-peligro');
+      botonEliminar.textContent = 'Eliminar';
+      botonEliminar.addEventListener('click', () => eliminarCancion(cancion));
+
+      contenedorBotones.append(botonSubir, botonBajar, botonRenombrar, botonEliminar);
+      fila.append(bloque, contenedorBotones);
+      contenedor.appendChild(fila);
+    });
+  } catch (error) {
+    contenedor.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+async function moverCancion(id, direccion) {
+  try {
+    await peticionAdmin(`/api/admin/canciones/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ mover: direccion })
+    });
+    await cargarCanciones();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function renombrarCancion(cancion) {
+  const valores = await abrirModalConCampos({
+    titulo: 'Renombrar canción',
+    campos: [
+      { nombre: 'titulo', etiqueta: 'Nuevo título', tipo: 'text', valor: cancion.titulo }
+    ],
+    textoConfirmar: 'Guardar',
+    validar: (v) => (v.titulo ? null : 'Escribe un título.')
+  });
+  if (!valores) return;
+
+  try {
+    await peticionAdmin(`/api/admin/canciones/${cancion.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ titulo: valores.titulo })
+    });
+    await cargarCanciones();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function eliminarCancion(cancion) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar canción',
+    mensaje: `¿Eliminar "${cancion.titulo}"? Se borra también su archivo de audio y su portada. Esto no se puede deshacer.`,
+    textoConfirmar: 'Eliminar',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+
+  try {
+    await peticionAdmin(`/api/admin/canciones/${cancion.id}`, { method: 'DELETE' });
+    await cargarCanciones();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+document.getElementById('formularioCancion').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  const resultado = document.getElementById('resultadoCancion');
+  const boton = document.getElementById('botonSubirCancion');
+  const campoTitulo = document.getElementById('campoTituloCancion');
+  const campoAudio = document.getElementById('archivoAudioCancion');
+  const campoImagen = document.getElementById('archivoImagenCancion');
+
+  if (!campoAudio.files[0]) {
+    resultado.innerHTML = '<p class="mensaje-error">Elige un archivo de audio.</p>';
+    return;
+  }
+
+  const cuerpo = new FormData();
+  cuerpo.append('titulo', campoTitulo.value.trim());
+  cuerpo.append('audio', campoAudio.files[0]);
+  if (campoImagen.files[0]) cuerpo.append('imagen', campoImagen.files[0]);
+
+  boton.disabled = true;
+  resultado.innerHTML = '<p class="mensaje-carga">Subiendo…</p>';
+
+  try {
+    const respuesta = await fetch('/api/admin/canciones', { method: 'POST', body: cuerpo });
+    if (respuesta.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const datos = await respuesta.json().catch(() => ({}));
+    if (!respuesta.ok) throw new Error(datos.error || 'No se pudo subir la canción.');
+
+    resultado.innerHTML = `<p class="mensaje-exito">Canción "${datos.cancion.titulo}" agregada.</p>`;
+    document.getElementById('formularioCancion').reset();
+    await cargarCanciones();
+  } catch (error) {
+    resultado.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  } finally {
+    boton.disabled = false;
+  }
+});
+
+// ---------------------------------------------------------------------
+// Índices económicos (salario mínimo general / Frontera Norte / UMA) que
+// usa la Calculadora Jurídica Financiera.
+// ---------------------------------------------------------------------
+
+const formularioIndices = document.getElementById('formularioIndices');
+const campoAnioIndices = document.getElementById('campoAnioIndices');
+const campoSmGeneral = document.getElementById('campoSmGeneral');
+const campoSmFrontera = document.getElementById('campoSmFrontera');
+const campoUma = document.getElementById('campoUma');
+const resultadoIndices = document.getElementById('resultadoIndices');
+
+async function cargarIndicesEconomicos() {
+  try {
+    const { indices } = await peticionAdmin('/api/admin/indices-economicos');
+    campoAnioIndices.value = indices.anio || '';
+    campoSmGeneral.value = indices.salarioMinimoGeneral || '';
+    campoSmFrontera.value = indices.salarioMinimoFronteraNorte || '';
+    campoUma.value = indices.uma || '';
+
+    const faltan = !(indices.salarioMinimoGeneral > 0 && indices.salarioMinimoFronteraNorte > 0);
+    resultadoIndices.innerHTML = faltan
+      ? '<p class="mensaje-error">Faltan valores: la calculadora no calculará hasta que captures los salarios mínimos.</p>'
+      : `<p class="mensaje-exito">Cargados. Última actualización: ${indices.actualizadoEn || '—'}.</p>`;
+  } catch (error) {
+    resultadoIndices.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+formularioIndices.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  resultadoIndices.innerHTML = '<p class="mensaje-carga">Guardando…</p>';
+
+  const cuerpo = {
+    anio: Number(campoAnioIndices.value.trim()),
+    salarioMinimoGeneral: Number(campoSmGeneral.value.trim()),
+    salarioMinimoFronteraNorte: Number(campoSmFrontera.value.trim()),
+    uma: Number(campoUma.value.trim())
+  };
+
+  try {
+    await peticionAdmin('/api/admin/indices-economicos', {
+      method: 'PUT',
+      body: JSON.stringify(cuerpo)
+    });
+    await cargarIndicesEconomicos();
+  } catch (error) {
+    resultadoIndices.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+});
+
+// ---------------------------------------------------------------------
+// Plantillas de documentos (Generador de Plantillas). Solo texto con
+// {{marcadores}} — nunca datos de clientes.
+// ---------------------------------------------------------------------
+
+const formularioPlantilla = document.getElementById('formularioPlantilla');
+const campoIdPlantilla = document.getElementById('campoIdPlantilla');
+const campoCategoriaPlantilla = document.getElementById('campoCategoriaPlantilla');
+const listaCategoriasPlantilla = document.getElementById('listaCategoriasPlantilla');
+const campoTituloPlantilla = document.getElementById('campoTituloPlantilla');
+const campoCuerpoPlantilla = document.getElementById('campoCuerpoPlantilla');
+const marcadoresDetectados = document.getElementById('marcadoresDetectados');
+const botonGuardarPlantilla = document.getElementById('botonGuardarPlantilla');
+const botonCancelarPlantilla = document.getElementById('botonCancelarPlantilla');
+const resultadoPlantilla = document.getElementById('resultadoPlantilla');
+const contenedorPlantillas = document.getElementById('listaPlantillas');
+
+function marcadoresEn(texto) {
+  return [...new Set([...String(texto).matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)].map((m) => m[1]))];
+}
+
+function actualizarMarcadoresDetectados() {
+  const marcadores = marcadoresEn(campoCuerpoPlantilla.value);
+  marcadoresDetectados.textContent = marcadores.length
+    ? `Marcadores detectados (${marcadores.length}): ${marcadores.join(', ')}`
+    : 'Sin marcadores todavía.';
+}
+campoCuerpoPlantilla.addEventListener('input', actualizarMarcadoresDetectados);
+
+function limpiarFormularioPlantilla() {
+  formularioPlantilla.reset();
+  campoIdPlantilla.value = '';
+  botonGuardarPlantilla.textContent = 'Guardar plantilla';
+  botonCancelarPlantilla.style.display = 'none';
+  actualizarMarcadoresDetectados();
+}
+
+botonCancelarPlantilla.addEventListener('click', limpiarFormularioPlantilla);
+
+async function cargarPlantillasAdmin() {
+  try {
+    const { plantillas } = await peticionAdmin('/api/admin/plantillas');
+
+    const categorias = [...new Set(plantillas.map((p) => p.categoria))].sort((a, b) => a.localeCompare(b, 'es'));
+    listaCategoriasPlantilla.innerHTML = categorias.map((c) => `<option value="${c.replace(/"/g, '&quot;')}">`).join('');
+
+    contenedorPlantillas.innerHTML = '';
+    if (plantillas.length === 0) {
+      contenedorPlantillas.innerHTML = '<p>Todavía no hay ninguna plantilla.</p>';
+      return;
+    }
+
+    plantillas.forEach((plantilla) => {
+      const fila = document.createElement('div');
+      fila.classList.add('fila-notificacion');
+
+      const texto = document.createElement('span');
+      texto.textContent = `${plantilla.titulo}  ·  ${plantilla.categoria}  ·  v${plantilla.version}`;
+
+      const contenedorBotones = document.createElement('div');
+      contenedorBotones.style.display = 'flex';
+      contenedorBotones.style.gap = '6px';
+
+      const botonEditar = document.createElement('button');
+      botonEditar.type = 'button';
+      botonEditar.classList.add('boton-secundario');
+      botonEditar.textContent = 'Editar';
+      botonEditar.addEventListener('click', () => editarPlantilla(plantilla));
+
+      const botonEliminar = document.createElement('button');
+      botonEliminar.type = 'button';
+      botonEliminar.classList.add('boton-peligro');
+      botonEliminar.textContent = 'Eliminar';
+      botonEliminar.addEventListener('click', () => eliminarPlantilla(plantilla));
+
+      contenedorBotones.append(botonEditar, botonEliminar);
+      fila.append(texto, contenedorBotones);
+      contenedorPlantillas.appendChild(fila);
+    });
+  } catch (error) {
+    contenedorPlantillas.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+function editarPlantilla(plantilla) {
+  campoIdPlantilla.value = String(plantilla.id);
+  campoCategoriaPlantilla.value = plantilla.categoria;
+  campoTituloPlantilla.value = plantilla.titulo;
+  campoCuerpoPlantilla.value = plantilla.cuerpo;
+  botonGuardarPlantilla.textContent = `Guardar cambios (v${plantilla.version} → v${plantilla.version + 1})`;
+  botonCancelarPlantilla.style.display = '';
+  actualizarMarcadoresDetectados();
+  formularioPlantilla.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function eliminarPlantilla(plantilla) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar plantilla',
+    mensaje: `¿Eliminar "${plantilla.titulo}"? Esto no se puede deshacer.`,
+    textoConfirmar: 'Eliminar',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+  try {
+    await peticionAdmin(`/api/admin/plantillas/${plantilla.id}`, { method: 'DELETE' });
+    if (campoIdPlantilla.value === String(plantilla.id)) limpiarFormularioPlantilla();
+    await cargarPlantillasAdmin();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+formularioPlantilla.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  resultadoPlantilla.innerHTML = '<p class="mensaje-carga">Guardando…</p>';
+
+  const id = campoIdPlantilla.value;
+  const cuerpo = {
+    categoria: campoCategoriaPlantilla.value.trim(),
+    titulo: campoTituloPlantilla.value.trim(),
+    cuerpo: campoCuerpoPlantilla.value
+  };
+
+  try {
+    await peticionAdmin(id ? `/api/admin/plantillas/${id}` : '/api/admin/plantillas', {
+      method: id ? 'PUT' : 'POST',
+      body: JSON.stringify(cuerpo)
+    });
+    resultadoPlantilla.innerHTML = `<p class="mensaje-exito">Plantilla ${id ? 'actualizada' : 'creada'}.</p>`;
+    limpiarFormularioPlantilla();
+    await cargarPlantillasAdmin();
+  } catch (error) {
+    resultadoPlantilla.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+});
+
+// ---------------------------------------------------------------------
+// Arranque: cargar las secciones en paralelo.
 // ---------------------------------------------------------------------
 cargarSectores();
 cargarListaDocumentos();
@@ -1095,3 +1455,6 @@ cargarSolicitudesRegistro();
 cargarSugerencias();
 cargarCuentas();
 cargarNotificaciones();
+cargarCanciones();
+cargarIndicesEconomicos();
+cargarPlantillasAdmin();

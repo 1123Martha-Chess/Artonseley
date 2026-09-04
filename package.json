@@ -11,7 +11,8 @@
     "migrar-datos": "node servidor/scripts/migrarDatosIniciales.js",
     "crear-usuario": "node servidor/scripts/crearUsuario.js",
     "actualizar-licencia": "node servidor/scripts/actualizarLicencia.js",
-    "probar-cifrado": "node servidor/scripts/probarCifradoCuadernos.js"
+    "probar-cifrado": "node servidor/scripts/probarCifradoCuadernos.js",
+    "generar-vapid": "node servidor/scripts/generarVapid.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,6 +20,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^8.6.2",
-    "helmet": "^8.3.0"
+    "helmet": "^8.3.0",
+    "multer": "^2.0.1",
+    "web-push": "^3.6.7"
   }
 }
