@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        [hidden] { display: none !important; }
+
+        html, body { height: 100%; }
+        body {
+            font-family: Arial, sans-serif;
+            color: #1c2733;
+            background: #eef4f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ================= Barra superior ================= */
+        .cal-barra {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 14px;
+            background: white;
+            border-bottom: 1px solid #dbe3ea;
+        }
+        .cal-barra .marca-mini { display: flex; align-items: center; gap: 7px; text-decoration: none; }
+        .cal-barra .marca-mini img.icono { height: 22px; }
+        .cal-barra .marca-mini img.letras { height: 12px; }
+        .cal-barra .enlace-inicio { margin-left: auto; font-size: 13px; color: var(--color-primario); text-decoration: none; }
+        .cal-barra .enlace-inicio:hover { text-decoration: underline; }
+
+        /* ================= Encabezado del mes ================= */
+        #calendario {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+        }
+
+        .cal-encabezado {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cal-nav {
+            width: 40px;
+            height: 34px;
+            font-size: 15px;
+            font-weight: bold;
+            border: 1px solid #b8c6d3;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .cal-nav:hover { background: #e8f0f7; }
+
+        .cal-titulo {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 210px;
+            text-align: center;
+        }
+
+        .cal-hoy {
+            margin-left: 8px;
+            padding: 8px 14px;
+            font-size: 13px;
+            border: 1px solid var(--color-primario);
+            color: var(--color-primario);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .cal-hoy:hover { background: #e8f0f7; }
+
+        /* ================= Rejilla del mes ================= */
+        .cal-dias-semana {
+            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+        .cal-dias-semana div {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #5b6b78;
+            padding: 4px 0;
+        }
+
+        .cal-rejilla {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: 1fr;
+            gap: 4px;
+        }
+
+        .cal-celda {
+            background: white;
+            border: 1px solid #d5dee6;
+            border-radius: 8px;
+            padding: 4px 6px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-height: 0;
+        }
+        .cal-celda:hover { border-color: var(--color-primario); }
+        .cal-celda-vacia { background: transparent; border: none; cursor: default; }
+        .cal-celda-hoy { outline: 2px solid var(--color-primario); outline-offset: -2px; }
+
+        .cal-numero { font-size: 13px; font-weight: bold; color: #33424f; }
+
+        .cal-notas-celda { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+        .cal-chip-nota {
+            font-size: 11px;
+            background: rgba(42, 107, 175, 0.14);
+            color: #1a4971;
+            border-radius: 4px;
+            padding: 1px 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cal-chip-mas { font-size: 10px; color: #5b6b78; padding-left: 3px; }
+
+        /* ================= Panel de un día ================= */
+        .cal-panel-fondo {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 90;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 30px 16px;
+            overflow-y: auto;
+        }
+
+        .cal-panel-dia {
+            position: relative;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 22px 24px;
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .cal-panel-dia h2 { font-size: 17px; margin: 0 32px 14px 0; }
+
+        .cal-panel-cerrar {
+            position: absolute;
+            top: 14px; right: 14px;
+            width: 28px; height: 28px;
+            border: none;
+            background: #eef2f5;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .cal-panel-cerrar:hover { background: #e0e6ea; }
+
+        .cal-bloque { margin-bottom: 18px; }
+        .cal-bloque h3 { font-size: 13px; margin: 0 0 8px 0; color: #33424f; }
+
+        .cal-colores { display: flex; flex-wrap: wrap; gap: 8px; }
+        .cal-swatch {
+            width: 30px; height: 30px;
+            border: 2px solid #cdd7df;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+        }
+        .cal-swatch.activo { border-color: #1c2733; box-shadow: 0 0 0 2px white inset; }
+        .cal-swatch-ninguno { background: white; color: #99a6b0; font-size: 13px; }
+
+        .cal-vacio { font-size: 13px; color: #5b6b78; margin: 0; }
+
+        .cal-nota {
+            border: 1px solid #e0e6ea;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        .cal-nota-titulo { font-weight: bold; font-size: 14px; }
+        .cal-nota-situacion { font-size: 12px; color: #44515c; margin-top: 4px; }
+        .cal-nota-info { font-size: 12px; color: #44515c; margin-top: 4px; white-space: pre-wrap; }
+        .cal-nota-acciones { margin-top: 8px; display: flex; gap: 8px; }
+        .cal-nota-acciones button {
+            font-size: 12px;
+            padding: 4px 10px;
+            border: 1px solid #b8c6d3;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .cal-nota-acciones .cal-borrar { color: #b02b2b; border-color: #e3b7b7; }
+
+        .cal-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: #e2e8ee;
+            color: #44515c;
+        }
+        .cal-badge-pendiente { background: #fceccf; color: #8a5a00; }
+        .cal-badge-en-curso { background: #cfe0f7; color: #1a4b86; }
+        .cal-badge-hecho { background: #cfe9d6; color: #1a6b32; }
+        .cal-badge-cancelada { background: #e0e0e0; color: #555; }
+
+        /* ================= Formulario de nota ================= */
+        .cal-form {
+            border-top: 1px solid #e0e6ea;
+            padding-top: 14px;
+        }
+        .cal-form h3 { font-size: 13px; margin: 0 0 10px 0; }
+        .cal-campo { margin-bottom: 10px; }
+        .cal-etiqueta { display: block; font-size: 12px; font-weight: bold; color: #33424f; margin-bottom: 4px; }
+        .cal-input, .cal-select {
+            width: 100%;
+            padding: 8px 10px;
+            font-family: inherit;
+            font-size: 13px;
+            border: 1px solid #b8c6d3;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+        textarea.cal-input { min-height: 70px; resize: vertical; }
+
+        .cal-fila-situacion { display: flex; gap: 8px; margin-bottom: 10px; }
+        .cal-fila-situacion .cal-select { flex: 0 0 130px; }
+        .cal-fila-situacion .cal-input { flex: 1; }
+
+        .cal-form-acciones { display: flex; gap: 8px; margin-top: 4px; }
+        .cal-boton-principal {
+            padding: 9px 18px;
+            font-size: 13px;
+            color: white;
+            background: var(--color-primario);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .cal-boton-principal:hover { filter: brightness(0.92); }
+        .cal-boton-secundario {
+            padding: 9px 16px;
+            font-size: 13px;
+            color: var(--color-primario);
+            background: white;
+            border: 1px solid var(--color-primario);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* ================= Pantalla de la bóveda ================= */
+        #pantallaBoveda {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: #eef4f9;
+            overflow-y: auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 18px;
+        }
+
+        .vista-boveda {
+            max-width: 560px;
+            width: 100%;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            padding: 28px 30px;
+        }
+
+        .vista-boveda h2 { font-size: 19px; margin: 0 0 10px 0; }
+        .vista-boveda p { font-size: 13.5px; line-height: 1.55; color: #3a4650; }
+
+        .cuadricula-palabras {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .chip-palabra {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            background: #f1f5f9;
+            border: 1px solid #dce4ec;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .numero-palabra {
+            font-size: 11px;
+            color: #8a97a2;
+            min-width: 16px;
+        }
+
+        .confirmacion-anotado {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            margin: 14px 0;
+            line-height: 1.4;
+        }
+
+        .fila-campos-verificacion { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+        .campo-verificacion { display: flex; flex-direction: column; gap: 4px; }
+        .campo-verificacion label { font-size: 12px; font-weight: bold; }
+        .campo-verificacion input {
+            padding: 8px 10px;
+            font-size: 14px;
+            border: 1px solid #b8c6d3;
+            border-radius: 7px;
+        }
+
+        .area-frase-desbloqueo {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 14px;
+            border: 1px solid #b8c6d3;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .mensaje-error-boveda { color: #b02b2b; font-size: 13px; font-weight: bold; min-height: 18px; }
+
+        .boton-boveda-principal {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: white;
+            background: var(--color-primario);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .boton-boveda-principal:disabled { opacity: 0.5; cursor: default; }
+        .boton-boveda-secundario {
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--color-primario);
+            background: white;
+            border: 1px solid var(--color-primario);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .fila-botones-boveda { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+
+        .salida-frase-perdida {
+            margin-top: 22px;
+            border-top: 1px solid #e3e9ee;
+            padding-top: 14px;
+        }
+        .salida-frase-perdida summary { cursor: pointer; font-size: 13px; color: var(--color-primario); }
+        .salida-frase-perdida p { font-size: 12.5px; }
+    </style>
+</head>
+<body>
+    <header class="cal-barra">
+        <a class="marca-mini" href="index.html" title="Volver al inicio">
+            <img class="icono" src="imagenes/artonseley-pagina.png" alt="">
+            <img class="letras" src="imagenes/artonseley-letras.png" alt="ARTONSELEY">
+        </a>
+        <a class="enlace-inicio" href="index.html">← Inicio</a>
+    </header>
+
+    <main id="calendario"></main>
+
+    <!-- Tapa todo hasta que la bóveda del calendario queda desbloqueada. -->
+    <div id="pantallaBoveda">
+        <div id="vistaBovedaCargando" class="vista-boveda">
+            <h2>Abriendo tu calendario…</h2>
+            <p>Un momento.</p>
+        </div>
+
+        <div id="vistaBovedaIncognito" class="vista-boveda" hidden>
+            <h2>Estás en una ventana privada / incógnito</h2>
+            <p>En modo incógnito el navegador borra todo al cerrar la ventana, así que las notas del calendario no se podrían guardar de forma segura. Abre Artonseley en una ventana normal para usar el calendario.</p>
+        </div>
+
+        <div id="vistaBovedaConfiguracion" class="vista-boveda" hidden></div>
+        <div id="vistaBovedaVerificacion" class="vista-boveda" hidden></div>
+        <div id="vistaBovedaDesbloqueo" class="vista-boveda" hidden></div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/calendarioPrincipal.js"></script>
+</body>
+</html>
