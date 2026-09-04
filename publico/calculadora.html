@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Jurídica Financiera - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        /* =========================================================
+           CALCULADORA JURÍDICA FINANCIERA — Fase 1: indemnización /
+           liquidación laboral (LFT). TODO el cálculo lo hace el servidor
+           (servidor/calculadoras/); esta página solo recoge los datos y
+           pinta el desglose que regresa POST /api/calculadora/:tipo.
+           ========================================================= */
+        [hidden] { display: none !important; }
+
+        .calc-descargo {
+            background: #fff6e5;
+            border: 1px solid #f0d191;
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #6b4e12;
+            margin-bottom: 22px;
+        }
+
+        .calc-campo {
+            margin-bottom: 14px;
+        }
+
+        .calc-campo label {
+            display: block;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .calc-campo input[type="date"],
+        .calc-campo input[type="number"],
+        .calc-campo select {
+            width: 100%;
+            padding: 9px 11px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            border: 1px solid #999;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .calc-fila {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .calc-fila > .calc-campo { flex: 1; min-width: 180px; }
+
+        .calc-ayuda {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #777;
+            line-height: 1.5;
+            margin: 4px 0 0 0;
+        }
+
+        .calc-radio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin: 4px 0;
+        }
+
+        .calc-casilla {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 6px 0;
+        }
+
+        /* -------- Resultado -------- */
+        .calc-total {
+            background: var(--color-primario);
+            color: white;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+        .calc-total .etiqueta { font-family: Arial, sans-serif; font-size: 13px; opacity: 0.9; }
+        .calc-total .monto { font-size: 30px; font-weight: bold; margin-top: 2px; }
+        .calc-total .sub { font-family: Arial, sans-serif; font-size: 12px; opacity: 0.9; margin-top: 8px; }
+
+        table.calc-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+        table.calc-tabla th,
+        table.calc-tabla td {
+            text-align: left;
+            padding: 9px 10px;
+            border-bottom: 1px solid #e4e4e4;
+            vertical-align: top;
+        }
+        table.calc-tabla th {
+            color: #555;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        table.calc-tabla td.monto { text-align: right; white-space: nowrap; font-weight: bold; }
+        table.calc-tabla .detalle { color: #777; font-size: 12px; }
+        table.calc-tabla .fundamento { color: var(--color-primario); font-size: 12px; white-space: nowrap; }
+        table.calc-tabla tr.grupo-titulo td {
+            background: #f0f4f9;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #444;
+        }
+
+        .calc-lista {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.55;
+            color: #444;
+            padding-left: 20px;
+            margin: 8px 0 18px 0;
+        }
+        .calc-avisos { color: #7a1f16; }
+
+        .tabla-scroll { overflow-x: auto; }
+
+        @media (max-width: 600px) {
+            table.calc-tabla { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="pantalla">
+        <a href="index.html" class="volver">← Volver al inicio</a>
+        <h1>Calculadora Jurídica Financiera</h1>
+        <p class="pantalla-descripcion">
+            Fase 1: indemnización y liquidación laboral conforme a la Ley Federal del Trabajo.
+            El resultado es un desglose renglón por renglón, con el artículo de la LFT que sustenta cada uno.
+        </p>
+
+        <div class="calc-descargo">
+            <strong>Aviso:</strong> los resultados son <strong>estimaciones informativas</strong>. No constituyen
+            asesoría jurídica ni sustituyen el cálculo de un abogado, de un juez o de la autoridad laboral. Verifica
+            siempre con un profesional antes de tomar decisiones.
+        </div>
+
+        <form id="formularioCalculo" class="bloque">
+            <h2>Indemnización / liquidación laboral</h2>
+
+            <div class="calc-fila">
+                <div class="calc-campo">
+                    <label for="fechaIngreso">Fecha de ingreso</label>
+                    <input type="date" id="fechaIngreso" required>
+                </div>
+                <div class="calc-campo">
+                    <label for="fechaBaja">Fecha de baja</label>
+                    <input type="date" id="fechaBaja" required>
+                </div>
+            </div>
+
+            <div class="calc-fila">
+                <div class="calc-campo">
+                    <label for="salarioDiario">Salario diario (base, en pesos)</label>
+                    <input type="number" id="salarioDiario" min="0" step="0.01" placeholder="Ej. 850.00" required>
+                </div>
+                <div class="calc-campo">
+                    <label for="zona">Zona (para el tope de salario mínimo)</label>
+                    <select id="zona">
+                        <option value="general">General (todo el país salvo Frontera Norte)</option>
+                        <option value="fronteraNorte">Zona Libre de la Frontera Norte</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="calc-fila">
+                <div class="calc-campo">
+                    <label for="causa">Causa de la separación</label>
+                    <select id="causa">
+                        <option value="despido-injustificado">Despido injustificado</option>
+                        <option value="despido-justificado">Despido justificado</option>
+                        <option value="renuncia">Renuncia voluntaria</option>
+                        <option value="rescision-trabajador">Rescisión por el trabajador (Art. 51 LFT)</option>
+                    </select>
+                </div>
+                <div class="calc-campo" id="campoResolucion">
+                    <label for="resolucion">Resultado esperado</label>
+                    <select id="resolucion">
+                        <option value="indemnizacion">Indemnización (no reinstalación)</option>
+                        <option value="reinstalacion">Reinstalación</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="calc-campo">
+                <label>Salario diario integrado (SDI)</label>
+                <div class="calc-radio">
+                    <input type="radio" name="modoSdi" id="sdiCalcular" value="calcular" checked>
+                    <label for="sdiCalcular" style="font-weight:normal;margin:0;">Calcúlalo por mí (a partir del aguinaldo y la prima vacacional)</label>
+                </div>
+                <div class="calc-radio">
+                    <input type="radio" name="modoSdi" id="sdiDirecto" value="directo">
+                    <label for="sdiDirecto" style="font-weight:normal;margin:0;">Ya lo conozco, lo escribo</label>
+                </div>
+
+                <div id="bloqueSdiCalcular" class="calc-fila" style="margin-top:8px;">
+                    <div class="calc-campo">
+                        <label for="diasAguinaldo">Días de aguinaldo al año</label>
+                        <input type="number" id="diasAguinaldo" min="15" step="1" value="15">
+                    </div>
+                    <div class="calc-campo">
+                        <label for="primaVacacionalPct">Prima vacacional (%)</label>
+                        <input type="number" id="primaVacacionalPct" min="25" step="1" value="25">
+                    </div>
+                </div>
+
+                <div id="bloqueSdiDirecto" class="calc-campo" style="margin-top:8px;" hidden>
+                    <label for="sdiValor">Salario diario integrado (en pesos)</label>
+                    <input type="number" id="sdiValor" min="0" step="0.01" placeholder="Ej. 892.50">
+                </div>
+                <p class="calc-ayuda">El SDI (Art. 84 LFT) es la base de la indemnización de 3 meses y de los 20 días por año. Los días de vacaciones para el factor se toman de la antigüedad (Art. 76 LFT).</p>
+            </div>
+
+            <div class="calc-campo" id="campoMesesJuicio">
+                <label for="mesesJuicio">Meses estimados de juicio (para salarios vencidos)</label>
+                <input type="number" id="mesesJuicio" min="0" step="1" value="0">
+                <p class="calc-ayuda">Solo aplica a despido injustificado y rescisión por el trabajador. Déjalo en 0 si no quieres estimar los salarios vencidos (dependen de cuánto dure el juicio real).</p>
+            </div>
+
+            <div class="calc-campo">
+                <label>Prestaciones devengadas a incluir</label>
+                <label class="calc-casilla"><input type="checkbox" id="incluirAguinaldoProp" checked> Aguinaldo proporcional del año en curso (Art. 87 LFT)</label>
+                <label class="calc-casilla"><input type="checkbox" id="incluirVacacionesProp" checked> Vacaciones proporcionales + prima vacacional (Arts. 76 y 80 LFT)</label>
+            </div>
+
+            <div class="calc-campo">
+                <label for="diasSalarioPendiente">Días de salario trabajados y no pagados</label>
+                <input type="number" id="diasSalarioPendiente" min="0" step="0.5" value="0">
+            </div>
+
+            <div class="calc-campo">
+                <label for="tope2xSM">Tope de 2× salario mínimo (Arts. 485-486 LFT)</label>
+                <select id="tope2xSM">
+                    <option value="solo-prima">Solo a la prima de antigüedad (criterio SCJN)</option>
+                    <option value="todo">A todas las indemnizaciones y a la prima (lectura conservadora)</option>
+                    <option value="ninguno">A ningún concepto</option>
+                </select>
+                <p class="calc-ayuda">Tema discutido: la Suprema Corte ha resuelto que el tope NO limita la indemnización constitucional (3 meses + 20 días/año), solo la prima de antigüedad. Elige según el criterio que sigas.</p>
+            </div>
+
+            <button type="submit" class="boton-plataforma" id="botonCalcular">Calcular</button>
+        </form>
+
+        <div id="resultadoCalculo"></div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/calculadoraPrincipal.js"></script>
+</body>
+</html>

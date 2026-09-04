@@ -19,6 +19,26 @@ Para las finalidades descritas en este Aviso, el Responsable recaba y trata las 
 - **Respuestas a encuestas.** De manera ocasional, el Responsable podrá levantar encuestas entre los Titulares. De dichas encuestas únicamente se recopila la fecha, la hora y el contenido de la respuesta, sin recabar ni conservar dato alguno que permita identificar a quien la respondió.
 - **Mensajes del buzón de sugerencias.** Al enviar una sugerencia, el Responsable visualiza de manera temporal el correo electrónico del remitente, la hora y fecha de envío, y el nivel de importancia seleccionado; dichos datos no se almacenan. Únicamente se conserva el contenido del mensaje, con la finalidad de valorarlo y, en su caso, atenderlo.
 
+<!-- ⚠️ PENDIENTE (Calculadora Jurídica Financiera): agregar un párrafo o viñeta
+     aquí. Contenido a cubrir: los datos que el Titular captura en la
+     "Calculadora Jurídica Financiera" (fechas de ingreso/baja, salario,
+     antigüedad, y en el futuro montos de deuda, ingresos, número de acreedores,
+     etc.) se envían al servidor únicamente para efectuar el cálculo solicitado
+     y devolver el resultado; NO se almacenan, NO se conserva historial de
+     cálculos, y NO se comparten con terceros. Esta nota NO se muestra en la
+     página pública (el renderizador la ignora); bórrala cuando redactes el
+     texto real. -->
+
+<!-- ⚠️ PENDIENTE (Generador de Plantillas y Documentos): agregar un párrafo o
+     viñeta. Contenido a cubrir: los datos que el Titular captura para llenar
+     una plantilla de documento (nombres, domicilios, datos del cliente o del
+     expediente) se procesan ÚNICAMENTE en el navegador del Titular para armar
+     el documento; NO se envían al servidor, NO se almacenan y NO se conserva
+     historial. En la Fase 2, los "Expedientes" reutilizables se guardarán
+     cifrados en el dispositivo del Titular, bajo el mismo tratamiento de
+     conocimiento cero descrito en la Sección III para Mis Cuadernos. Esta nota
+     NO se muestra en la página pública; bórrala al redactar el texto real. -->
+
 El Responsable **no analiza, revisa ni comparte** el contenido de las búsquedas o consultas jurídicas que el Titular realice dentro de la Plataforma, ni conserva un historial de dichas búsquedas.
 
 El Responsable **no recaba, no almacena ni tiene acceso** al contenido de los cuadernos y notas que el Titular cree mediante la función **Mis Cuadernos**, conforme al tratamiento de conocimiento cero descrito en la Sección III de este Aviso.

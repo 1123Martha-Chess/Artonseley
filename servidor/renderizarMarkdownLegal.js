@@ -75,6 +75,16 @@ export function renderizarMarkdownLegal(markdown) {
       continue;
     }
 
+    // Comentario HTML (<!-- ... -->): son notas para quien edita el .md
+    // (ej. "PENDIENTE: agregar tal cláusula"), NO deben salir en la página.
+    // Se saltan por completo, sea de una línea o de varias.
+    if (limpia.startsWith('<!--')) {
+      cerrarParrafo();
+      cerrarLista();
+      while (i < lineas.length && !lineas[i].includes('-->')) i++;
+      continue; // la línea con "-->" también se descarta (el for incrementa)
+    }
+
     // Título (#, ##, ###...).
     const encabezado = limpia.match(/^(#{1,6})\s+(.*)$/);
     if (encabezado) {

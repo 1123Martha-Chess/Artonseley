@@ -115,6 +115,35 @@ Mis Cuadernos es una herramienta opcional de la Plataforma que permite al Usuari
 
 ## 8. Limitación de Responsabilidad
 
+<!-- ⚠️ PENDIENTE (Calculadora Jurídica Financiera): agregar aquí una cláusula
+     nueva (p. ej. 8.x). Contenido a cubrir: los resultados de la "Calculadora
+     Jurídica Financiera" (indemnizaciones/liquidaciones laborales, y en el
+     futuro actualización con INPC + intereses y pensión alimenticia) son
+     ESTIMACIONES informativas calculadas a partir de los datos que el Usuario
+     captura y de fórmulas generales de la ley; NO constituyen asesoría
+     jurídica, ni un dictamen, ni sustituyen el cálculo de un abogado, de un
+     juez o de la autoridad competente; el Responsable no garantiza su
+     exactitud y no asume responsabilidad por decisiones tomadas con base en
+     ellas. Cuando exista la calculadora de pensión alimenticia (Fase 3), esa
+     calculadora mostrará además un descargo específico dentro de ella misma.
+     Esta nota NO se muestra en la página pública (el renderizador la ignora);
+     bórrala cuando redactes la cláusula real. -->
+
+<!-- ⚠️ PENDIENTE (Generador de Plantillas y Documentos): agregar una cláusula
+     nueva. Contenido a cubrir: la biblioteca de plantillas ("machotes") es un
+     PUNTO DE PARTIDA con fines de referencia, no un dictamen ni asesoría
+     jurídica; el Usuario —aunque sea abogado— es el único responsable de
+     revisar, adaptar y validar cada plantilla antes de firmarla o presentarla
+     ante cualquier autoridad, y de que el documento final cumpla la normativa
+     aplicable; el Responsable no garantiza que las plantillas estén vigentes
+     ni que sean idóneas para un caso concreto, y no asume responsabilidad por
+     su uso. En la Fase 1 los datos que el Usuario captura para llenar una
+     plantilla se procesan SOLO en su navegador y no se envían al servidor. En
+     la Fase 2, los "Expedientes" (datos del cliente/caso) serán de
+     conocimiento cero, con el mismo tratamiento que Mis Cuadernos (Cláusula 5).
+     Esta nota NO se muestra en la página pública; bórrala al redactar la
+     cláusula real. -->
+
 8.1 **Exclusión de asesoría legal y profesional.** La Plataforma es una herramienta de consulta, investigación y referencia académica e informativa sobre información jurídica, y no sustituye la asesoría, el criterio ni el juicio profesional de un abogado o profesional titulado, ni la consulta de las fuentes oficiales, incluyendo el Diario Oficial de la Federación (DOF). El Responsable deslinda cualquier responsabilidad por las decisiones jurídicas, estratégicas o profesionales que abogados, especialistas o Usuarios adopten con base en la información consultada en la Plataforma, así como por actos realizados fuera del entorno operativo de ésta.
 
 8.2 **Vigencia del marco normativo.** El Responsable procura mantener actualizados los textos legales, criterios y demás contenidos jurídicos disponibles en la Plataforma; sin embargo, no garantiza su actualización simultánea o en tiempo real, ni se responsabiliza por la existencia eventual de ordenamientos desactualizados. Se recomienda al Usuario verificar la vigencia de cualquier disposición ante la fuente oficial correspondiente antes de tomar decisiones con base en ella.
