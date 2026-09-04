@@ -1,0 +1,17 @@
+{
+  "name": "Artonseley",
+  "short_name": "Artonseley",
+  "description": "Consulta ágil de leyes y artículos de México, con calendario y cuadernos cifrados.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f7",
+  "theme_color": "#2A6BAF",
+  "icons": [
+    {
+      "src": "/imagenes/artonseley-favicon.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

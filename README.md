@@ -32,6 +32,42 @@ Copia `.env.example` a `.env` y ajústalo. Las que importan:
 | `CONFIA_EN_PROXY` | `1` cuando hay un proxy delante (Render). Necesario para que los límites por IP funcionen. | `0` |
 | `DIAS_DURACION_SESION` | Cuánto dura una sesión iniciada. | `7` |
 | `PORT` | Puerto del servidor. | `3000` |
+| `VAPID_PUBLICA` / `VAPID_PRIVADA` | Claves para los "Recordatorios del calendario" (Web Push). Sin ellas, esa función queda desactivada. Genera el par con `npm run generar-vapid`. | (vacío) |
+| `VAPID_SUBJECT` | Contacto (un `mailto:` o URL) que el servicio de push usa para avisos. | `mailto:soporte@artonseley.site` |
+| `TOKEN_TAREAS` | Solo si el hosting duerme el proceso: token para que un cron externo dispare el envío diario. Vacío = la ruta no existe. | (vacío) |
+
+## Recordatorios del calendario (Web Push)
+
+Un aviso al día en la computadora del usuario, a partir de las 7:00 a.m. de su
+hora local, recordándole que revise su calendario. **Por privacidad la
+notificación no lleva nada del calendario** (las notas siguen cifradas de
+extremo a extremo): el servidor solo manda un "ping" y el navegador muestra un
+texto fijo.
+
+Para activarlo:
+
+1. `npm run generar-vapid` — genera el par de claves UNA vez.
+2. Pega `VAPID_PUBLICA` y `VAPID_PRIVADA` en las variables de entorno (en Render,
+   en *Environment*). No las cambies después: si lo haces, todas las
+   suscripciones existentes dejan de servir y cada usuario tiene que volver a
+   activar los recordatorios en Configuración.
+3. Reinicia. En el log de arranque debe decir
+   `Recordatorios del calendario: activos`.
+
+El usuario los activa en **Configuración → "Recordatorios del calendario"**
+(pide permiso de notificaciones del navegador). Solo funciona sobre HTTPS
+(`www.artonseley.site`) o `localhost` — no por una dirección de red local.
+
+**Hosting:** el proceso Node revisa cada 30 min a quién le toca su aviso. En
+**Render plan Free el servicio se duerme** por inactividad y ese temporizador no
+corre. Opciones: usar un plan que no duerma, o definir `TOKEN_TAREAS` y
+configurar un cron externo gratuito (ej. [cron-job.org](https://cron-job.org))
+que cada hora haga:
+
+```
+POST https://www.artonseley.site/api/tareas/recordatorios
+Header: Authorization: Bearer <el valor de TOKEN_TAREAS>
+```
 
 ## Despliegue en Render (disco persistente)
 
