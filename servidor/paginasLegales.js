@@ -52,7 +52,7 @@ function armarPagina({ titulo, cuerpoHTML }) {
 </head>
 <body>
     <div class="hoja-documento">
-        <a href="index.html" class="volver">← Volver al buscador</a>
+        <a href="index.html" class="volver">← Volver al inicio</a>
 ${cuerpoHTML}
     </div>
     <script type="module" src="Sistema/ajustaEnlaceVolver.js"></script>

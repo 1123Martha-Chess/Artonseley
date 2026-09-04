@@ -30,12 +30,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { obtenerDocumentosDisponibles, invalidarCacheDeLeyes } from './servidor/LectorDeJSON.js';
 import { procesarBusqueda } from './servidor/procesarBusqueda.js';
-import { SECRETO_COOKIES, DIAS_DURACION_SESION, MINUTOS_BLOQUEO_LOGIN, CONFIA_EN_PROXY } from './servidor/config.js';
+import { SECRETO_COOKIES, DIAS_DURACION_SESION, MINUTOS_BLOQUEO_LOGIN, CONFIA_EN_PROXY, VAPID_PUBLICA, TOKEN_TAREAS } from './servidor/config.js';
 import {
   buscarUsuarioPorEmail,
   buscarUsuarioPorId,
   crearUsuario,
   actualizarLicencia,
+  actualizarNombre,
   registrarIntentoFallido,
   resetearIntentosFallidos,
   listarUsuarios,
@@ -86,6 +87,40 @@ import {
   crearSector,
   eliminarSector
 } from './servidor/db/sectores.js';
+import {
+  listarCanciones,
+  buscarCancionPorId,
+  crearCancion,
+  renombrarCancion,
+  moverCancion,
+  eliminarCancion
+} from './servidor/db/canciones.js';
+import {
+  subidaDeCancion,
+  rutaArchivoMusica,
+  borrarArchivoDeMusica,
+  LIMITE_IMAGEN_BYTES
+} from './servidor/musicaArchivos.js';
+import {
+  guardarSuscripcion,
+  eliminarSuscripcionPorEndpoint
+} from './servidor/db/suscripcionesPush.js';
+import { configurarWebPush, barrerYEnviar } from './servidor/recordatoriosCalendario.js';
+import {
+  CALCULADORAS,
+  obtenerIndicesEconomicos,
+  indicesEconomicosListos
+} from './servidor/calculadoras/registro.js';
+import { guardarIndicesEconomicos } from './servidor/db/indicesEconomicos.js';
+import {
+  listarPlantillas,
+  listarPlantillasParaAdmin,
+  buscarPlantillaPorId,
+  crearPlantilla,
+  actualizarPlantilla,
+  eliminarPlantilla
+} from './servidor/db/plantillas.js';
+import { extraerVariables } from './servidor/plantillas/extraerVariables.js';
 import {
   limitadorLogin,
   limitadorSugerencias,
@@ -158,7 +193,13 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      'style-src': ["'self'", "'unsafe-inline'"]
+      'style-src': ["'self'", "'unsafe-inline'"],
+      // El Service Worker de los recordatorios (publico/sw.js) y el
+      // manifest se sirven del mismo origen. Se declaran explícitos porque
+      // algunos navegadores exigen worker-src/manifest-src aparte de
+      // default-src, aunque el valor sea el mismo ('self').
+      'worker-src': ["'self'"],
+      'manifest-src': ["'self'"]
     }
   }
 }));
@@ -191,6 +232,19 @@ app.get(['/', '/index.html'], requiereSesionParaPagina, (peticion, respuesta) =>
   respuesta.sendFile(path.join(__dirname, 'publico', 'index.html'));
 });
 
+// index.html dejó de ser el buscador: ahora es la pantalla de inicio
+// (las "burbujas" de acceso). El buscador, las notificaciones, el buzón
+// de sugerencias y la configuración pasaron a ser páginas completas
+// propias, cada una con su enlace "← Volver al inicio". Todas piden
+// sesión igual que index.html (no rol admin).
+app.get(
+  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html'],
+  requiereSesionParaPagina,
+  (peticion, respuesta) => {
+    respuesta.sendFile(path.join(__dirname, 'publico', path.basename(peticion.path)));
+  }
+);
+
 app.get('/admin.html', requiereAdminParaPagina, (peticion, respuesta) => {
   respuesta.sendFile(path.join(__dirname, 'publico', 'admin.html'));
 });
@@ -213,6 +267,19 @@ app.get('/terminos-y-condiciones.html', (peticion, respuesta) =>
   manejarPaginaLegal('terminos-y-condiciones.html', respuesta));
 app.get('/avisos-de-privacidad.html', (peticion, respuesta) =>
   manejarPaginaLegal('avisos-de-privacidad.html', respuesta));
+
+// El Service Worker de los "Recordatorios del calendario". Va antes de
+// express.static y con cabeceras propias: sin caché agresiva (para que un
+// cambio en sw.js llegue pronto) y Service-Worker-Allowed: / para que su
+// alcance pueda ser toda la raíz del sitio aunque el archivo viva en
+// publico/. No lleva lógica de negocio ni datos — solo muestra la
+// notificación (ver publico/sw.js).
+app.get('/sw.js', (peticion, respuesta) => {
+  respuesta.set('Cache-Control', 'no-cache');
+  respuesta.set('Service-Worker-Allowed', '/');
+  respuesta.type('application/javascript');
+  respuesta.sendFile(path.join(__dirname, 'publico', 'sw.js'));
+});
 
 app.use(express.static(path.join(__dirname, 'publico')));
 
@@ -300,6 +367,7 @@ app.post('/api/login', limitadorLogin, jsonEstandar, (peticion, respuesta) => {
   respuesta.json({
     ok: true,
     email: usuario.email,
+    nombre: usuario.nombre,
     rol: usuario.rol,
     licenciaVenceEn: usuario.licencia_vence_en
   });
@@ -369,10 +437,29 @@ app.post('/api/auth/solicitudes-registro', limitadorSolicitudesRegistro, jsonEst
 app.get('/api/sesion', requiereSesionAPI, (peticion, respuesta) => {
   respuesta.json({
     email: peticion.usuario.email,
+    nombre: peticion.usuario.nombre,
     rol: peticion.usuario.rol,
     licenciaVenceEn: peticion.usuario.licencia_vence_en,
     licenciaVigente: new Date(peticion.usuario.licencia_vence_en) > new Date()
   });
+});
+
+// "Mi cuenta": por ahora lo único editable es el apodo con el que la
+// pantalla de inicio saluda al usuario (ver configuracion.html →
+// sección "Mi cuenta"). Mandar cadena vacía lo borra y el saludo vuelve
+// a "[user]". El límite de largo evita guardar un texto absurdo que
+// desacomode el saludo.
+const LARGO_MAXIMO_NOMBRE = 40;
+
+app.post('/api/mi-cuenta', jsonEstandar, requiereSesionAPI, (peticion, respuesta) => {
+  const nombre = String(peticion.body?.nombre ?? '').trim();
+  if (nombre.length > LARGO_MAXIMO_NOMBRE) {
+    return respuesta.status(400).json({
+      error: `Ese nombre es muy largo (máximo ${LARGO_MAXIMO_NOMBRE} caracteres).`
+    });
+  }
+  actualizarNombre(peticion.usuario.id, nombre);
+  respuesta.json({ ok: true, nombre: nombre || null });
 });
 
 // Lista de documentos disponibles (para pintar los botones de sectores).
@@ -399,6 +486,61 @@ app.post('/api/buscar', jsonEstandar, requiereSesionAPI, requiereLicenciaVigente
     console.error('Error en /api/buscar:', error);
     respuesta.status(500).json({ error: 'Ocurrió un error al buscar.' });
   }
+});
+
+// Calculadora Jurídica Financiera. Igual que el buscador: todo el cálculo
+// vive en servidor/ (servidor/calculadoras/), el cliente solo manda los
+// datos que capturó el usuario y pinta el desglose. Requiere sesión +
+// licencia vigente (es función para abogados, como la búsqueda). El
+// resultado sigue el patrón { tipo: 'resultado' | 'errores' | 'mensaje' }.
+app.post('/api/calculadora/:tipo', jsonEstandar, requiereSesionAPI, requiereLicenciaVigente, (peticion, respuesta) => {
+  try {
+    const calculadora = CALCULADORAS[peticion.params.tipo];
+    if (!calculadora) {
+      return respuesta.status(404).json({ error: 'Esa calculadora no existe.' });
+    }
+
+    const errores = calculadora.validar(peticion.body ?? {});
+    if (errores.length > 0) {
+      return respuesta.status(400).json({ tipo: 'errores', errores });
+    }
+
+    const indices = obtenerIndicesEconomicos();
+    if (!indicesEconomicosListos(indices)) {
+      return respuesta.json({
+        tipo: 'mensaje',
+        mensaje: 'La calculadora todavía no tiene cargados los valores económicos vigentes (salario mínimo, UMA). Contacta al administrador.'
+      });
+    }
+
+    respuesta.json(calculadora.calcular(peticion.body, indices));
+  } catch (error) {
+    console.error('Error en POST /api/calculadora/:tipo:', error);
+    respuesta.status(500).json({ error: 'Ocurrió un error al calcular.' });
+  }
+});
+
+// Generador de Plantillas y Documentos. El servidor solo guarda el TEXTO
+// de cada machote (con marcadores {{clave}}); el motor de fusión y los
+// datos del cliente/expediente viven 100% en el navegador del abogado.
+// Requiere sesión + licencia vigente, como el buscador.
+app.get('/api/plantillas', requiereSesionAPI, requiereLicenciaVigente, (peticion, respuesta) => {
+  respuesta.json({ plantillas: listarPlantillas() });
+});
+
+app.get('/api/plantillas/:id', requiereSesionAPI, requiereLicenciaVigente, (peticion, respuesta) => {
+  const plantilla = buscarPlantillaPorId(Number(peticion.params.id));
+  if (!plantilla) {
+    return respuesta.status(404).json({ error: 'Esa plantilla ya no existe.' });
+  }
+  respuesta.json({
+    id: plantilla.id,
+    categoria: plantilla.categoria,
+    titulo: plantilla.titulo,
+    cuerpo: plantilla.cuerpo,
+    version: plantilla.version,
+    variables: extraerVariables(plantilla.cuerpo)
+  });
 });
 
 const LARGO_MAXIMO_SUGERENCIA = 2000;
@@ -434,6 +576,118 @@ app.post('/api/sugerencias', limitadorSugerencias, jsonEstandar, requiereSesionA
 // "notificaciones", que el administrador gestiona desde admin.html.
 app.get('/api/notificaciones', requiereSesionAPI, (peticion, respuesta) => {
   respuesta.json({ notificaciones: listarNotificacionesActivas() });
+});
+
+// ---------------------------------------------------------------------
+// Música: el reproductor (publico/Sistema/reproductorGlobal.js, incluido
+// en todas las páginas con sesión) pide la lista de canciones y luego el
+// audio/imagen de cada una por id. Solo requiere sesión — igual que el
+// Calendario y los Cuadernos, la música no es un dato legal y no depende
+// de que la licencia esté vigente. Los archivos se sirven con res.sendFile,
+// que ya responde peticiones Range (206) para poder hacer seek/streaming.
+// El administrador gestiona las canciones más abajo, bajo /api/admin.
+// ---------------------------------------------------------------------
+app.get('/api/canciones', requiereSesionAPI, (peticion, respuesta) => {
+  const canciones = listarCanciones().map((c) => ({
+    id: c.id,
+    titulo: c.titulo,
+    orden: c.orden,
+    tieneImagen: !!c.archivo_imagen
+  }));
+  respuesta.json({ canciones });
+});
+
+function enviarArchivoDeCancion(respuesta, nombreArchivo, mime) {
+  const ruta = rutaArchivoMusica(nombreArchivo);
+  if (!ruta) {
+    return respuesta.status(404).json({ error: 'Archivo no encontrado.' });
+  }
+  if (mime) respuesta.type(mime);
+  respuesta.sendFile(ruta, (error) => {
+    if (error && !respuesta.headersSent) {
+      respuesta.status(404).json({ error: 'Archivo no encontrado.' });
+    }
+  });
+}
+
+app.get('/api/musica/audio/:id', requiereSesionAPI, (peticion, respuesta) => {
+  const cancion = buscarCancionPorId(Number(peticion.params.id));
+  if (!cancion) {
+    return respuesta.status(404).json({ error: 'Esa canción ya no existe.' });
+  }
+  enviarArchivoDeCancion(respuesta, cancion.archivo_audio, cancion.mime_audio);
+});
+
+app.get('/api/musica/imagen/:id', requiereSesionAPI, (peticion, respuesta) => {
+  const cancion = buscarCancionPorId(Number(peticion.params.id));
+  if (!cancion || !cancion.archivo_imagen) {
+    return respuesta.status(404).json({ error: 'Esa canción no tiene portada.' });
+  }
+  enviarArchivoDeCancion(respuesta, cancion.archivo_imagen, cancion.mime_imagen);
+});
+
+// ---------------------------------------------------------------------
+// Recordatorios del calendario (notificaciones Web Push). El servidor
+// solo guarda la suscripción del navegador y le manda un "ping" diario
+// (ver servidor/recordatoriosCalendario.js). NO ve nada del calendario:
+// el aviso lo arma el Service Worker con un texto fijo. Sesión requerida,
+// sin licencia — igual que el calendario en sí.
+// ---------------------------------------------------------------------
+app.get('/api/recordatorios/clave-publica', requiereSesionAPI, (peticion, respuesta) => {
+  if (!VAPID_PUBLICA) {
+    return respuesta.status(503).json({ error: 'Los recordatorios no están disponibles en este momento.' });
+  }
+  respuesta.json({ clavePublica: VAPID_PUBLICA });
+});
+
+app.post('/api/recordatorios/suscribir', jsonEstandar, requiereSesionAPI, (peticion, respuesta) => {
+  const { suscripcion, offsetMinutos } = peticion.body ?? {};
+  const endpoint = suscripcion?.endpoint;
+  const p256dh = suscripcion?.keys?.p256dh;
+  const auth = suscripcion?.keys?.auth;
+
+  if (typeof endpoint !== 'string' || !endpoint || typeof p256dh !== 'string' || typeof auth !== 'string') {
+    return respuesta.status(400).json({ error: 'La suscripción no tiene la forma esperada.' });
+  }
+  if (endpoint.length > 1000) {
+    return respuesta.status(400).json({ error: 'La suscripción no es válida.' });
+  }
+
+  const offset = Number(offsetMinutos);
+  if (!Number.isInteger(offset) || offset < -840 || offset > 840) {
+    return respuesta.status(400).json({ error: 'La zona horaria no es válida.' });
+  }
+
+  guardarSuscripcion({ usuarioId: peticion.usuario.id, endpoint, p256dh, auth, offsetMinutos: offset });
+  respuesta.json({ ok: true });
+});
+
+app.post('/api/recordatorios/cancelar', jsonEstandar, requiereSesionAPI, (peticion, respuesta) => {
+  const endpoint = peticion.body?.endpoint;
+  if (typeof endpoint === 'string' && endpoint) {
+    eliminarSuscripcionPorEndpoint(endpoint);
+  }
+  respuesta.json({ ok: true });
+});
+
+// Disparador para un cron EXTERNO (ver TOKEN_TAREAS en servidor/config.js).
+// Si no hay token configurado, esta ruta no existe. Con token, exige
+// "Authorization: Bearer <token>". Es el plan B para hostings que duermen
+// el proceso y por eso el temporizador interno no corre.
+app.post('/api/tareas/recordatorios', jsonEstandar, async (peticion, respuesta) => {
+  if (!TOKEN_TAREAS) {
+    return respuesta.status(404).json({ error: 'No encontrado.' });
+  }
+  if (peticion.get('authorization') !== `Bearer ${TOKEN_TAREAS}`) {
+    return respuesta.status(401).json({ error: 'No autorizado.' });
+  }
+  try {
+    const resumen = await barrerYEnviar();
+    respuesta.json({ ok: true, ...resumen });
+  } catch (error) {
+    console.error('Error en POST /api/tareas/recordatorios:', error);
+    respuesta.status(500).json({ error: 'No se pudo procesar el envío.' });
+  }
 });
 
 // ---------------------------------------------------------------------
@@ -880,6 +1134,214 @@ app.delete('/api/admin/notificaciones/:id', (peticion, respuesta) => {
   respuesta.json({ ok: true });
 });
 
+// ---------------------------------------------------------------------
+// Índices económicos (panel de administración). El admin captura el
+// salario mínimo general, el de la Frontera Norte y la UMA vigentes; la
+// Calculadora Jurídica Financiera los usa. Mientras los salarios mínimos
+// valgan 0, la calculadora responde un aviso en vez de calcular.
+// ---------------------------------------------------------------------
+app.get('/api/admin/indices-economicos', (peticion, respuesta) => {
+  respuesta.json({ indices: obtenerIndicesEconomicos() });
+});
+
+app.put('/api/admin/indices-economicos', jsonEstandar, (peticion, respuesta) => {
+  const { anio, salarioMinimoGeneral, salarioMinimoFronteraNorte, uma } = peticion.body ?? {};
+
+  const esNumero = (valor) => typeof valor === 'number' && Number.isFinite(valor);
+  const errores = [];
+
+  if (!Number.isInteger(anio) || anio < 2000 || anio > 2100) {
+    errores.push('El año debe ser un número entre 2000 y 2100.');
+  }
+  for (const [nombre, valor] of [
+    ['El salario mínimo general', salarioMinimoGeneral],
+    ['El salario mínimo de la Frontera Norte', salarioMinimoFronteraNorte],
+    ['La UMA', uma]
+  ]) {
+    if (!esNumero(valor) || valor < 0 || valor > 100000) {
+      errores.push(`${nombre} debe ser un número de 0 o más.`);
+    }
+  }
+
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+
+  const indices = guardarIndicesEconomicos({ anio, salarioMinimoGeneral, salarioMinimoFronteraNorte, uma });
+  respuesta.json({ ok: true, indices });
+});
+
+// ---------------------------------------------------------------------
+// Plantillas de documentos (panel de administración). El admin crea,
+// edita (sube la versión) y borra los machotes de la biblioteca. Usa
+// jsonDocumentoLegal (5 MB) porque el cuerpo de una plantilla puede ser
+// largo. Solo texto — nunca datos de clientes.
+// ---------------------------------------------------------------------
+const LARGO_MAXIMO_CUERPO_PLANTILLA = 100000;
+
+function validarPlantilla(cuerpoPeticion) {
+  const categoria = String(cuerpoPeticion?.categoria ?? '').trim();
+  const titulo = String(cuerpoPeticion?.titulo ?? '').trim();
+  const cuerpo = String(cuerpoPeticion?.cuerpo ?? '');
+  const errores = [];
+  if (!categoria || categoria.length > 80) errores.push('La categoría es obligatoria (máximo 80 caracteres).');
+  if (!titulo || titulo.length > 200) errores.push('El título es obligatorio (máximo 200 caracteres).');
+  if (!cuerpo.trim()) errores.push('El cuerpo de la plantilla no puede estar vacío.');
+  if (cuerpo.length > LARGO_MAXIMO_CUERPO_PLANTILLA) errores.push('El cuerpo es demasiado largo.');
+  return { categoria, titulo, cuerpo, errores };
+}
+
+app.get('/api/admin/plantillas', (peticion, respuesta) => {
+  respuesta.json({ plantillas: listarPlantillasParaAdmin() });
+});
+
+app.post('/api/admin/plantillas', jsonDocumentoLegal, (peticion, respuesta) => {
+  const { categoria, titulo, cuerpo, errores } = validarPlantilla(peticion.body);
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+  const plantilla = crearPlantilla({ categoria, titulo, cuerpo });
+  respuesta.json({ ok: true, plantilla: { id: plantilla.id, titulo: plantilla.titulo } });
+});
+
+app.put('/api/admin/plantillas/:id', jsonDocumentoLegal, (peticion, respuesta) => {
+  const existente = buscarPlantillaPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Esa plantilla ya no existe.' });
+  }
+  const { categoria, titulo, cuerpo, errores } = validarPlantilla(peticion.body);
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+  const plantilla = actualizarPlantilla(existente.id, { categoria, titulo, cuerpo });
+  respuesta.json({ ok: true, plantilla: { id: plantilla.id, version: plantilla.version } });
+});
+
+app.delete('/api/admin/plantillas/:id', (peticion, respuesta) => {
+  const existente = buscarPlantillaPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Esa plantilla ya no existe.' });
+  }
+  eliminarPlantilla(existente.id);
+  respuesta.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------
+// Música (panel de administración). El admin sube una canción (audio
+// obligatorio + imagen opcional), la renombra, la reordena o la borra.
+// Los archivos van a CARPETA_DATOS/musica/ (ver servidor/musicaArchivos.js);
+// la tabla "canciones" solo guarda los metadatos.
+// ---------------------------------------------------------------------
+const LARGO_MAXIMO_TITULO_CANCION = 120;
+
+app.get('/api/admin/canciones', (peticion, respuesta) => {
+  const canciones = listarCanciones().map((c) => ({
+    id: c.id,
+    titulo: c.titulo,
+    orden: c.orden,
+    tieneImagen: !!c.archivo_imagen,
+    creadoEn: c.creado_en
+  }));
+  respuesta.json({ canciones });
+});
+
+// El middleware de subida (multer) se envuelve para traducir sus errores
+// (archivo muy grande, tipo no permitido) a un 400 con mensaje en español
+// en vez de dejar que caiga en el manejador de errores genérico como 500.
+app.post('/api/admin/canciones', (peticion, respuesta) => {
+  subidaDeCancion()(peticion, respuesta, async (errorSubida) => {
+    const audio = peticion.files?.audio?.[0];
+    const imagen = peticion.files?.imagen?.[0];
+
+    // Ante cualquier problema, hay que limpiar lo que multer ya haya
+    // escrito en disco para no dejar archivos huérfanos.
+    const limpiarArchivos = async () => {
+      if (audio) await borrarArchivoDeMusica(audio.filename);
+      if (imagen) await borrarArchivoDeMusica(imagen.filename);
+    };
+
+    if (errorSubida) {
+      await limpiarArchivos();
+      const mensaje =
+        errorSubida.code === 'LIMIT_FILE_SIZE'
+          ? 'El archivo es demasiado grande (el audio admite hasta 20 MB).'
+          : errorSubida.message || 'No se pudo subir el archivo.';
+      return respuesta.status(400).json({ error: mensaje });
+    }
+
+    const titulo = String(peticion.body?.titulo ?? '').trim();
+    if (!titulo) {
+      await limpiarArchivos();
+      return respuesta.status(400).json({ error: 'Escribe un título para la canción.' });
+    }
+    if (titulo.length > LARGO_MAXIMO_TITULO_CANCION) {
+      await limpiarArchivos();
+      return respuesta.status(400).json({
+        error: `El título es muy largo (máximo ${LARGO_MAXIMO_TITULO_CANCION} caracteres).`
+      });
+    }
+    if (!audio) {
+      await limpiarArchivos();
+      return respuesta.status(400).json({ error: 'Falta el archivo de audio.' });
+    }
+    if (imagen && imagen.size > LIMITE_IMAGEN_BYTES) {
+      await limpiarArchivos();
+      return respuesta.status(400).json({ error: 'La portada es muy grande (máximo 4 MB).' });
+    }
+
+    try {
+      const cancion = crearCancion({
+        titulo,
+        archivoAudio: audio.filename,
+        mimeAudio: audio.mimetype,
+        archivoImagen: imagen?.filename || null,
+        mimeImagen: imagen?.mimetype || null
+      });
+      respuesta.json({ ok: true, cancion: { id: cancion.id, titulo: cancion.titulo } });
+    } catch (error) {
+      console.error('Error en POST /api/admin/canciones:', error);
+      await limpiarArchivos();
+      respuesta.status(500).json({ error: 'No se pudo guardar la canción.' });
+    }
+  });
+});
+
+app.patch('/api/admin/canciones/:id', jsonEstandar, (peticion, respuesta) => {
+  const cancion = buscarCancionPorId(Number(peticion.params.id));
+  if (!cancion) {
+    return respuesta.status(404).json({ error: 'Esa canción ya no existe.' });
+  }
+
+  const { titulo, mover } = peticion.body ?? {};
+
+  if (mover === 'subir' || mover === 'bajar') {
+    moverCancion(cancion.id, mover);
+    return respuesta.json({ ok: true });
+  }
+
+  const tituloLimpio = String(titulo ?? '').trim();
+  if (!tituloLimpio) {
+    return respuesta.status(400).json({ error: 'El título no puede estar vacío.' });
+  }
+  if (tituloLimpio.length > LARGO_MAXIMO_TITULO_CANCION) {
+    return respuesta.status(400).json({
+      error: `El título es muy largo (máximo ${LARGO_MAXIMO_TITULO_CANCION} caracteres).`
+    });
+  }
+  renombrarCancion(cancion.id, tituloLimpio);
+  respuesta.json({ ok: true });
+});
+
+app.delete('/api/admin/canciones/:id', async (peticion, respuesta) => {
+  const fila = eliminarCancion(Number(peticion.params.id));
+  if (!fila) {
+    return respuesta.status(404).json({ error: 'Esa canción ya no existe.' });
+  }
+  await borrarArchivoDeMusica(fila.archivo_audio);
+  if (fila.archivo_imagen) await borrarArchivoDeMusica(fila.archivo_imagen);
+  respuesta.json({ ok: true });
+});
+
 app.listen(PUERTO, '0.0.0.0', () => {
   const ipLocal = obtenerIPLocal();
   console.log('El sistema está corriendo:');
@@ -888,4 +1350,25 @@ app.listen(PUERTO, '0.0.0.0', () => {
     console.log(`  - Desde tu celular (mismo WiFi que esta compu): http://${ipLocal}:${PUERTO}`);
   }
   console.log(`  - Duración de sesión: ${DIAS_DURACION_SESION} días.`);
+  iniciarRecordatoriosCalendario();
 });
+
+// Temporizador interno de los "Recordatorios del calendario": cada 30 min
+// revisa si a alguna suscripción ya le toca su aviso del día (hora local
+// >= 7 y no se le mandó hoy) y le manda el push. 30 min de margen está
+// bien: "a partir de las 7:00" no es al minuto, y el servicio de push
+// encola el mensaje si el equipo estaba apagado. En NODE_ENV=test no
+// arranca (para no mandar pushes de verdad desde una prueba). Si no hay
+// claves VAPID, tampoco: configurarWebPush() devuelve false.
+function iniciarRecordatoriosCalendario() {
+  if (process.env.NODE_ENV === 'test') return;
+  if (!configurarWebPush()) {
+    console.log('  - Recordatorios del calendario: desactivados (faltan claves VAPID).');
+    return;
+  }
+  console.log('  - Recordatorios del calendario: activos (barrido cada 30 min).');
+  const barrer = () => barrerYEnviar().catch((error) =>
+    console.error('recordatoriosCalendario: barrido falló:', error));
+  barrer();
+  setInterval(barrer, 30 * 60 * 1000);
+}

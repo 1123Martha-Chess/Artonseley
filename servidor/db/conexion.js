@@ -36,6 +36,7 @@ import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mkdirSync } from 'node:fs';
+import { PLANTILLAS_EJEMPLO } from '../plantillas/ejemplos.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CARPETA_DATOS = process.env.CARPETA_DATOS || path.join(__dirname, '..', '..', 'data');
@@ -121,6 +122,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     hash_contrasena TEXT NOT NULL,
+    nombre TEXT,
     rol TEXT NOT NULL DEFAULT 'abogado' CHECK (rol IN ('abogado', 'admin')),
     licencia_vence_en TEXT NOT NULL,
     activo INTEGER NOT NULL DEFAULT 1,
@@ -172,7 +174,84 @@ db.exec(`
     user_agent TEXT,
     creado_en TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  -- Canciones del apartado "Música". Solo metadatos: los archivos (audio e
+  -- imagen) viven en CARPETA_DATOS/musica/ (ver servidor/musicaArchivos.js),
+  -- junto a este mismo .db, para que en producción queden en el disco
+  -- persistente. archivo_audio / archivo_imagen guardan el nombre del archivo
+  -- dentro de esa carpeta. "orden" es el que decide el administrador para la
+  -- lista del reproductor.
+  CREATE TABLE IF NOT EXISTS canciones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo TEXT NOT NULL,
+    archivo_audio TEXT NOT NULL,
+    mime_audio TEXT NOT NULL,
+    archivo_imagen TEXT,
+    mime_imagen TEXT,
+    orden INTEGER NOT NULL DEFAULT 0,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  -- Suscripciones a las notificaciones Web Push de "Recordatorios del
+  -- calendario". Una fila por navegador/dispositivo donde el usuario activó
+  -- los recordatorios. NO guarda nada del calendario: solo lo que hace falta
+  -- para mandarle un "ping" diario (el navegador arma el aviso, con texto
+  -- fijo, sin contenido). offset_minutos = -new Date().getTimezoneOffset()
+  -- del dispositivo, para saber cuándo son las 7:00 a.m. en su hora local.
+  -- ultimo_envio = fecha local ('YYYY-MM-DD') del último push, para no
+  -- mandar más de uno por día.
+  CREATE TABLE IF NOT EXISTS suscripciones_push (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh TEXT NOT NULL,
+    auth TEXT NOT NULL,
+    offset_minutos INTEGER NOT NULL DEFAULT 0,
+    ultimo_envio TEXT,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  -- Valores económicos que usa la Calculadora Jurídica Financiera (salario
+  -- mínimo general y de la Frontera Norte, UMA). Es una tabla de una sola
+  -- fila (id = 1): el administrador la edita desde el panel. Mientras los
+  -- salarios mínimos valgan 0, la calculadora responde un aviso en vez de
+  -- calcular. El CHECK (id = 1) y el INSERT de abajo garantizan que la fila
+  -- exista siempre.
+  CREATE TABLE IF NOT EXISTS indices_economicos (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    anio INTEGER NOT NULL DEFAULT 0,
+    salario_minimo_general REAL NOT NULL DEFAULT 0,
+    salario_minimo_frontera_norte REAL NOT NULL DEFAULT 0,
+    uma REAL NOT NULL DEFAULT 0,
+    actualizado_en TEXT
+  );
+  INSERT OR IGNORE INTO indices_economicos (id) VALUES (1);
+
+  -- Biblioteca de "machotes" del Generador de Plantillas y Documentos.
+  -- Solo el texto de la plantilla (con marcadores {{clave}}) — NUNCA datos
+  -- de ningún cliente/expediente: esos viven cifrados en el navegador del
+  -- abogado (Fase 2). El administrador crea/edita/versiona las plantillas
+  -- desde el panel. "version" sube en cada edición.
+  CREATE TABLE IF NOT EXISTS plantillas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoria TEXT NOT NULL,
+    titulo TEXT NOT NULL,
+    cuerpo TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+    actualizado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
 `);
+
+// Siembra las plantillas de EJEMPLO la primera vez (tabla vacía). Si el
+// administrador las borra, no vuelven: la biblioteca real es suya.
+const totalPlantillas = db.prepare('SELECT COUNT(*) AS n FROM plantillas').get().n;
+if (totalPlantillas === 0) {
+  const insertarPlantilla = db.prepare('INSERT INTO plantillas (categoria, titulo, cuerpo) VALUES (?, ?, ?)');
+  for (const plantilla of PLANTILLAS_EJEMPLO) {
+    insertarPlantilla.run(plantilla.categoria, plantilla.titulo, plantilla.cuerpo);
+  }
+}
 
 // CREATE TABLE IF NOT EXISTS no le agrega columnas nuevas a una tabla
 // que ya existía de antes (ej. la primera vez que se corre este archivo
@@ -204,4 +283,14 @@ if (!yaTieneSuspendidoHasta) {
 const yaTieneEliminadoEn = columnasDeUsuarios.some(columna => columna.name === 'eliminado_en');
 if (!yaTieneEliminadoEn) {
   db.exec('ALTER TABLE usuarios ADD COLUMN eliminado_en TEXT');
+}
+
+// "nombre" es un apodo opcional que el usuario elige en "Mi cuenta"
+// (ver configuracion.html). Solo se usa para saludarlo por su nombre en
+// la pantalla de inicio (ver Sistema/frasesBienvenida.js); si está vacío,
+// el saludo muestra el texto literal "[user]". Se agregó después de que
+// la tabla "usuarios" ya existía, por eso va como ALTER TABLE aparte.
+const yaTieneNombre = columnasDeUsuarios.some(columna => columna.name === 'nombre');
+if (!yaTieneNombre) {
+  db.exec('ALTER TABLE usuarios ADD COLUMN nombre TEXT');
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugerencias - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="stylesheet" href="plataforma.css">
+</head>
+<body>
+    <!-- =========================================================
+         SUGERENCIAS: antes era el "Buzón de sugerencias", un panel
+         lateral que se abría desde Configuración ⚙️. Ahora es una
+         pantalla completa. El usuario escribe su sugerencia, elige qué
+         tan urgente la considera, y se manda con POST /api/sugerencias.
+         ========================================================= -->
+    <div class="pantalla">
+        <a href="index.html" class="volver">← Volver al inicio</a>
+        <h1>Sugerencias</h1>
+        <p class="pantalla-descripcion">¿Qué le hace falta al sistema? Cuéntanos y lo revisamos.</p>
+
+        <div class="bloque">
+            <h3>Tu sugerencia</h3>
+            <textarea id="textoSugerencia" class="campo-texto" rows="6" placeholder="Escribe tu sugerencia..."></textarea>
+
+            <h3>¿Qué tan urgente crees que es implementarlo?</h3>
+            <div id="opcionesUrgencia"></div>
+
+            <p>
+                <button id="botonEnviarSugerencia" class="boton-plataforma" type="button">Enviar sugerencia</button>
+            </p>
+            <p id="confirmacionSugerencia"></p>
+        </div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/paginaSugerencias.js"></script>
+</body>
+</html>

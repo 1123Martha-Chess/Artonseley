@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artonseley — Buscador</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <style>
+        * { box-sizing: border-box; }
+
+        /* Color de acento de la plataforma. Lo cambia manejaPersonalizacion.js
+           al elegir un modo distinto en Configuración; por ahora solo
+           existe el modo Azul, así que siempre vale esto. */
+        :root {
+            --color-primario: #2A6BAF;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f7f7f7;
+        }
+
+        /* =========================================================
+           BARRA SUPERIOR
+           Orden de izquierda a derecha:
+             1) .marca                    -> logo (enlace a la pantalla de inicio)
+             2) .barra-busqueda-superior  -> el buscador
+           Los accesos a Notificaciones y Configuración ya NO viven aquí:
+           están en la pantalla de inicio (las burbujas), a la que se vuelve
+           con el logo. Tenerlos también en esta barra era redundante y
+           estorbaba con la nueva interfaz.
+           ========================================================= */
+        .barra-superior {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .marca {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .logo-marca {
+            height: 60px;
+            width: auto;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        .logo-letras {
+            height: 38px;
+            width: auto;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        .barra-busqueda-superior {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .caja-busqueda {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .caja-busqueda input {
+            flex: 1;
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid #999;
+            border-radius: 8px;
+        }
+
+        .caja-busqueda button {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: white;
+            background: var(--color-primario);
+            border: 1px solid var(--color-primario);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .caja-busqueda button:hover {
+            filter: brightness(0.85);
+        }
+
+        /* Mensajes de estado que pinta buscadorPrincipal.js / sistemaDeBotones.js
+           mientras se espera al servidor o cuando algo falla, para que el
+           usuario nunca se quede viendo una pantalla en blanco sin explicación. */
+        .mensaje-carga {
+            color: #555;
+            font-style: italic;
+        }
+
+        .mensaje-error {
+            color: #b02b2b;
+            font-weight: bold;
+        }
+
+        /* En pantallas angostas (celulares) el sidebar de sectores ya no
+           flota a la izquierda de los resultados: pasa a ocupar todo el
+           ancho, arriba de los resultados, para que ambos sean usables sin
+           scroll horizontal. */
+        @media (max-width: 640px) {
+            .contenedor-principal {
+                flex-direction: column;
+            }
+
+            .barra-lateral {
+                width: 100%;
+                max-height: 40vh;
+                border-right: none;
+                border-bottom: 2px solid #cbd5e0;
+                padding-right: 0;
+                padding-bottom: 12px;
+                margin-bottom: 12px;
+            }
+
+            .barra-superior {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .barra-busqueda-superior {
+                order: 3;
+                flex-basis: 100%;
+            }
+
+            .logo-marca {
+                height: 30px;
+            }
+
+            .logo-letras {
+                height: 19px;
+            }
+        }
+
+        /* Texto de ayuda: una línea chica justo debajo de la barra superior. */
+        .texto-ayuda {
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            margin: 14px 20px;
+        }
+
+        /* =========================================================
+           CUERPO: sidebar de sectores (izquierda) + resultados (derecha)
+           ========================================================= */
+        .contenedor-principal {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            padding: 0 20px calc(30px + var(--altura-pie-legal, 46px)) 20px;
+        }
+
+        .barra-lateral {
+            width: 260px;
+            flex-shrink: 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 16px;
+            border-right: 2px solid #cbd5e0;
+        }
+
+        .titulo-sector {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .flecha-sector {
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .titulo-sector.abierto .flecha-sector {
+            transform: rotate(90deg);
+        }
+
+        .contenido-sector {
+            display: none;
+        }
+
+        .contenido-sector.abierto {
+            display: block;
+        }
+
+        .contenido-principal {
+            flex: 1;
+        }
+
+        .bloque-sector {
+            margin-bottom: 18px;
+            padding-left: 10px;
+            border-left: 3px solid #ddd;
+        }
+
+        .bloque-sector h3 {
+            margin: 10px 0 6px 0;
+            font-size: 15px;
+        }
+
+        .boton-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 4px 0;
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid #999;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .boton-checkbox::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            border: 1px solid #999;
+            border-radius: 3px;
+            background: white;
+        }
+
+        .boton-checkbox.activo {
+            background: var(--color-primario);
+            color: white;
+            border-color: var(--color-primario);
+        }
+
+        .boton-checkbox.activo::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: var(--color-primario);
+            border-color: white;
+        }
+
+        .boton-general {
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .boton-sector {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .boton-documento-sector {
+            margin-left: 12px;
+            width: calc(100% - 12px);
+        }
+
+        /* =========================================================
+           RESULTADOS: cada artículo en su propia tarjeta.
+           ========================================================= */
+        .tarjeta-articulo {
+            background: #eaf4fd;
+            border: 1px solid #bcdcf7;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .aviso-similares {
+            font-size: 13px;
+            font-style: italic;
+            color: #555;
+            margin: 0 0 12px 0;
+        }
+
+        .tarjeta-encabezado {
+            margin: 0 0 6px 0;
+            font-weight: bold;
+            font-size: 13px;
+            color: #1a4971;
+        }
+
+        .tarjeta-cuerpo {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.55;
+            color: #222;
+        }
+
+        /* Reemplaza el texto "Buscando…" mientras se espera la respuesta
+           del servidor: el ícono (redondo, sin el nombre) da vueltas sobre
+           su propio centro, en medio del espacio de resultados. */
+        @keyframes girar-logo-buscando {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo-buscando {
+            display: block;
+            width: 80px;
+            height: 80px;
+            margin: 50px auto;
+            border-radius: 50%;
+            animation: girar-logo-buscando 1.1s linear infinite;
+        }
+
+        /* Fijo en el pie de la pantalla: el aviso siempre queda a la vista
+           sin importar cuánto crezcan los resultados. .contenedor-principal
+           reserva el espacio de abajo que necesita (ver --altura-pie-legal,
+           que mide buscadorPrincipal.js) para que nada quede tapado. */
+        .pie-aviso-legal {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #777;
+            padding: 10px 20px;
+            border-top: 1px solid #e2e2e2;
+            z-index: 998;
+        }
+    </style>
+</head>
+<body>
+    <!-- =========================================================
+         BARRA SUPERIOR: logo (enlace al inicio) + buscador (centro).
+         ========================================================= -->
+    <header class="barra-superior">
+
+        <!-- El logo lleva de vuelta a la pantalla de inicio (las burbujas),
+             desde donde se llega a Notificaciones, Configuración y todo lo demás. -->
+        <a class="marca" href="index.html" title="Volver al inicio">
+            <img id="iconoMarca" class="logo-marca" src="imagenes/artonseley-logo-azul.jpg" alt="Ícono ARTONSELEY">
+            <img id="letrasMarca" class="logo-letras" src="imagenes/artonseley-letras-azul.png" alt="ARTONSELEY">
+        </a>
+
+        <div class="barra-busqueda-superior">
+            <div class="caja-busqueda">
+                <input type="text" id="campoPalabra" placeholder="Ej. robo, fraude, homicidio, amparo... o artículo 210" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <button id="botonBuscar">Buscar</button>
+            </div>
+        </div>
+    </header>
+
+    <p class="texto-ayuda">Escribe una palabra (o las primeras letras) para buscar por tema, o el número de un artículo (ej. "artículo 210") para ir directo a él. Presiona "Buscar" o Enter.</p>
+
+    <div class="contenedor-principal">
+        <!-- IZQUIERDA: sistemaDeBotones.js pinta aquí el botón general + los sectores -->
+        <aside id="contenedorSectores" class="barra-lateral"></aside>
+
+        <!-- DERECHA: resultados, en tarjetas (ver .tarjeta-articulo) -->
+        <main class="contenido-principal">
+            <div id="resultados"></div>
+        </main>
+    </div>
+
+    <footer class="pie-aviso-legal">
+        Este sistema es una herramienta de búsqueda y consulta; no sustituye la asesoría de un abogado certificado. Para decisiones legales concretas, consulta siempre con un profesional.
+    </footer>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/buscadorPrincipal.js"></script>
+</body>
+</html>

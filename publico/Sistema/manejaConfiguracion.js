@@ -79,7 +79,7 @@ export async function inicializarConfiguracion(idBotonConfig, idMenu) {
   const estaEnEditor = window.location.pathname.endsWith('/editor.html');
   let opcionesFinales = OPCIONES.map((opcion) => {
     if (estaEnEditor && opcion.pagina === 'editor.html') {
-      return { texto: 'Volver al Buscador', pagina: 'index.html' };
+      return { texto: 'Volver al Buscador', pagina: 'buscador.html' };
     }
     return opcion;
   });

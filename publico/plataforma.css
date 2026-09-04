@@ -1,0 +1,302 @@
+/* plataforma.css
+   -------------------------------------------------------------------
+   Estilo compartido por la pantalla de inicio (index.html) y las
+   pantallas completas que antes eran paneles laterales:
+   notificaciones.html, sugerencias.html y configuracion.html.
+
+   El buscador (buscador.html) NO usa este archivo: conserva su propio
+   <style> embebido, heredado de cuando era index.html.
+
+   Para agregar otra pantalla completa con este mismo estilo, copia
+   cualquiera de esas 3 y enlaza este archivo:
+       <link rel="stylesheet" href="plataforma.css">
+   ------------------------------------------------------------------- */
+
+* { box-sizing: border-box; }
+
+/* Color de acento de la plataforma. Lo cambia manejaPersonalizacion.js
+   (aplicarModoGuardado / renderizarPersonalizacionEn) según el modo
+   elegido; por ahora solo existe el modo Azul. */
+:root {
+  --color-primario: #2A6BAF;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #000;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   PANTALLA DE INICIO (index.html): saludo grande + burbujas
+   ========================================================= */
+.inicio {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 80px 24px;
+  text-align: center;
+}
+
+.inicio-marca {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 26px;
+}
+
+.inicio-marca img {
+  object-fit: contain;
+}
+
+/* Marca compacta: el ícono transparente ("PAGINA") y el nombre en trazo
+   grueso. El nombre lleva bastante menos altura que el ícono para que el
+   grosor del texto quede a la misma proporción visual. */
+.inicio-marca .logo-icono { height: 34px; }
+.inicio-marca .logo-letras { height: 18px; }
+
+/* El saludo aleatorio. Georgia y negro, como pidió el diseño. */
+.saludo {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #000;
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: normal;
+  margin: 0 0 40px 0;
+  line-height: 1.25;
+}
+
+.rejilla-accesos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  max-width: 900px;
+}
+
+/* Escritorio y Pestañas como botones PRINCIPALES: dos rectángulos anchos
+   y aplastados (poca altura), del mismo tamaño, centrados, encima de la
+   rejilla del resto. Las medidas van FIJAS en píxeles (no en %). El
+   cuadro arrancó en 300×200; el dueño pidió bajarle 80px de alto y
+   pasarlos al ancho -> 380×120, con el ícono y el texto en una sola fila
+   (no en columna) para que el aplastado se vea bien. */
+.acceso-principal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.burbuja-principal {
+  justify-content: center;
+  gap: 16px;
+  width: 380px;
+  height: 120px;
+  min-width: 0; /* anula el min-width de .burbuja para que quede a 380px exactos */
+  padding: 20px 28px;
+  border-width: 3px;
+  border-radius: 22px;
+  background: #eef4fb;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.burbuja-principal .burbuja-icono {
+  font-size: 40px;
+}
+
+@media (max-width: 600px) {
+  .acceso-principal { width: 100%; }
+  .burbuja-principal { width: 100%; height: 100px; }
+}
+
+/* Cada acceso: un rectángulo de esquinas redondeadas con su ícono y su
+   nombre, como en el boceto. */
+.burbuja {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 210px;
+  padding: 18px 26px;
+  background: white;
+  border: 2px solid var(--color-primario);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  text-decoration: none;
+  color: #000;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.burbuja:hover,
+.burbuja:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  outline: none;
+}
+
+.burbuja-icono {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   PANTALLAS COMPLETAS (notificaciones / sugerencias / configuración)
+   ========================================================= */
+.pantalla {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 80px 24px;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 22px;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: var(--color-primario);
+  text-decoration: none;
+}
+
+.volver:hover { text-decoration: underline; }
+
+.pantalla h1 {
+  font-size: 26px;
+  margin: 0 0 6px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #333;
+}
+
+.pantalla-descripcion {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #555;
+  margin: 0 0 26px 0;
+  line-height: 1.5;
+}
+
+/* Bloque blanco tipo "tarjeta" para agrupar secciones dentro de una
+   pantalla completa (Personalización, Mi cuenta, enlaces...). */
+.bloque {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.bloque h2 {
+  font-size: 17px;
+  margin: 0 0 12px 0;
+}
+
+.bloque h3 {
+  font-size: 15px;
+  margin: 0 0 8px 0;
+}
+
+.bloque p {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #444;
+}
+
+/* Lista de enlaces (Guía de Uso, Términos, Avisos...) dentro de un bloque. */
+.lista-enlaces {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lista-enlaces li { margin: 0; }
+
+.lista-enlaces a {
+  display: block;
+  padding: 11px 4px;
+  border-bottom: 1px solid #eee;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: var(--color-primario);
+  text-decoration: none;
+}
+
+.lista-enlaces li:last-child a { border-bottom: none; }
+.lista-enlaces a:hover { text-decoration: underline; }
+
+/* Botones e inputs genéricos de estas pantallas (Arial, no Georgia, para
+   que el texto de interacción se lea como interfaz y no como documento). */
+.boton-plataforma {
+  display: inline-block;
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: white;
+  background: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.boton-plataforma:hover { filter: brightness(0.9); }
+
+.boton-plataforma.secundario {
+  background: white;
+  color: var(--color-primario);
+}
+
+.campo-texto {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  border: 1px solid #999;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+textarea.campo-texto {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.mensaje-carga { color: #555; font-style: italic; font-family: Arial, sans-serif; }
+.mensaje-error { color: #b02b2b; font-weight: bold; font-family: Arial, sans-serif; }
+.mensaje-ok { color: #1a7a1a; font-family: Arial, sans-serif; font-size: 13px; }
+
+/* Botones tipo casilla (niveles de urgencia del buzón, selector de modo
+   de color). Copiados de index.html para no depender de su <style>. */
+.boton-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 6px 4px 0;
+  padding: 8px 14px;
+  background: white;
+  border: 1px solid #999;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+.boton-checkbox.activo {
+  background: var(--color-primario);
+  color: white;
+  border-color: var(--color-primario);
+}
+
+@media (max-width: 600px) {
+  .burbuja { min-width: 100%; }
+  .pantalla { padding: 28px 16px 60px 16px; }
+}

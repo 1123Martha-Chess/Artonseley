@@ -405,7 +405,7 @@
     <header class="barra-admin">
         <h1>Panel de administración</h1>
         <div>
-            <a href="index.html">← Ir al buscador</a>
+            <a href="index.html">← Volver al inicio</a>
             <button type="button" id="botonCerrarSesionAdmin">Cerrar sesión</button>
         </div>
     </header>
@@ -547,6 +547,88 @@
                 cuentas activas tal como estaban.
             </p>
             <div id="listaUsuariosEliminados"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Índices económicos (calculadora)</h2>
+            <p class="ayuda">
+                Valores que usa la <strong>Calculadora Jurídica Financiera</strong> para el tope de
+                2× salario mínimo. Actualízalos cuando el DOF publique los nuevos (el salario mínimo
+                y la UMA cambian una vez al año). Mientras los salarios mínimos estén en 0, la
+                calculadora no calcula: avisa que faltan los valores. El cambio surte efecto de
+                inmediato, sin reiniciar.
+            </p>
+            <form id="formularioIndices">
+                <label for="campoAnioIndices">Año de vigencia</label>
+                <input type="text" id="campoAnioIndices" inputmode="numeric" placeholder="Ej. 2026">
+
+                <label for="campoSmGeneral">Salario mínimo general (pesos por día)</label>
+                <input type="text" id="campoSmGeneral" inputmode="decimal" placeholder="Ej. 278.80">
+
+                <label for="campoSmFrontera">Salario mínimo Zona Libre de la Frontera Norte (pesos por día)</label>
+                <input type="text" id="campoSmFrontera" inputmode="decimal" placeholder="Ej. 419.88">
+
+                <label for="campoUma">UMA (pesos por día)</label>
+                <input type="text" id="campoUma" inputmode="decimal" placeholder="Ej. 113.14">
+
+                <button type="submit" class="boton-primario">Guardar índices</button>
+            </form>
+            <div id="resultadoIndices"></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Música</h2>
+            <p class="ayuda">
+                Canciones del apartado "Música". Sube el audio (obligatorio) y, si quieres, una
+                imagen de portada. El orden con ↑ / ↓ es el que verán los usuarios en la lista
+                del reproductor.
+            </p>
+            <div id="listaCancionesAdmin"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioCancion">
+                <label for="campoTituloCancion">Título de la canción</label>
+                <input type="text" id="campoTituloCancion" placeholder='ej. "Lounge relajado"' required>
+
+                <label for="archivoAudioCancion">Audio (mp3 u otro, máximo 20 MB)</label>
+                <input type="file" id="archivoAudioCancion" accept="audio/*" required>
+
+                <label for="archivoImagenCancion">Portada (imagen, opcional, máximo 4 MB)</label>
+                <input type="file" id="archivoImagenCancion" accept="image/*">
+
+                <button type="submit" class="boton-primario" id="botonSubirCancion">Agregar canción</button>
+            </form>
+            <div id="resultadoCancion"></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Plantillas de documentos</h2>
+            <p class="ayuda">
+                Biblioteca de machotes del <strong>Generador de Plantillas</strong>. Escribe el texto
+                de la plantilla y usa <code>{{marcadores}}</code> donde el abogado deba capturar un dato
+                (ej. <code>{{cliente.nombre}}</code>, <code>{{expediente.numero}}</code>). El sistema
+                arma solo el formulario a partir de esos marcadores. Solo texto — <strong>nunca</strong>
+                datos de clientes. Al guardar una plantilla existente sube su versión.
+            </p>
+            <div id="listaPlantillas"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioPlantilla">
+                <input type="hidden" id="campoIdPlantilla" value="">
+
+                <label for="campoCategoriaPlantilla">Categoría</label>
+                <input type="text" id="campoCategoriaPlantilla" list="listaCategoriasPlantilla" placeholder='Ej. "Contratos", "Demandas"' required>
+                <datalist id="listaCategoriasPlantilla"></datalist>
+
+                <label for="campoTituloPlantilla">Título</label>
+                <input type="text" id="campoTituloPlantilla" placeholder='Ej. "Contrato de arrendamiento"' required>
+
+                <label for="campoCuerpoPlantilla">Cuerpo de la plantilla</label>
+                <textarea id="campoCuerpoPlantilla" rows="14" placeholder="Texto del machote, con {{marcadores}} para los datos a capturar."></textarea>
+                <p class="ayuda" id="marcadoresDetectados" style="margin-top:6px;"></p>
+
+                <button type="submit" class="boton-primario" id="botonGuardarPlantilla">Guardar plantilla</button>
+                <button type="button" class="boton-secundario" id="botonCancelarPlantilla" style="margin-left:8px; display:none;">Cancelar edición</button>
+            </form>
+            <div id="resultadoPlantilla"></div>
         </section>
 
         <section class="tarjeta">

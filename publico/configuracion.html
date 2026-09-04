@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="stylesheet" href="plataforma.css">
+</head>
+<body>
+    <!-- =========================================================
+         CONFIGURACIÓN: antes era un menú desplegable del ícono ⚙️.
+         Ahora es una pantalla completa que reúne:
+           - Mi cuenta (por ahora solo el apodo del saludo del inicio).
+           - Personalización (el selector de modo de color; lo pinta
+             manejaPersonalizacion.js dentro de #personalizacion).
+           - Enlaces a la Guía de Uso, los Términos y los Avisos.
+           - El acceso al Panel de administración (solo si eres admin;
+             lo agrega paginaConfiguracion.js).
+           - Cerrar sesión.
+         "Mis cuadernos" y "Buzón de sugerencias" ya no viven aquí:
+         son sus propias burbujas en la pantalla de inicio.
+         ========================================================= -->
+    <div class="pantalla">
+        <a href="index.html" class="volver">← Volver al inicio</a>
+        <h1>Configuración</h1>
+        <p class="pantalla-descripcion">Tu cuenta y las preferencias de la plataforma.</p>
+
+        <div class="bloque">
+            <h2>Mi cuenta</h2>
+            <p>Sesión iniciada como <strong id="correoUsuario">…</strong>.</p>
+            <h3>Tu nombre</h3>
+            <p>El nombre o apodo con el que la pantalla de inicio te saluda. Si lo dejas vacío, el saludo mostrará <strong>[user]</strong>.</p>
+            <input type="text" id="campoNombre" class="campo-texto" maxlength="40" placeholder="Ej. Lic. Irineo" autocomplete="off">
+            <button type="button" id="botonGuardarNombre" class="boton-plataforma">Guardar nombre</button>
+            <p id="confirmacionNombre"></p>
+        </div>
+
+        <div class="bloque">
+            <h2>Personalización</h2>
+            <div id="personalizacion"></div>
+        </div>
+
+        <div class="bloque">
+            <h2>Calendario</h2>
+            <p>Para ahorrar espacio, el calendario puede borrar solo las notas que ya quedaron a más de un mes en el pasado. Los colores de los días no se borran. Desactivado por defecto.</p>
+            <label style="display:flex; align-items:flex-start; gap:8px; font-family:Arial, sans-serif; font-size:13px; line-height:1.4;">
+                <input type="checkbox" id="casillaBorradoCalendario">
+                Borrar automáticamente las notas del calendario con más de un mes de antigüedad.
+            </label>
+            <p id="confirmacionCalendario" class="mensaje-ok"></p>
+        </div>
+
+        <div class="bloque">
+            <h2>Recordatorios del calendario</h2>
+            <p>
+                Un aviso al día en tu computadora, a partir de las 7:00 a.m., para que no se te
+                olvide revisar tu calendario. <strong>Por privacidad, el aviso no muestra tus notas</strong>
+                (siguen cifradas): solo te recuerda entrar a verlas.
+            </p>
+            <label style="display:flex; align-items:flex-start; gap:8px; font-family:Arial, sans-serif; font-size:13px; line-height:1.4;">
+                <input type="checkbox" id="casillaRecordatorios">
+                Enviarme un recordatorio diario del calendario a este navegador.
+            </label>
+            <p id="estadoRecordatorios" class="mensaje-ok"></p>
+            <p style="font-family:Arial, sans-serif; font-size:12px; color:#777; line-height:1.5; margin-top:8px;">
+                Requiere que el navegador te dé permiso de notificaciones y que esté abierto (aunque sea
+                minimizado). Si tu computadora estuvo apagada, el aviso llega al encenderla. Solo funciona
+                en www.artonseley.site (no por una dirección de red local).
+            </p>
+        </div>
+
+        <div class="bloque">
+            <h2>Ayuda y documentos</h2>
+            <ul class="lista-enlaces">
+                <li><a href="guia-de-uso.html">Guía de Uso</a></li>
+                <li><a href="terminos-y-condiciones.html">Términos y condiciones</a></li>
+                <li><a href="avisos-de-privacidad.html">Avisos de privacidad</a></li>
+            </ul>
+        </div>
+
+        <div class="bloque" id="bloqueAdmin" hidden>
+            <h2>Administración</h2>
+            <ul class="lista-enlaces">
+                <li><a href="admin.html">Panel de administración</a></li>
+            </ul>
+        </div>
+
+        <div class="bloque">
+            <h2>Sesión</h2>
+            <button type="button" id="botonCerrarSesion" class="boton-plataforma secundario">Cerrar sesión</button>
+        </div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/paginaConfiguracion.js"></script>
+</body>
+</html>

@@ -13,3 +13,17 @@ Captura*.png
 # Referencias de diseño sueltas que no son parte del sitio (PDFs de
 # boceto, etc.) — se quedan en tu compu, no en el repo.
 *.pdf
+
+# Música de prueba suelta en la raíz. Las canciones reales del reproductor
+# se suben desde el panel de administración y viven en data/musica/ (ya
+# ignorado por la regla data/ de arriba), nunca en el repo.
+*.mp3
+
+# Bocetos/diagramas de diseño sueltos en la raíz (no son parte del sitio;
+# los .png reales del sitio están en publico/imagenes/ y no se ven afectados
+# por estas reglas ancladas con "/").
+/burbujas.png
+/cuadritosMios.png
+/cuadritosMiosEjemplo.png
+/musica.png
+/arquitectura_generador_plantillas.png

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <link rel="stylesheet" href="plataforma.css">
+</head>
+<body>
+    <!-- =========================================================
+         NOTIFICACIONES: antes era un panel lateral que se abría desde
+         el ícono 🔔. Ahora es una pantalla completa. El contenido
+         (leyes modificadas y avisos del administrador) sale de
+         GET /api/notificaciones, igual que antes.
+         ========================================================= -->
+    <div class="pantalla">
+        <a href="index.html" class="volver">← Volver al inicio</a>
+        <h1>Notificaciones</h1>
+        <p class="pantalla-descripcion">Avisos del sistema y leyes que se han modificado recientemente.</p>
+
+        <div id="listaNotificaciones" class="bloque">
+            <p class="mensaje-carga">Cargando…</p>
+        </div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/paginaNotificaciones.js"></script>
+</body>
+</html>

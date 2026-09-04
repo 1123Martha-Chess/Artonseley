@@ -4,17 +4,20 @@
 // ni Introduccion_De_Palabras.js: esos ahora viven solo en el servidor
 // (carpeta servidor/), y nunca se le mandan al navegador.
 //
-// Este archivo solo:
-//   1) Pinta los sectores, notificaciones y configuración (igual que antes).
+// Punto de entrada de buscador.html (antes era index.html; el buscador
+// se mudó a su propia página cuando index.html pasó a ser la pantalla de
+// inicio con las "burbujas"). Este archivo solo:
+//   1) Pinta los sectores en el sidebar y aplica el color de la plataforma.
 //   2) Manda lo que escribe el usuario a POST /api/buscar.
 //   3) Pinta la respuesta que regresa el servidor, ya lista.
+//
+// Notificaciones, buzón de sugerencias y configuración ya no son paneles
+// de esta página: son páginas completas propias (los íconos de la barra
+// superior son enlaces directos a ellas).
 // -------------------------------------------------------------------
 
 import { inicializarSistemaDeBotones, obtenerDocumentosSeleccionados } from './sistemaDeBotones.js';
-import { inicializarSugerencias } from './manejaSugerencias.js';
-import { inicializarConfiguracion } from './manejaConfiguracion.js';
-import { inicializarBuzonSugerencias } from './manejaBuzonSugerencias.js';
-import { inicializarPersonalizacion, obtenerModoActual } from './manejaPersonalizacion.js';
+import { aplicarModoGuardado, obtenerModoActual } from './manejaPersonalizacion.js';
 import { pintarResultados } from './pintarResultadosBusqueda.js';
 
 console.log('buscadorPrincipal.js (cliente) se cargó correctamente.');
@@ -23,26 +26,12 @@ const campoPalabra = document.getElementById('campoPalabra');
 const botonBuscar = document.getElementById('botonBuscar');
 const contenedorResultados = document.getElementById('resultados');
 
-// Los paneles de 🔔/⚙️ (ver .panel-sugerencias en index.html) necesitan
-// saber cuánto mide la barra superior de verdad para empezar justo
-// debajo de ella y no taparla. Antes ese alto estaba fijo en la hoja de
-// estilos (60px), así que se desajustaba cada vez que la barra cambiaba
-// de tamaño (el logo se agrandó, o la pantalla es angosta y la barra se
-// parte en dos líneas). Con ResizeObserver, --altura-barra-superior se
-// actualiza sola cada vez que la barra cambia de alto por cualquier motivo.
-const barraSuperior = document.querySelector('.barra-superior');
-if (barraSuperior) {
-  const actualizarAlturaBarraSuperior = () => {
-    document.documentElement.style.setProperty('--altura-barra-superior', `${barraSuperior.offsetHeight}px`);
-  };
-  actualizarAlturaBarraSuperior();
-  new ResizeObserver(actualizarAlturaBarraSuperior).observe(barraSuperior);
-}
-
-// Mismo motivo, pero con el pie de página (ver .pie-aviso-legal): ahora
-// que queda fijo abajo de la pantalla en vez de al final del documento,
-// .contenedor-principal y los paneles necesitan --altura-pie-legal para
-// reservarle su espacio y que no tape nada.
+// El pie de aviso legal (ver .pie-aviso-legal) queda fijo abajo de la
+// pantalla en vez de al final del documento, así que .contenedor-principal
+// necesita --altura-pie-legal para reservarle su espacio y que no tape la
+// última tarjeta de resultados. Con ResizeObserver se actualiza sola cada
+// vez que el pie cambia de alto (por ejemplo al partirse en dos líneas en
+// una pantalla angosta).
 const pieAvisoLegal = document.querySelector('.pie-aviso-legal');
 if (pieAvisoLegal) {
   const actualizarAlturaPieLegal = () => {
@@ -52,17 +41,14 @@ if (pieAvisoLegal) {
   new ResizeObserver(actualizarAlturaPieLegal).observe(pieAvisoLegal);
 }
 
+aplicarModoGuardado();
 inicializarSistemaDeBotones('contenedorSectores');
-inicializarSugerencias('botonSugerencias', 'panelSugerencias');
-inicializarBuzonSugerencias();
-inicializarPersonalizacion();
-inicializarConfiguracion('botonConfiguracion', 'menuConfiguracion');
 
 if (!campoPalabra || !botonBuscar || !contenedorResultados) {
   console.error(
     'buscadorPrincipal.js: no encontré uno o más elementos en el HTML. ' +
     `campoPalabra=${!!campoPalabra}, botonBuscar=${!!botonBuscar}, resultados=${!!contenedorResultados}. ` +
-    'Revisa que index.html tenga exactamente esos ids.'
+    'Revisa que buscador.html tenga exactamente esos ids.'
   );
 } else {
   botonBuscar.addEventListener('click', () => procesarBusqueda(campoPalabra.value));

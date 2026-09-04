@@ -43,6 +43,15 @@ export function actualizarLicencia(usuarioId, licenciaVenceEn) {
   db.prepare('UPDATE usuarios SET licencia_vence_en = ? WHERE id = ?').run(licenciaVenceEn, usuarioId);
 }
 
+// Apodo opcional que el usuario elige en "Mi cuenta" (ver configuracion.html):
+// solo sirve para el saludo de la pantalla de inicio. Un valor vacío o solo
+// con espacios se guarda como NULL, para que el saludo vuelva a mostrar el
+// texto literal "[user]".
+export function actualizarNombre(usuarioId, nombre) {
+  const limpio = String(nombre ?? '').trim();
+  db.prepare('UPDATE usuarios SET nombre = ? WHERE id = ?').run(limpio || null, usuarioId);
+}
+
 // Suspender/reactivar es independiente de la licencia: sirve para
 // cortarle el acceso a alguien de inmediato (ej. dejó de pagar antes de
 // que venza su licencia, o hay que investigar algo) sin tener que tocar
