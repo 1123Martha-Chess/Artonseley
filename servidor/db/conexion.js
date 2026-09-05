@@ -130,6 +130,7 @@ db.exec(`
     eliminado_en TEXT,
     intentos_fallidos INTEGER NOT NULL DEFAULT 0,
     bloqueado_hasta TEXT,
+    limite_sesiones INTEGER,
     creado_en TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
@@ -293,4 +294,15 @@ if (!yaTieneEliminadoEn) {
 const yaTieneNombre = columnasDeUsuarios.some(columna => columna.name === 'nombre');
 if (!yaTieneNombre) {
   db.exec('ALTER TABLE usuarios ADD COLUMN nombre TEXT');
+}
+
+// "limite_sesiones": cuántas sesiones simultáneas (dispositivos con
+// sesión iniciada a la vez) se le permiten a ESTA cuenta en particular.
+// NULL (el valor de siempre, para toda cuenta que el admin nunca ha
+// tocado) significa "usa LIMITE_SESIONES_POR_DEFECTO" (ver
+// servidor/config.js) — así, si ese valor por defecto cambia más
+// adelante, se aplica también a las cuentas sin ajuste propio.
+const yaTieneLimiteSesiones = columnasDeUsuarios.some(columna => columna.name === 'limite_sesiones');
+if (!yaTieneLimiteSesiones) {
+  db.exec('ALTER TABLE usuarios ADD COLUMN limite_sesiones INTEGER');
 }

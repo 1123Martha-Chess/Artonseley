@@ -30,7 +30,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { obtenerDocumentosDisponibles, invalidarCacheDeLeyes } from './servidor/LectorDeJSON.js';
 import { procesarBusqueda } from './servidor/procesarBusqueda.js';
-import { SECRETO_COOKIES, DIAS_DURACION_SESION, MINUTOS_BLOQUEO_LOGIN, CONFIA_EN_PROXY, VAPID_PUBLICA, TOKEN_TAREAS } from './servidor/config.js';
+import { SECRETO_COOKIES, DIAS_DURACION_SESION, MINUTOS_BLOQUEO_LOGIN, LIMITE_SESIONES_POR_DEFECTO, CONFIA_EN_PROXY, VAPID_PUBLICA, TOKEN_TAREAS } from './servidor/config.js';
 import {
   buscarUsuarioPorEmail,
   buscarUsuarioPorId,
@@ -43,11 +43,12 @@ import {
   suspenderUsuario,
   reactivarUsuario,
   moverUsuarioAPapelera,
-  restaurarUsuarioDePapelera
+  restaurarUsuarioDePapelera,
+  fijarLimiteSesiones
 } from './servidor/db/usuarios.js';
 import { calcularVigenciaLicencia } from './servidor/calcularVigenciaLicencia.js';
 import { manejarPaginaLegal } from './servidor/paginasLegales.js';
-import { crearSesion, borrarSesion, borrarSesionesDeUsuario } from './servidor/db/sesiones.js';
+import { crearSesion, borrarSesion, borrarSesionesDeUsuario, contarSesionesActivasDeUsuario } from './servidor/db/sesiones.js';
 import { verificarContrasena, hashContrasena } from './servidor/auth/contrasenas.js';
 import {
   requiereSesionAPI,
@@ -361,6 +362,23 @@ app.post('/api/login', limitadorLogin, jsonEstandar, (peticion, respuesta) => {
   }
 
   resetearIntentosFallidos(usuario.id);
+
+  // Límite de sesiones simultáneas: cada login exitoso deja una fila en
+  // "sesiones" (ver crearSesion) y cada logout la borra (ver
+  // POST /api/logout), así que contar las filas vivas de este usuario
+  // YA equivale al "contador de dispositivos conectados" sin necesitar
+  // una columna aparte que sumar/restar a mano — no puede quedar
+  // desincronizado ni volverse negativo. limite_sesiones es el ajuste
+  // por cuenta que hace el admin (ver POST /api/admin/usuarios/:id/limite-sesiones);
+  // NULL usa LIMITE_SESIONES_POR_DEFECTO.
+  const limiteSesiones = usuario.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO;
+  if (contarSesionesActivasDeUsuario(usuario.id) >= limiteSesiones) {
+    return respuesta.status(409).json({
+      error: 'Lo sentimos, pero esta cuenta ya está siendo usada, cierre sesión o comuníquese ' +
+        'con artonseley.contacto@gmail.com si se ha olvidado de cerrar sesión y perdió acceso a la cuenta'
+    });
+  }
+
   const { token, expiraEn } = crearSesion(usuario.id);
   fijarCookieDeSesion(respuesta, token, expiraEn);
 
@@ -740,7 +758,15 @@ function usuarioAJSON(usuario) {
     rol: usuario.rol,
     licenciaVenceEn: usuario.licencia_vence_en,
     licenciaVigente: new Date(usuario.licencia_vence_en) > new Date(),
-    creadoEn: usuario.creado_en
+    creadoEn: usuario.creado_en,
+    // Límite de sesiones simultáneas (ver la Cláusula 2.7 de los
+    // Términos): sesionesActivas se cuenta al momento de responder (igual
+    // criterio que licenciaVigente, arriba), nunca queda desactualizado.
+    // limiteSesiones es el valor crudo (null = "usa el de por defecto");
+    // limiteSesionesEfectivo ya resuelve ese null para pintarlo directo.
+    sesionesActivas: contarSesionesActivasDeUsuario(usuario.id),
+    limiteSesiones: usuario.limite_sesiones,
+    limiteSesionesEfectivo: usuario.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO
   };
 }
 
@@ -852,6 +878,61 @@ app.post('/api/admin/usuarios/:id/restaurar', (peticion, respuesta) => {
   }
 
   restaurarUsuarioDePapelera(id);
+  respuesta.json({ ok: true });
+});
+
+// Ajusta cuántas sesiones simultáneas (dispositivos con sesión iniciada
+// a la vez) se le permiten a ESTA cuenta — pensado para cuando el dueño
+// necesite subirle el límite a alguien en particular. "limite" vacío o
+// null vuelve a dejar la cuenta en LIMITE_SESIONES_POR_DEFECTO. Cambiar
+// este número SIEMPRE cierra de inmediato todas las sesiones activas de
+// la cuenta (ver borrarSesionesDeUsuario), tanto si sube como si baja:
+// así lo pidió el dueño, para que la cuenta quede en un estado limpio y
+// conocido en vez de arrastrar sesiones que contaban contra el límite
+// anterior. Esto NO ocurre cuando es el propio usuario quien cierra
+// sesión desde uno de sus dispositivos (eso solo borra esa sesión).
+app.post('/api/admin/usuarios/:id/limite-sesiones', jsonEstandar, (peticion, respuesta) => {
+  const id = Number(peticion.params.id);
+  const usuario = buscarUsuarioPorId(id);
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+
+  const { limite } = peticion.body ?? {};
+  let limiteLimpio = null;
+  if (limite !== null && limite !== undefined && limite !== '') {
+    limiteLimpio = Number(limite);
+    if (!Number.isInteger(limiteLimpio) || limiteLimpio < 1 || limiteLimpio > 1000) {
+      return respuesta.status(400).json({
+        error: 'El límite debe ser un número entero de 1 a 1000, o déjalo vacío para usar el valor por defecto.'
+      });
+    }
+  }
+
+  fijarLimiteSesiones(id, limiteLimpio);
+  borrarSesionesDeUsuario(id);
+
+  respuesta.json({
+    ok: true,
+    limiteSesiones: limiteLimpio,
+    limiteSesionesEfectivo: limiteLimpio ?? LIMITE_SESIONES_POR_DEFECTO
+  });
+});
+
+// Cierra de inmediato todas las sesiones activas de una cuenta, SIN
+// tocar su límite — para cuando a alguien "se le olvidó" cerrar sesión
+// en otro dispositivo y por eso el login le dice que la cuenta ya está
+// en uso. Libera todos los cupos de una vez (no hay forma de cerrar solo
+// una sesión puntual desde el panel, porque el admin no sabe cuál es
+// cuál — no se identifica ni se distingue el dispositivo de cada sesión).
+app.post('/api/admin/usuarios/:id/cerrar-sesiones', (peticion, respuesta) => {
+  const id = Number(peticion.params.id);
+  const usuario = buscarUsuarioPorId(id);
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+
+  borrarSesionesDeUsuario(id);
   respuesta.json({ ok: true });
 });
 

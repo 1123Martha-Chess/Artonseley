@@ -22,7 +22,8 @@ export function buscarUsuarioPorId(id) {
 
 export function listarUsuarios() {
   return db.prepare(`
-    SELECT id, email, rol, licencia_vence_en, activo, suspendido_hasta, eliminado_en, creado_en
+    SELECT id, email, rol, licencia_vence_en, activo, suspendido_hasta, eliminado_en,
+           limite_sesiones, creado_en
     FROM usuarios
     ORDER BY creado_en DESC
   `).all();
@@ -83,6 +84,19 @@ export function moverUsuarioAPapelera(usuarioId) {
 
 export function restaurarUsuarioDePapelera(usuarioId) {
   db.prepare('UPDATE usuarios SET activo = 1, suspendido_hasta = NULL, eliminado_en = NULL WHERE id = ?').run(usuarioId);
+}
+
+// Límite de sesiones simultáneas que el admin fija a mano para ESTA
+// cuenta (ver POST /api/admin/usuarios/:id/limite-sesiones en
+// servidor.js). "limite" en null vuelve a dejar la cuenta en el valor
+// por defecto (LIMITE_SESIONES_POR_DEFECTO, ver servidor/config.js).
+// Quien llama a esto también debe borrar las sesiones activas del
+// usuario (ver borrarSesionesDeUsuario en sesiones.js), tal como pidió
+// el dueño: cambiar este número deja la cuenta en un estado limpio y
+// conocido en vez de arrastrar sesiones que ya contaban contra el límite
+// anterior.
+export function fijarLimiteSesiones(usuarioId, limite) {
+  db.prepare('UPDATE usuarios SET limite_sesiones = ? WHERE id = ?').run(limite, usuarioId);
 }
 
 // Se llama cuando la contraseña escrita en el login NO es correcta.

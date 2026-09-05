@@ -26,6 +26,15 @@ export const DIAS_DURACION_SESION = Number(process.env.DIAS_DURACION_SESION || 7
 export const LIMITE_INTENTOS_LOGIN = Number(process.env.LIMITE_INTENTOS_LOGIN || 5);
 export const MINUTOS_BLOQUEO_LOGIN = Number(process.env.MINUTOS_BLOQUEO_LOGIN || 15);
 
+// Cuántas sesiones (dispositivos/navegadores con sesión iniciada a la vez)
+// se permiten por cuenta antes de que el login rechace uno más. Es "por
+// lo mientras" 2 — el propio dueño puede pedir que cambie más adelante,
+// así que vive aquí como variable de entorno y no como número fijo en el
+// código. Una cuenta concreta puede tener su propio límite distinto (ver
+// usuarios.limite_sesiones en servidor/db/usuarios.js): este valor solo
+// aplica cuando esa columna está vacía (NULL).
+export const LIMITE_SESIONES_POR_DEFECTO = Number(process.env.LIMITE_SESIONES_POR_DEFECTO || 2);
+
 // Actívalo (CONFIA_EN_PROXY=1) SOLO si el hosting pone un proxy/balanceador
 // propio delante de tu app (Render, Railway, cPanel con Passenger, Cloudflare,
 // nginx, etc. — es el caso normal en PaaS). Sin esto, Express ve la IP del

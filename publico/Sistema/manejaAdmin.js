@@ -753,6 +753,22 @@ function celdaLicencia(u) {
   return celda;
 }
 
+// "1 / 2" (sesiones activas / límite efectivo). Si el límite fue ajustado
+// a mano para esta cuenta (limiteSesiones no es null), lo marca aparte
+// para que no se confunda con el valor por defecto de todas las demás.
+function celdaSesiones(u) {
+  const celda = document.createElement('td');
+  celda.textContent = `${u.sesionesActivas} / ${u.limiteSesionesEfectivo}`;
+  if (u.limiteSesiones !== null) {
+    const etiqueta = document.createElement('span');
+    etiqueta.classList.add('etiqueta-estado', 'etiqueta-suspendida');
+    etiqueta.textContent = 'personalizado';
+    etiqueta.style.marginLeft = '6px';
+    celda.appendChild(etiqueta);
+  }
+  return celda;
+}
+
 function pintarTabla(contenedor, columnas, filas) {
   contenedor.innerHTML = '';
   if (filas.length === 0) {
@@ -777,7 +793,7 @@ async function cargarCuentas() {
 
     pintarTabla(
       contenedorActivas,
-      ['Correo', 'Rol', 'Registrado', 'Licencia vence'],
+      ['Correo', 'Rol', 'Registrado', 'Licencia vence', 'Sesiones'],
       activos.map(u => {
         const fila = document.createElement('tr');
         const celdaCorreo = document.createElement('td');
@@ -790,15 +806,18 @@ async function cargarCuentas() {
         const celdaAcciones = document.createElement('td');
         const contenedorBotones = document.createElement('div');
         contenedorBotones.style.display = 'flex';
+        contenedorBotones.style.flexWrap = 'wrap';
         contenedorBotones.style.gap = '6px';
         contenedorBotones.append(
           pintarBotonAccion('Renovar licencia', 'boton-secundario', () => renovarLicencia(u)),
+          pintarBotonAccion('Cambiar límite', 'boton-secundario', () => cambiarLimiteSesiones(u)),
+          pintarBotonAccion('Cerrar sesiones', 'boton-peligro', () => cerrarSesionesCuenta(u)),
           pintarBotonAccion('Suspender', 'boton-peligro', () => suspenderCuenta(u)),
           pintarBotonAccion('Eliminar', 'boton-peligro', () => eliminarCuenta(u))
         );
         celdaAcciones.appendChild(contenedorBotones);
 
-        fila.append(celdaCorreo, celdaRol, celdaRegistrado, celdaLicencia(u), celdaAcciones);
+        fila.append(celdaCorreo, celdaRol, celdaRegistrado, celdaLicencia(u), celdaSesiones(u), celdaAcciones);
         return fila;
       })
     );
@@ -885,6 +904,55 @@ async function renovarLicencia(usuario) {
       `Licencia de "${usuario.email}" actualizada: ahora vence el ${new Date(datos.licenciaVenceEn).toLocaleDateString('es-MX')}.`,
       'exito'
     );
+    await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function cambiarLimiteSesiones(usuario) {
+  const resultado = await abrirModal({
+    titulo: 'Cambiar límite de sesiones',
+    mensaje: `"${usuario.email}" tiene ${usuario.sesionesActivas} de ${usuario.limiteSesionesEfectivo} sesiones activas ahora mismo. Escribe el nuevo límite para esta cuenta, o déjalo vacío para volver al valor por defecto. Esto cerrará de inmediato TODAS sus sesiones activas, en todos los dispositivos.`,
+    etiquetaCampo: 'Nuevo límite (vacío = usar el valor por defecto)',
+    placeholderCampo: 'ej. 2',
+    textoConfirmar: 'Guardar y cerrar sus sesiones',
+    claseBotonConfirmar: 'boton-peligro',
+    validar(valorCampo) {
+      if (!valorCampo) return null;
+      const limite = Number(valorCampo);
+      if (!Number.isInteger(limite) || limite < 1 || limite > 1000) {
+        return 'Escribe un número entero de 1 a 1000, o déjalo vacío.';
+      }
+      return null;
+    }
+  });
+  if (!resultado) return;
+
+  try {
+    await peticionAdmin(`/api/admin/usuarios/${usuario.id}/limite-sesiones`, {
+      method: 'POST',
+      body: JSON.stringify({ limite: resultado.valorCampo || null })
+    });
+    mostrarAviso(`Límite de sesiones de "${usuario.email}" actualizado. Se cerraron todas sus sesiones activas.`, 'exito');
+    await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function cerrarSesionesCuenta(usuario) {
+  const resultado = await abrirModal({
+    titulo: 'Cerrar sesiones',
+    mensaje: `¿Cerrar de inmediato TODAS las sesiones activas de "${usuario.email}" (${usuario.sesionesActivas} ahora mismo), en todos sus dispositivos? Su límite de sesiones no cambia; solo queda libre para volver a iniciar sesión.`,
+    textoConfirmar: 'Cerrar sesiones',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+
+  try {
+    await peticionAdmin(`/api/admin/usuarios/${usuario.id}/cerrar-sesiones`, { method: 'POST' });
+    mostrarAviso(`Se cerraron todas las sesiones de "${usuario.email}".`, 'exito');
     await cargarCuentas();
   } catch (error) {
     mostrarAviso(error.message);

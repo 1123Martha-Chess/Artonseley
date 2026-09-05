@@ -853,3 +853,125 @@ guardados. Se cambió en `publico/Sistema/plantillasPrincipal.js` →
 `pintarFormulario()`: el `<form>` usa `no-autocompletar-formulario-plantilla`
 y cada `<input>` usa `no-autocompletar-<clave del marcador>` (un valor
 distinto por campo).
+
+---
+
+# Etapa 9 — Límite de sesiones simultáneas por cuenta
+
+Fecha: 2026-09-05. **Tampoco subido a GitHub (hasta el commit de esta etapa).**
+
+El dueño pidió una función para que una misma cuenta no se pueda usar desde
+más dispositivos de los permitidos al mismo tiempo. Su idea original era un
+contador manual (+1 al iniciar sesión, -1 al cerrarla) guardado en la
+licencia. Al revisar el código encontramos que **ya existe una tabla
+`sesiones`** con una fila por dispositivo con sesión iniciada (se borra sola
+al cerrar sesión o al expirar) — así que en vez de un contador aparte que se
+pudiera desincronizar, el "valor" que pidió el dueño se calcula **contando
+esas filas en el momento**: llega a 0 solo, nunca hace falta "avisar al
+servidor" por un valor negativo porque `COUNT()` no puede dar negativo.
+Le expliqué esto al dueño como cambio de implementación, NO de comportamiento
+— el resultado que ve es exactamente el que pidió.
+
+## Decisiones del dueño (Etapa 9)
+
+- Tope de 2 sesiones simultáneas por cuenta por defecto; el admin puede
+  fijarle a una cuenta en particular el límite que quiera (sin tope superior
+  impuesto, más allá de una validación técnica de 1 a 1000).
+- Mensaje exacto al rechazar un login que ya llegó al tope: "Lo sentimos,
+  pero esta cuenta ya está siendo usada, cierre sesión o comuníquese con
+  artonseley.contacto@gmail.com si se ha olvidado de cerrar sesión y perdió
+  acceso a la cuenta".
+- El admin puede: (a) cambiar el límite de una cuenta, (b) cerrar de golpe
+  todas sus sesiones activas sin tocar el límite (para el caso de "se me
+  olvidó cerrar sesión en otro dispositivo"). Cualquiera de las dos SIEMPRE
+  cierra todas las sesiones de esa cuenta de inmediato — el propio dueño lo
+  pidió así, para que la cuenta quede en un estado limpio y conocido. Un
+  cierre de sesión que hace el propio usuario (no el admin) solo afecta a esa
+  sesión, no a las demás.
+- No se rastrea ni se guarda EN NINGÚN LADO si el usuario está conectado en
+  un momento preciso, ni horarios de uso, ni desde qué dispositivos tiene
+  sesión iniciada — solo se cuenta cuántas sesiones vivas tiene ahora mismo,
+  y ese conteo se descarta en cuanto la sesión se borra (por logout o por
+  expirar). Esto se agregó como Cláusula 2.7 de los Términos y una viñeta
+  nueva ("Conteo de sesiones activas") en la Sección II del Aviso de
+  Privacidad, redactadas por mí siguiendo el dictado del dueño (a diferencia
+  de la Calculadora/Plantillas, donde el dueño prefirió redactar él mismo y
+  yo solo dejé una nota `PENDIENTE`).
+
+## Cómo funciona
+
+Cada login exitoso ya dejaba una fila en `sesiones` (`crearSesion`) y cada
+logout ya la borraba (`borrarSesion`) — eso no cambió. Lo nuevo:
+
+1. `POST /api/login`, después de verificar la contraseña: cuenta las filas
+   vivas del usuario en `sesiones` (`contarSesionesActivasDeUsuario`, compara
+   `expira_en` como texto ISO 8601 contra `new Date().toISOString()`, mismo
+   criterio de comparación que ya usaba `obtenerSesionValida` en JS) contra
+   `usuarios.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO` (2, variable de
+   entorno). Si ya llegó al límite, `409` con el mensaje exacto de arriba;
+   si no, crea la sesión normalmente.
+2. `usuarios.limite_sesiones` (columna nueva, `NULL` = "usa el valor por
+   defecto") se ajusta con `POST /api/admin/usuarios/:id/limite-sesiones`
+   (`{ limite }`, vacío/null = volver al valor por defecto; valida entero de
+   1 a 1000) — y esa ruta llama `borrarSesionesDeUsuario` de una vez.
+3. `POST /api/admin/usuarios/:id/cerrar-sesiones` hace lo mismo
+   (`borrarSesionesDeUsuario`) sin tocar el límite — el botón "para cuando
+   se le olvidó cerrar sesión".
+4. `GET /api/admin/usuarios` ahora manda `sesionesActivas`, `limiteSesiones`
+   (crudo) y `limiteSesionesEfectivo` por cada cuenta.
+5. Panel (`admin.html` → "Usuarios y licencias"): nueva columna "Sesiones"
+   ("1 / 2", con etiqueta "personalizado" si el admin ya le tocó el límite a
+   esa cuenta) y dos botones nuevos por fila: "Cambiar límite" y "Cerrar
+   sesiones" (ambos con su modal de confirmación, mismo patrón que
+   "Suspender"/"Renovar licencia").
+
+## Archivos MODIFICADOS
+
+| Archivo | Cambio |
+|---|---|
+| `servidor/config.js` | `LIMITE_SESIONES_POR_DEFECTO` (variable de entorno, por defecto 2). |
+| `.env.example` | Línea `LIMITE_SESIONES_POR_DEFECTO=`. |
+| `servidor/db/conexion.js` | Columna `usuarios.limite_sesiones INTEGER` (en el `CREATE TABLE` + `ALTER TABLE` para bases existentes, mismo patrón que `nombre`). |
+| `servidor/db/sesiones.js` | Nueva `contarSesionesActivasDeUsuario(usuarioId)`. |
+| `servidor/db/usuarios.js` | `listarUsuarios()` incluye `limite_sesiones`; nueva `fijarLimiteSesiones(usuarioId, limite)`. |
+| `servidor.js` | `POST /api/login` valida el límite antes de crear la sesión; `usuarioAJSON` incluye `sesionesActivas`/`limiteSesiones`/`limiteSesionesEfectivo`; nuevas rutas `POST /api/admin/usuarios/:id/limite-sesiones` y `POST /api/admin/usuarios/:id/cerrar-sesiones` (ambas bajo el mismo `requiereSesionAPI` + `requiereAdmin` que el resto de `/api/admin`). |
+| `publico/admin.html` | Párrafo de ayuda de "Usuarios y licencias" actualizado. |
+| `publico/Sistema/manejaAdmin.js` | Columna "Sesiones" (`celdaSesiones`) + botones/funciones `cambiarLimiteSesiones` / `cerrarSesionesCuenta` en la tabla de cuentas activas. |
+| `Terminos_y_Condiciones_Artonseley.md` | Nueva Cláusula 2.7 (Límite de sesiones simultáneas). |
+| `Aviso_de_Privacidad_Artonseley.md` | Nueva viñeta "Conteo de sesiones activas" en la Sección II. |
+| `CLAUDE.md` | Nuevo bullet bajo `servidor.js` documentando sesiones/límite. |
+
+## Archivos AGREGADOS / ELIMINADOS
+
+Ninguno (todo se apoyó en la tabla `sesiones` que ya existía).
+
+## Verificado (Etapa 9)
+
+`node --check` de todos los archivos JS tocados: OK. Servidor de prueba
+(`PORT=3998`, `CARPETA_DATOS` en una base aparte en scratch, usuarios de
+prueba y base **ya borrados**), todo con `curl`:
+
+- 1er y 2º login de la misma cuenta → `200` (2 sesiones); 3er login → `409`
+  con el mensaje exacto; `GET /api/admin/usuarios` muestra
+  `sesionesActivas: 2, limiteSesiones: null, limiteSesionesEfectivo: 2`.
+- Logout de una de las dos → libera el cupo (el 3er login ahora sí entra).
+- Admin sube el límite a 5 → **las dos sesiones que había se cierran de
+  inmediato** (`GET /api/sesion` con esas cookies → `401`);
+  `sesionesActivas` vuelve a 0.
+- Admin usa "cerrar sesiones" sin tocar el límite → la sesión se cierra
+  (`401`) y el límite queda igual (5).
+- Límite inválido (`0`, texto) → `400`; límite vacío/`null` → vuelve al valor
+  por defecto (2); usuario inexistente en ambas rutas → `404`.
+- Ambas rutas nuevas, sin sesión → `401`; con sesión de abogado (no admin)
+  → `403`.
+- Los dos documentos legales siguen renderizando sin errores
+  (`renderizarMarkdownLegal`) con el texto nuevo adentro.
+
+## Pendiente (Etapa 9)
+
+1. Prueba visual del dueño en `admin.html` (columna "Sesiones" + los dos
+   botones nuevos) — no se pudo probar en navegador real esta sesión.
+2. Si en el futuro se necesita cerrar UNA sola sesión en particular (no
+   todas) haría falta identificar dispositivos, lo cual el dueño pidió
+   explícitamente NO hacer — por ahora "Cerrar sesiones" siempre es todo o
+   nada.

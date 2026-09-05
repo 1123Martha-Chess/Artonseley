@@ -42,6 +42,22 @@ export function borrarSesion(token) {
   db.prepare('DELETE FROM sesiones WHERE token = ?').run(token);
 }
 
+// Cuenta cuántas sesiones VIVAS (no vencidas) tiene un usuario en este
+// momento, sin borrar nada. La usa POST /api/login para decidir si la
+// cuenta ya llegó a su límite de dispositivos simultáneos (ver
+// LIMITE_SESIONES_POR_DEFECTO / usuarios.limite_sesiones). La comparación
+// se hace contra un texto ISO 8601 generado igual que expira_en (con
+// new Date().toISOString()), así la comparación de cadenas equivale a
+// comparar fechas sin depender de las funciones de fecha de SQLite —
+// mismo criterio que ya usa obtenerSesionValida, solo que en SQL en vez
+// de en JavaScript, porque aquí conviene contar sin traer las filas.
+export function contarSesionesActivasDeUsuario(usuarioId) {
+  const fila = db
+    .prepare('SELECT COUNT(*) AS total FROM sesiones WHERE usuario_id = ? AND expira_en > ?')
+    .get(usuarioId, new Date().toISOString());
+  return fila.total;
+}
+
 // Se usa al suspender una cuenta desde el panel de administración: borra
 // todas sus sesiones de una vez, así que si esa persona tiene el sitio
 // abierto en otra pestaña u otro dispositivo, su próxima petición ya no
