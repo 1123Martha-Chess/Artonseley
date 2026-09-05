@@ -975,3 +975,32 @@ prueba y base **ya borrados**), todo con `curl`:
    todas) haría falta identificar dispositivos, lo cual el dueño pidió
    explícitamente NO hacer — por ahora "Cerrar sesiones" siempre es todo o
    nada.
+
+---
+
+# Etapa 10 — Guía de Uso: se vacía mientras se prepara una versión nueva
+
+Fecha: 2026-09-05.
+
+El dueño pidió quitar TODO el contenido de `guia-de-uso.html` (el recorrido
+paso a paso con capturas anotadas) y dejar en su lugar un aviso de que la
+guía todavía no está lista, con los dos canales de contacto — **correo
+primero, luego WhatsApp** (el dueño notó que en la versión vieja del aviso
+el orden estaba al revés).
+
+## Archivos MODIFICADOS
+
+| Archivo | Cambio |
+|---|---|
+| `publico/guia-de-uso.html` | Se quitó el recorrido completo (25 pasos con capturas de `imagenes/guia/`, el índice, y el `<style>` propio de esos pasos). Queda solo el título y una caja `.aviso-pendiente-revision` (clase que ya existía en `documento.css`, mismo estilo amarillo que usan Términos/Aviso) con: "Por el momento no tenemos una guía terminada de la plataforma" + correo (**artonseley.contacto@gmail.com**) primero, WhatsApp (**+52 315 126 0581**) después + "Próximamente tendremos una guía completa". Se conserva el `<script>` de `ajustaEnlaceVolver.js` (es genérico, no depende del contenido de la guía). Las imágenes de `publico/imagenes/guia/` NO se borraron (quedan sin usar, por si se reutilizan en la guía nueva). |
+| `Terminos_y_Condiciones_Artonseley.md` | Cláusula 11.5 reescrita: ya NO afirma que la Guía "está a disposición" ni que "fue elaborada con apoyo de IA, siendo veraz la información" (esas afirmaciones dejaron de ser ciertas y eran un riesgo legal — una cláusula no puede describir algo que la propia página ya no ofrece). Ahora dice que el Responsable "tiene contemplado" publicarla, que mientras tanto la propia página lo señala y remite a los canales de contacto, y que esas garantías (no exhaustiva, no sustituye T&C, etc.) aplicarán "una vez publicada". El resto de la cláusula (canales, horario, excepción de solicitudes formales por correo) no cambió. |
+
+Revisé `Aviso_de_Privacidad_Artonseley.md` y `CLAUDE.md`: ninguno de los dos
+menciona el contenido de la Guía de Uso, así que no hizo falta tocarlos.
+
+## Verificado (Etapa 10)
+
+`GET /guia-de-uso.html` sin sesión (es pública a propósito) → `200`, con el
+aviso nuevo en el HTML. `renderizarMarkdownLegal` sobre el `.md` de Términos
+sigue sin errores, con la Cláusula 11.5 nueva adentro y sin la frase vieja
+sobre la IA.
