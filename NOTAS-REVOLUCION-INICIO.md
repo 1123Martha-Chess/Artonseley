@@ -1004,3 +1004,73 @@ menciona el contenido de la Guía de Uso, así que no hizo falta tocarlos.
 aviso nuevo en el HTML. `renderizarMarkdownLegal` sobre el `.md` de Términos
 sigue sin errores, con la Cláusula 11.5 nueva adentro y sin la frase vieja
 sobre la IA.
+
+---
+
+# Etapa 11 — Personalización: modo de color "Morado" (#8b0999), logo incluido
+
+Fecha: 2026-09-06.
+
+El dueño pidió un segundo modo de color en Personalización que cambie TODO,
+incluido el color del logo, con el tono `#8b0999` y "sus variantes según las
+del azul ya implementado".
+
+## Cómo se resolvió el logo (sin PNGs nuevos)
+
+El logo azul tiene DOS colores reales: el azul (`#0e63bc` en el ícono/compás,
+`#2b6cb0` en las letras) y el blanco del compás. Un simple "pintar todo de
+morado" borraría el compás blanco. En vez de eso, `manejaPersonalizacion.js`
+inyecta un `<svg>` oculto con dos filtros `feColorMatrix` (uno por imagen,
+porque su azul base difiere) que **mapean el azul exacto del logo al color
+del modo dejando el blanco en blanco y el negro en negro**. La matriz se
+calcula en runtime desde `modo.color` (función `valoresMatrizRecolor`), así
+que un 3er color futuro no necesita nada nuevo. `color-interpolation-filters="sRGB"`
+es obligatorio o el color sale oscurecido.
+
+**Verificado** con una captura headless de Chrome (`chrome --headless
+--screenshot` sobre una página de prueba con los dos filtros y las dos
+imágenes reales): el logo recoloreado queda EXACTAMENTE en `#8b0999`
+(coincide con un cuadro de referencia de ese color puesto al lado) y la
+estrella/compás blanca se conserva intacta. La técnica `filter: url(#filtroSVGenLínea)`
+sobre un `<img>` funciona en Chrome (el navegador de la mayoría de usuarios).
+La prueba unitaria en Node de `valoresMatrizRecolor` confirma: azul base →
+`(139,9,153)`, blanco → `(255,255,255)`, negro → `(0,0,0)`, gris → gris.
+
+## "Variantes según las del azul"
+
+El único tinte del azul que estaba fijo (no como variable CSS) era el fondo
+`#eef4fb` de los botones principales del inicio (`.burbuja-principal`). Se
+parametrizó como `--color-primario-suave` (par nuevo junto a
+`--color-primario`), y cada modo trae el suyo: azul `#eef4fb`, morado
+`#f6ebf7` (mismo ~8 % de acento sobre blanco, en morado). El resto de la
+plataforma ya usaba `var(--color-primario)` y los `:hover` usan
+`filter: brightness(...)` relativo, que sirve para cualquier tono — no hizo
+falta una variante "oscura".
+
+## Archivos MODIFICADOS
+
+| Archivo | Cambio |
+|---|---|
+| `publico/Sistema/manejaPersonalizacion.js` | Modo `morado` en `MODOS` (`color: '#8b0999'`, `colorSuave: '#f6ebf7'`, `recolorLogo: true`, reusa los PNG azules). Nuevo: `colorSuave` en cada modo; `--color-primario-suave` se fija junto a `--color-primario`; helpers `hexARgb` / `valoresMatrizRecolor` / `asegurarFiltrosLogo`; `aplicarModo` recolorea el logo con el filtro SVG y ahora cubre las 3 marcas del DOM (`#iconoMarca`/`#letrasMarca`, `.marca-mini img.icono/.letras`, `.marca img.icono/.letras`); nuevo export `filtroLogoBusqueda()`. Comentario "CÓMO AGREGAR UN MODO" reescrito (opción A: PNGs propios / opción B: teñir el azul). |
+| `publico/plataforma.css` | `--color-primario-suave` en `:root`; `.burbuja-principal` usa `var(--color-primario-suave)` en vez de `#eef4fb` fijo. |
+| `publico/Sistema/buscadorPrincipal.js` | El ícono que da vueltas al buscar aplica `filtroLogoBusqueda()` (se tiñe en modo morado). |
+| `publico/plantillas.html` | Su logo pasa de `artonseley-logo-azul.jpg` / `-letras-azul.png` (versión vieja con fondo blanco, que un filtro no puede recolorear) a los PNG transparentes `artonseley-pagina.png` / `artonseley-letras.png`, como el resto de las páginas. (Arregla de paso esa inconsistencia que venía de la Etapa 7.) |
+| `CLAUDE.md` | Actualizada la línea de `manejaPersonalizacion.js`. |
+
+## Archivos AGREGADOS / ELIMINADOS
+
+Ninguno (todo el color del logo se hace con el filtro SVG en runtime).
+
+## Pendiente (Etapa 11)
+
+1. Prueba visual del dueño con sesión iniciada: entrar a Configuración →
+   Personalización, elegir "Morado", y confirmar que (a) botones/bordes/
+   casillas quedan `#8b0999`, (b) el logo de la barra se ve morado en
+   inicio / buscador / escritorio / calendario / pestañas / plantillas /
+   cuadernos, (c) al recargar sigue en morado (localStorage), (d) volver a
+   "Azul" lo deja todo como antes. La parte crítica (que el filtro SVG
+   recoloree bien) ya se verificó con captura headless.
+2. Las páginas públicas (Términos / Aviso / Guía) usan `documento.css` con
+   azules propios (`#2b6cb0`, `#235a91`) que NO siguen el modo — nunca lo
+   hicieron y no son parte de "Personalización" (que es una preferencia con
+   sesión). Si el dueño quiere que también cambien, es otra tarea.

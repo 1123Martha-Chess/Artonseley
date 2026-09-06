@@ -14,11 +14,15 @@
 
 * { box-sizing: border-box; }
 
-/* Color de acento de la plataforma. Lo cambia manejaPersonalizacion.js
+/* Colores de acento de la plataforma. Los cambia manejaPersonalizacion.js
    (aplicarModoGuardado / renderizarPersonalizacionEn) según el modo
-   elegido; por ahora solo existe el modo Azul. */
+   elegido. --color-primario es el acento fuerte (botones, bordes,
+   casillas activas); --color-primario-suave es su tinte muy claro para
+   fondos (ej. el fondo de los botones principales del inicio). Cada modo
+   trae su propio par (ver MODOS en manejaPersonalizacion.js). */
 :root {
   --color-primario: #2A6BAF;
+  --color-primario-suave: #eef4fb;
 }
 
 body {
@@ -101,7 +105,7 @@ body {
   padding: 20px 28px;
   border-width: 3px;
   border-radius: 22px;
-  background: #eef4fb;
+  background: var(--color-primario-suave);
   font-size: 22px;
   font-weight: bold;
 }

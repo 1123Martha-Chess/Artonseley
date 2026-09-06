@@ -17,7 +17,7 @@
 // -------------------------------------------------------------------
 
 import { inicializarSistemaDeBotones, obtenerDocumentosSeleccionados } from './sistemaDeBotones.js';
-import { aplicarModoGuardado, obtenerModoActual } from './manejaPersonalizacion.js';
+import { aplicarModoGuardado, obtenerModoActual, filtroLogoBusqueda } from './manejaPersonalizacion.js';
 import { pintarResultados } from './pintarResultadosBusqueda.js';
 
 console.log('buscadorPrincipal.js (cliente) se cargó correctamente.');
@@ -110,6 +110,7 @@ function mostrarCargando() {
   contenedorResultados.innerHTML = '';
   const logo = document.createElement('img');
   logo.src = obtenerModoActual().logoIcono;
+  logo.style.filter = filtroLogoBusqueda();
   logo.alt = 'Buscando…';
   logo.classList.add('logo-buscando');
   contenedorResultados.appendChild(logo);
