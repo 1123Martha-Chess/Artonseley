@@ -976,6 +976,51 @@ prueba y base **ya borrados**), todo con `curl`:
    explícitamente NO hacer — por ahora "Cerrar sesiones" siempre es todo o
    nada.
 
+### Corrección URGENTE (2026-09-06) — el límite de sesiones bloqueaba TODOS los logins
+
+El dueño reportó que **no podía entrar a ninguna cuenta**. Causa: la versión
+de la Etapa 9 RECHAZABA el login (409) cuando la cuenta ya tenía el cupo de
+sesiones lleno. Pero las filas de `sesiones` solo se borran al hacer
+"cerrar sesión" explícito o al vencer la cookie (7 días) — **cerrar el
+navegador no llama a `/api/logout`**. Cualquier cuenta que hubiera iniciado
+sesión 2+ veces en una semana sin cerrar sesión a mano quedaba con el cupo
+lleno de sesiones "fantasma" y **ya no podía entrar**. Y como la cuenta de
+administrador estaba igual de bloqueada, no había forma de destrabarlo desde
+el panel. Un bug mío: apliqué un tope duro, de forma retroactiva, sobre un
+sistema que nunca limpió sus sesiones, y sin vía de recuperación.
+
+**Arreglo:** en vez de rechazar el login, ahora se **cierran las sesiones
+más viejas** hasta dejar hueco para la nueva (`limitarSesionesDeUsuario` en
+`servidor/db/sesiones.js`, `DELETE ... WHERE token IN (SELECT ... ORDER BY
+creado_en ASC LIMIT <sobran>)` — con early-return si `sobran <= 0` porque en
+SQLite `LIMIT <= 0` significa "sin límite"). Así:
+
+- El login **nunca falla** por esto; las sesiones fantasma se limpian solas
+  en el siguiente login.
+- Se sigue respetando "máximo N dispositivos a la vez" (el objetivo del
+  dueño: frenar el uso compartido sin límite).
+- **Los administradores quedan exentos del tope** (`usuario.rol === 'admin'`
+  se salta el recorte) — nunca se les debe cortar el acceso a su panel.
+
+Cambia el comportamiento que el dueño había especificado (rechazar + mensaje
+"esta cuenta ya está siendo usada"). Se lo expliqué: "rechazar" no se puede
+sostener sin además darle a las sesiones una vida corta y una vía de
+recuperación, o vuelve a pasar esto. Si el dueño quiere el muro de rechazo,
+hay que hacerlo con esas dos piezas primero.
+
+**Archivos:** `servidor/db/sesiones.js` (nueva `limitarSesionesDeUsuario`),
+`servidor.js` (`/api/login` recorta en vez de rechazar; admins exentos),
+`Terminos_y_Condiciones_Artonseley.md` (Cláusula 2.7: "se lo impedirá y le
+mostrará un aviso" → "se cerrará la sesión más antigua para dejar lugar a la
+nueva"), `CLAUDE.md`.
+
+**Verificado** (base de prueba que reproduce el estado bloqueado): una
+cuenta con 4 sesiones viejas sin cerrar — que ANTES daba 409 — ahora entra
+(200) y le quedan 2 (el límite), conservando las más nuevas y expulsando las
+2 más viejas; un 2º login desde otro dispositivo entra y expulsa la sesión
+más vieja que quedaba; la cuenta admin con 3 sesiones viejas entra y
+**conserva las 3 + la nueva** (exenta). `node --check` de todo OK.
+
 ---
 
 # Etapa 10 — Guía de Uso: se vacía mientras se prepara una versión nueva

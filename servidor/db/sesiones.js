@@ -65,3 +65,36 @@ export function contarSesionesActivasDeUsuario(usuarioId) {
 export function borrarSesionesDeUsuario(usuarioId) {
   db.prepare('DELETE FROM sesiones WHERE usuario_id = ?').run(usuarioId);
 }
+
+// Deja como mucho `maximo` sesiones vivas para el usuario, cerrando las
+// MÁS VIEJAS (por creado_en) que sobren. Devuelve cuántas cerró.
+//
+// La usa el login para hacer hueco ANTES de crear la sesión nueva, en
+// vez de rechazar el intento: rechazar dejaba fuera a cualquier cuenta
+// que ya tuviera el cupo lleno de sesiones viejas sin cerrar —cerrar el
+// navegador no llama a /api/logout, así que esas filas se quedan hasta
+// que expira la cookie (días)— y no había manera de entrar a
+// destrabarlo, ni siquiera como administrador.
+export function limitarSesionesDeUsuario(usuarioId, maximo) {
+  const ahora = new Date().toISOString();
+  const { total } = db
+    .prepare('SELECT COUNT(*) AS total FROM sesiones WHERE usuario_id = ? AND expira_en > ?')
+    .get(usuarioId, ahora);
+
+  const sobran = total - maximo;
+  if (sobran <= 0) return 0;
+
+  // OJO: LIMIT con un número <= 0 en SQLite significa "sin límite" (borra
+  // todo), por eso el early-return de arriba es imprescindible.
+  db.prepare(`
+    DELETE FROM sesiones
+    WHERE token IN (
+      SELECT token FROM sesiones
+      WHERE usuario_id = ? AND expira_en > ?
+      ORDER BY creado_en ASC
+      LIMIT ?
+    )
+  `).run(usuarioId, ahora, sobran);
+
+  return sobran;
+}

@@ -48,7 +48,7 @@ import {
 } from './servidor/db/usuarios.js';
 import { calcularVigenciaLicencia } from './servidor/calcularVigenciaLicencia.js';
 import { manejarPaginaLegal } from './servidor/paginasLegales.js';
-import { crearSesion, borrarSesion, borrarSesionesDeUsuario, contarSesionesActivasDeUsuario } from './servidor/db/sesiones.js';
+import { crearSesion, borrarSesion, borrarSesionesDeUsuario, contarSesionesActivasDeUsuario, limitarSesionesDeUsuario } from './servidor/db/sesiones.js';
 import { verificarContrasena, hashContrasena } from './servidor/auth/contrasenas.js';
 import {
   requiereSesionAPI,
@@ -363,20 +363,24 @@ app.post('/api/login', limitadorLogin, jsonEstandar, (peticion, respuesta) => {
 
   resetearIntentosFallidos(usuario.id);
 
-  // Límite de sesiones simultáneas: cada login exitoso deja una fila en
-  // "sesiones" (ver crearSesion) y cada logout la borra (ver
-  // POST /api/logout), así que contar las filas vivas de este usuario
-  // YA equivale al "contador de dispositivos conectados" sin necesitar
-  // una columna aparte que sumar/restar a mano — no puede quedar
-  // desincronizado ni volverse negativo. limite_sesiones es el ajuste
-  // por cuenta que hace el admin (ver POST /api/admin/usuarios/:id/limite-sesiones);
-  // NULL usa LIMITE_SESIONES_POR_DEFECTO.
-  const limiteSesiones = usuario.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO;
-  if (contarSesionesActivasDeUsuario(usuario.id) >= limiteSesiones) {
-    return respuesta.status(409).json({
-      error: 'Lo sentimos, pero esta cuenta ya está siendo usada, cierre sesión o comuníquese ' +
-        'con artonseley.contacto@gmail.com si se ha olvidado de cerrar sesión y perdió acceso a la cuenta'
-    });
+  // Límite de sesiones simultáneas (dispositivos con sesión iniciada a la
+  // vez). Cada login exitoso deja una fila en "sesiones" (ver crearSesion)
+  // y cada logout la borra (ver POST /api/logout).
+  //
+  // En vez de RECHAZAR el login cuando el cupo está lleno, se cierran las
+  // sesiones MÁS VIEJAS para hacerle lugar a esta. Rechazar dejaba fuera a
+  // cualquier cuenta que ya tuviera 2+ sesiones viejas sin cerrar (cerrar
+  // el navegador no llama a /api/logout: esas filas se quedan días, hasta
+  // que expira la cookie) y no había forma de entrar a destrabarlo, ni
+  // siquiera como administrador.
+  //
+  // Los administradores quedan exentos del límite: nunca se les debe
+  // cortar el acceso a su propio panel.
+  if (usuario.rol !== 'admin') {
+    const limiteSesiones = usuario.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO;
+    // Deja hueco para 1: al conservar como mucho (límite - 1) sesiones
+    // viejas y sumar la nueva, el total queda en el límite exacto.
+    limitarSesionesDeUsuario(usuario.id, Math.max(0, limiteSesiones - 1));
   }
 
   const { token, expiraEn } = crearSesion(usuario.id);
