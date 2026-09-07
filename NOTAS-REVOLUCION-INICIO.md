@@ -1119,3 +1119,77 @@ Ninguno (todo el color del logo se hace con el filtro SVG en runtime).
    azules propios (`#2b6cb0`, `#235a91`) que NO siguen el modo — nunca lo
    hicieron y no son parte de "Personalización" (que es una preferencia con
    sesión). Si el dueño quiere que también cambien, es otra tarea.
+
+---
+
+# Etapa 12 — Modo oscuro (independiente del color) + cuadritos de leyes teñidos
+
+Fecha: 2026-09-06/07.
+
+El dueño pidió: (a) teñir todo el panel de sectores del buscador (no solo el
+estado activo) con el color del modo; (b) un **modo oscuro** que se combine
+libremente con el color (azul+oscuro, morado+oscuro), como dos ejes
+independientes; (c) que lo actual (azul + claro) sea una de las opciones /
+el valor por defecto.
+
+Alcance elegido por el dueño: **núcleo ahora, resto por etapas.** Esta
+entrega convierte a tema claro/oscuro: inicio, buscador (+ cuadritos de
+leyes), configuración, notificaciones, sugerencias, login, crear-cuenta y
+las páginas legales. Pendiente para una etapa siguiente: editor/cuadernos,
+escritorio, calendario, música, calculadora, plantillas y admin (siguen
+solo en claro; en modo oscuro se les aplica solo el color de acento, no el
+tema — ver más abajo).
+
+## Arquitectura: dos ejes
+
+- **Color** (`localStorage` `modoPersonalizacion`): `azul` | `morado`.
+  Pone `--color-primario` / `--color-primario-suave` y tiñe el logo.
+- **Tema** (`localStorage` `temaPersonalizacion`): `claro` | `oscuro`.
+  Pone/quita `<html data-tema="oscuro">` y `color-scheme`.
+- Sin nada guardado: `azul` + `claro` (el aspecto original).
+
+| Archivo | Qué es |
+|---|---|
+| `publico/tema.css` (nuevo) | TODOS los tokens de color: acento (`--color-primario*`) + superficies/texto/bordes/sombras para claro (`:root`) y oscuro (`:root[data-tema="oscuro"]`). Se enlaza ANTES de plataforma.css / documento.css / los `<style>` embebidos. |
+| `publico/Sistema/temaGuardado.js` (nuevo) | Script **clásico** (no módulo), bloqueante en el `<head>`. Lee la preferencia guardada y aplica acento + `data-tema` ANTES del primer pintado → **sin parpadeo claro→oscuro**. Las 4 constantes de color están duplicadas aquí a propósito (no cargar el módulo entero de forma bloqueante). |
+| `publico/Sistema/manejaPersonalizacion.js` (reescrito) | Dos listas: `COLORES` (con `suaveClaro`/`suaveOscuro` por color) y `TEMAS`. El selector de Configuración ahora pinta DOS grupos ("Color" y "Tema"). `aplicar()` sólo pone `data-tema`/`color-scheme` si la página enlaza `tema.css` (así las páginas aún no convertidas no quedan con controles nativos oscuros sobre fondo claro). El recolor del logo (filtro SVG) no cambió. |
+| `publico/plataforma.css` (reescrito) | Quita su `:root` de acento (ahora en tema.css) y cambia todos los literales de color por `var(--fondo/--superficie/--texto/--borde/…)`. |
+| `publico/documento.css` (reescrito) | Igual; además tokens `--aviso-*` para las cajas amarillas de aviso, con variante oscura. |
+| `publico/buscador.html` (`<style>`) | Convertido a variables. **El panel de sectores (`.barra-lateral`) ahora es una tarjeta teñida**: fondo `--color-primario-suave`, borde `--color-primario`. Los cuadritos sin seleccionar llevan borde de acento y hover con el tinte; el `border-left` de cada sector usa el acento. Logo del `<head>`/`<body>` corregido a los PNG transparentes. |
+| `publico/login.html`, `publico/crear-cuenta.html` (`<style>`) | Convertidos; botón e inputs con las variables; `<script temaGuardado.js>` + `<link tema.css>` en el head. |
+| `publico/index.html`, `configuracion.html`, `notificaciones.html`, `sugerencias.html`, `guia-de-uso.html` | `<script temaGuardado.js>` + `<link tema.css>` agregados al `<head>` antes de plataforma.css/documento.css. |
+| `servidor/paginasLegales.js` | Mismo par de líneas en el `<head>` que genera para Términos / Aviso. |
+| `publico/Sistema/temaGuardado.js` + `CLAUDE.md` | Documentación actualizada. |
+
+## Verificado (Etapa 12)
+
+`node --check` de todo OK; llaves balanceadas en las 3 hojas CSS; el
+servidor arranca y sirve `tema.css`, `temaGuardado.js` y la página de
+Términos (con las dos líneas nuevas en el head).
+
+**Capturas headless de Chrome** (usuario de prueba + base aparte, ambos ya
+borrados), los 4 cruces:
+- **login** claro+azul: idéntico al original (tarjeta blanca, botón azul).
+- **login** oscuro+morado: fondo oscuro, tarjeta e inputs oscuros, texto
+  claro, botón morado.
+- **inicio** oscuro+morado: fondo oscuro, **logo morado**, botones
+  principales con relleno morado oscuro + borde morado, burbujas oscuras
+  con borde morado.
+- **buscador** oscuro+morado: barra oscura, logo morado, botón "Buscar"
+  morado, y **el panel de sectores teñido** (fondo morado oscuro, borde
+  morado, "Seleccionar todo" activo en morado).
+- **buscador** claro+azul: el panel de sectores ahora es una tarjeta con
+  tinte azul claro y borde azul (antes era transparente con una línea
+  divisoria) — cambio buscado ("teñir todo el panel").
+- **configuración** oscuro+morado: tarjetas oscuras, y el selector de
+  Personalización con los **dos grupos** ("Color": Azul/Morado — "Tema":
+  Claro/Oscuro), cada uno con su opción activa en morado.
+
+## Pendiente (Etapa 12)
+
+1. Prueba visual del dueño con sesión: recorrer las páginas del núcleo en
+   los 4 cruces y confirmar que nada quedó ilegible.
+2. Siguiente etapa: llevar el modo oscuro a editor/cuadernos, escritorio,
+   calendario, música, calculadora, plantillas y admin (cada una tiene su
+   `<style>` embebido grande; hay que enlazarles `tema.css` +
+   `temaGuardado.js` y cambiar sus literales por variables).

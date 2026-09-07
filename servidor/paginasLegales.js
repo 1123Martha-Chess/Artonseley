@@ -48,6 +48,8 @@ function armarPagina({ titulo, cuerpoHTML }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${titulo} - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
     <link rel="stylesheet" href="documento.css">
 </head>
 <body>

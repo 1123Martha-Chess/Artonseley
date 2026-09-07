@@ -1,0 +1,68 @@
+/* tema.css
+   -------------------------------------------------------------------
+   Tokens de color de la plataforma. Son DOS ejes independientes:
+
+     1) COLOR de acento (azul / morado) — lo pone manejaPersonalizacion.js
+        (o el bootstrap Sistema/temaGuardado.js) escribiendo
+        --color-primario / --color-primario-suave inline en <html>.
+     2) TEMA claro / oscuro — lo controla este archivo, según el
+        atributo <html data-tema="oscuro">. Cuando no está el atributo,
+        vale el bloque :root de abajo (claro).
+
+   Se combinan libremente: azul+claro, azul+oscuro, morado+claro,
+   morado+oscuro. El valor por defecto (sin nada guardado) es azul+claro,
+   que es el aspecto con el que se lanzó el sitio.
+
+   Se enlaza ANTES que plataforma.css / documento.css / los <style>
+   embebidos, para que todos puedan usar var(--...). Junto con él va
+   Sistema/temaGuardado.js como <script> bloqueante en el <head>, que
+   aplica la preferencia guardada antes del primer pintado (evita el
+   parpadeo claro→oscuro).
+   ------------------------------------------------------------------- */
+
+:root {
+  /* Acento — por defecto azul; se pisa inline según el color elegido. */
+  --color-primario: #2A6BAF;
+  --color-primario-suave: #eef4fb;
+
+  /* Superficies y texto — TEMA CLARO. */
+  --fondo: #f7f7f7;         /* fondo de la página */
+  --superficie: #ffffff;    /* tarjetas, barras, inputs */
+  --superficie-2: #f2f2f2;  /* zonas hundidas, hover neutro */
+  --texto: #1a1a1a;         /* texto principal */
+  --texto-2: #555555;       /* texto secundario */
+  --texto-3: #7a7a7a;       /* texto terciario, pies */
+  --borde: #dcdcdc;         /* bordes de tarjetas y separadores */
+  --borde-2: #999999;       /* bordes marcados (inputs) */
+  --linea: #ececec;         /* separadores muy tenues */
+  --sombra: rgba(0, 0, 0, 0.10);
+  --sombra-2: rgba(0, 0, 0, 0.16);
+
+  /* Cajas de aviso amarillas (guía sin terminar, notas "PENDIENTE" de
+     los .md legales). */
+  --aviso-fondo: #fff8e1;
+  --aviso-borde: #f0d375;
+  --aviso-texto: #7a5c00;
+}
+
+:root[data-tema="oscuro"] {
+  /* El tinte suave por defecto (claro) no sirve en oscuro; el JS lo pisa
+     con el valor correcto del color, esto es solo el respaldo. */
+  --color-primario-suave: #1b2735;
+
+  --fondo: #131519;
+  --superficie: #1e2126;
+  --superficie-2: #26292e;
+  --texto: #e7e7e7;
+  --texto-2: #a8a8a8;
+  --texto-3: #7f7f7f;
+  --borde: #34383e;
+  --borde-2: #4c515a;
+  --linea: #2a2d32;
+  --sombra: rgba(0, 0, 0, 0.55);
+  --sombra-2: rgba(0, 0, 0, 0.70);
+
+  --aviso-fondo: #2a2410;
+  --aviso-borde: #5c4e1e;
+  --aviso-texto: #e0c877;
+}
