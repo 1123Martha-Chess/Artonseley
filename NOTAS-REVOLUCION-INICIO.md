@@ -1193,3 +1193,47 @@ borrados), los 4 cruces:
    calendario, música, calculadora, plantillas y admin (cada una tiene su
    `<style>` embebido grande; hay que enlazarles `tema.css` +
    `temaGuardado.js` y cambiar sus literales por variables).
+
+## Etapa 12 (continuación) — modo oscuro en TODAS las páginas restantes
+
+Fecha: 2026-09-07.
+
+El dueño pidió llevar el modo oscuro a todas las páginas y herramientas que
+faltaban. Se convirtieron las 8 que quedaban en claro:
+
+| Página | `<style>` (líneas) | Notas de la conversión |
+|---|---|---|
+| `calculadora.html` | 139 | Descargo amarillo → tokens `--aviso-*`; inputs/tabla/desglose a variables. |
+| `escritorio.html` | 285 | Lienzo `#eef4f9` → `--fondo`; celdas de la cuadrícula con borde `--color-primario` y relleno `rgba(127,127,127,0.08)`; barras/pie/ventanas/caja de piezas a variables. |
+| `pestanas.html` | 212 | Barra/pestañas/menú "+"/área de contenido/rejilla vacía a variables; pestaña inactiva `--superficie-2`, activa `--superficie`. |
+| `plantillas.html` | 162 | Barra/descargo/lateral/formulario/vista previa a variables. `.plt-previa` (borrador del documento) también sigue el tema; el `@media print` se queda en negro sobre blanco (papel). |
+| `musica.html` | 203 | Barra de volumen/lista de canciones/espectro/playlist a variables; `#eef4fb` → `--color-primario-suave`. |
+| `calendario.html` | 372 | Barra/cuadrícula del mes/panel del día/pantallas de la bóveda a variables. Los 8 colores de día y las etiquetas de estado (pendiente/en curso/hecho/cancelada) se dejan como están (son colores de contenido, legibles en ambos temas). |
+| `admin.html` | 395 | Antes NO usaba `--color-primario` (azul fijo `#2b6cb0`); ahora también sigue el color de acento. Tablas/tarjetas/modales/botones/cajas de error y éxito a variables (rojo `#d9534f`, verde `#3c9a3c`). |
+| `editor.html` | 1317 | La más grande. `#2B6CB0` → `--color-primario`; se quitó el `--color-primario` propio del `:root` (lo da tema.css); la "hoja" de escritura (`.area-escritura`) y su fondo a rayas usan `--superficie`/`--borde-2` → en oscuro es una hoja oscura con texto claro (como los editores en modo oscuro). Pantallas de la bóveda incluidas. |
+
+Cada página recibió en el `<head>`: `<script src="Sistema/temaGuardado.js">` +
+`<link rel="stylesheet" href="tema.css">` antes de su `<style>` / de
+`plataforma.css`. (Esto además arregla un bug latente de la Etapa 12: las
+páginas que cargaban `plataforma.css` pero no `tema.css` tenían `var(--fondo)`
+/ `var(--texto)` sin definir en algunas clases compartidas.)
+
+### Verificado (Etapa 12 continuación)
+
+Llaves CSS balanceadas en las 8 páginas; `tema.css` + `temaGuardado.js`
+presentes en cada una. Capturas headless de Chrome en **oscuro + morado**
+(usuarios de prueba abogado y admin, base aparte, todo ya borrado):
+escritorio, calendario (pantalla de bóveda), música, plantillas,
+calculadora, pestañas, editor (pantalla de bóveda) y admin — todas se ven
+oscuras, legibles y con el acento morado; nada quedó ilegible.
+
+### Pendiente
+
+1. Prueba visual del dueño **con las herramientas desbloqueadas** (bóveda de
+   cuadernos y de calendario abiertas, canciones cargadas, una plantilla
+   elegida) — la automatización no puede pasar de las pantallas de frase de
+   recuperación.
+2. Detalles finos que pueden pulirse después: la pista del deslizador de
+   volumen en música y algún separador de la barra de herramientas del
+   editor se ven un poco claros sobre el fondo oscuro (son controles/adornos
+   nativos, no rompen nada).

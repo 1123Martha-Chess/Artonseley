@@ -6,6 +6,8 @@
     <title>Calculadora Jurídica Financiera - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <link rel="manifest" href="manifest.webmanifest">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
     <link rel="stylesheet" href="plataforma.css">
     <style>
         /* =========================================================
@@ -17,14 +19,14 @@
         [hidden] { display: none !important; }
 
         .calc-descargo {
-            background: #fff6e5;
-            border: 1px solid #f0d191;
+            background: var(--aviso-fondo);
+            border: 1px solid var(--aviso-borde);
             border-radius: 10px;
             padding: 14px 16px;
             font-family: Arial, sans-serif;
             font-size: 13px;
             line-height: 1.5;
-            color: #6b4e12;
+            color: var(--aviso-texto);
             margin-bottom: 22px;
         }
 
@@ -47,9 +49,10 @@
             padding: 9px 11px;
             font-family: Arial, sans-serif;
             font-size: 14px;
-            border: 1px solid #999;
+            color: var(--texto);
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
-            background: white;
+            background: var(--superficie);
         }
 
         .calc-fila {
@@ -62,7 +65,7 @@
         .calc-ayuda {
             font-family: Arial, sans-serif;
             font-size: 12px;
-            color: #777;
+            color: var(--texto-3);
             line-height: 1.5;
             margin: 4px 0 0 0;
         }
@@ -89,7 +92,7 @@
         /* -------- Resultado -------- */
         .calc-total {
             background: var(--color-primario);
-            color: white;
+            color: #fff;
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 18px;
@@ -109,36 +112,36 @@
         table.calc-tabla td {
             text-align: left;
             padding: 9px 10px;
-            border-bottom: 1px solid #e4e4e4;
+            border-bottom: 1px solid var(--borde);
             vertical-align: top;
         }
         table.calc-tabla th {
-            color: #555;
+            color: var(--texto-2);
             font-size: 11.5px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
         table.calc-tabla td.monto { text-align: right; white-space: nowrap; font-weight: bold; }
-        table.calc-tabla .detalle { color: #777; font-size: 12px; }
+        table.calc-tabla .detalle { color: var(--texto-3); font-size: 12px; }
         table.calc-tabla .fundamento { color: var(--color-primario); font-size: 12px; white-space: nowrap; }
         table.calc-tabla tr.grupo-titulo td {
-            background: #f0f4f9;
+            background: var(--superficie-2);
             font-weight: bold;
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
-            color: #444;
+            color: var(--texto-2);
         }
 
         .calc-lista {
             font-family: Arial, sans-serif;
             font-size: 13px;
             line-height: 1.55;
-            color: #444;
+            color: var(--texto-2);
             padding-left: 20px;
             margin: 8px 0 18px 0;
         }
-        .calc-avisos { color: #7a1f16; }
+        .calc-avisos { color: #d9534f; }
 
         .tabla-scroll { overflow-x: auto; }
 

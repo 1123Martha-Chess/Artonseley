@@ -6,6 +6,8 @@
     <title>Plantillas y Documentos - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <link rel="manifest" href="manifest.webmanifest">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
     <link rel="stylesheet" href="plataforma.css">
     <style>
         /* =========================================================
@@ -18,28 +20,28 @@
            ========================================================= */
         [hidden] { display: none !important; }
 
-        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
+        body { font-family: Arial, sans-serif; color: var(--texto); background: var(--fondo); margin: 0; }
 
         .plt-barra-superior {
             display: flex;
             align-items: center;
             gap: 16px;
             padding: 12px 20px;
-            background: white;
-            border-bottom: 1px solid #ddd;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            background: var(--superficie);
+            border-bottom: 1px solid var(--borde);
+            box-shadow: 0 2px 8px var(--sombra);
         }
         .plt-barra-superior .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; }
         .plt-barra-superior .marca img.icono { height: 40px; }
         .plt-barra-superior .marca img.letras { height: 24px; }
-        .plt-barra-superior h1 { font-size: 18px; margin: 0; color: #1c2733; }
+        .plt-barra-superior h1 { font-size: 18px; margin: 0; color: var(--texto); }
         .plt-barra-superior .volver { margin-left: auto; font-size: 13px; color: var(--color-primario); text-decoration: none; }
         .plt-barra-superior .volver:hover { text-decoration: underline; }
 
         .plt-descargo {
-            background: #fff6e5;
-            border: 1px solid #f0d191;
-            color: #6b4e12;
+            background: var(--aviso-fondo);
+            border: 1px solid var(--aviso-borde);
+            color: var(--aviso-texto);
             font-size: 13px;
             line-height: 1.5;
             padding: 12px 20px;
@@ -58,7 +60,7 @@
         .plt-lateral {
             width: 260px;
             flex-shrink: 0;
-            border-right: 2px solid #cbd5e0;
+            border-right: 2px solid var(--borde);
             padding-right: 16px;
             max-height: 78vh;
             overflow-y: auto;
@@ -84,20 +86,21 @@
             margin: 4px 0;
             padding: 7px 10px;
             font-size: 13px;
-            background: white;
-            border: 1px solid #999;
+            color: var(--texto);
+            background: var(--superficie);
+            border: 1px solid var(--borde-2);
             border-radius: 6px;
             cursor: pointer;
         }
-        .plt-boton-plantilla:hover { background: #f0f6fc; }
-        .plt-boton-plantilla.activa { background: var(--color-primario); color: white; border-color: var(--color-primario); }
+        .plt-boton-plantilla:hover { background: var(--color-primario-suave); }
+        .plt-boton-plantilla.activa { background: var(--color-primario); color: #fff; border-color: var(--color-primario); }
 
         .plt-principal { flex: 1; min-width: 0; }
 
-        .plt-vacio { color: #667; font-size: 14px; padding: 30px 0; }
+        .plt-vacio { color: var(--texto-2); font-size: 14px; padding: 30px 0; }
 
         .plt-titulo-plantilla { font-size: 20px; margin: 0 0 2px 0; }
-        .plt-version { font-size: 12px; color: #888; margin: 0 0 18px 0; }
+        .plt-version { font-size: 12px; color: var(--texto-3); margin: 0 0 18px 0; }
 
         .plt-campo { margin-bottom: 12px; }
         .plt-campo label {
@@ -110,7 +113,9 @@
             width: 100%;
             padding: 9px 11px;
             font-size: 14px;
-            border: 1px solid #999;
+            color: var(--texto);
+            background: var(--superficie);
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
         }
 
@@ -121,32 +126,32 @@
             border-radius: 8px;
             cursor: pointer;
         }
-        .plt-btn-primario { color: white; background: var(--color-primario); border: 1px solid var(--color-primario); }
-        .plt-btn-secundario { color: var(--color-primario); background: white; border: 1px solid var(--color-primario); }
+        .plt-btn-primario { color: #fff; background: var(--color-primario); border: 1px solid var(--color-primario); }
+        .plt-btn-secundario { color: var(--color-primario); background: var(--superficie); border: 1px solid var(--color-primario); }
         .plt-acciones button:disabled { opacity: 0.5; cursor: default; }
 
         .plt-previa {
-            border: 1px solid #d8e0e8;
+            border: 1px solid var(--borde);
             border-radius: 10px;
-            background: white;
+            background: var(--superficie);
             padding: 20px 22px;
             font-family: 'Times New Roman', Georgia, serif;
             font-size: 15px;
             line-height: 1.6;
             white-space: pre-wrap;
-            color: #1c2733;
+            color: var(--texto);
         }
         .plt-previa .falta {
-            background: #fde2e0;
-            color: #7a1f16;
+            background: rgba(217, 83, 79, 0.15);
+            color: #d9534f;
             border-radius: 3px;
             padding: 0 2px;
         }
-        .plt-aviso-faltantes { color: #7a1f16; font-size: 13px; margin: 8px 0 0 0; }
+        .plt-aviso-faltantes { color: #d9534f; font-size: 13px; margin: 8px 0 0 0; }
 
         @media (max-width: 720px) {
             .plt-cuerpo { flex-direction: column; }
-            .plt-lateral { width: 100%; border-right: none; border-bottom: 2px solid #cbd5e0; padding-right: 0; padding-bottom: 12px; max-height: none; }
+            .plt-lateral { width: 100%; border-right: none; border-bottom: 2px solid var(--borde); padding-right: 0; padding-bottom: 12px; max-height: none; }
         }
 
         /* ---- Solo impresión: el documento y nada más ---- */

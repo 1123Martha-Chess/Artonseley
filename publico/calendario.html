@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
     <link rel="stylesheet" href="plataforma.css">
     <style>
         [hidden] { display: none !important; }
@@ -12,8 +14,8 @@
         html, body { height: 100%; }
         body {
             font-family: Arial, sans-serif;
-            color: #1c2733;
-            background: #eef4f9;
+            color: var(--texto);
+            background: var(--fondo);
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -26,8 +28,8 @@
             align-items: center;
             gap: 14px;
             padding: 8px 14px;
-            background: white;
-            border-bottom: 1px solid #dbe3ea;
+            background: var(--superficie);
+            border-bottom: 1px solid var(--borde);
         }
         .cal-barra .marca-mini { display: flex; align-items: center; gap: 7px; text-decoration: none; }
         .cal-barra .marca-mini img.icono { height: 22px; }
@@ -57,12 +59,13 @@
             height: 34px;
             font-size: 15px;
             font-weight: bold;
-            border: 1px solid #b8c6d3;
-            background: white;
+            color: var(--texto);
+            border: 1px solid var(--borde-2);
+            background: var(--superficie);
             border-radius: 8px;
             cursor: pointer;
         }
-        .cal-nav:hover { background: #e8f0f7; }
+        .cal-nav:hover { background: var(--color-primario-suave); }
 
         .cal-titulo {
             font-size: 20px;
@@ -77,11 +80,11 @@
             font-size: 13px;
             border: 1px solid var(--color-primario);
             color: var(--color-primario);
-            background: white;
+            background: var(--superficie);
             border-radius: 8px;
             cursor: pointer;
         }
-        .cal-hoy:hover { background: #e8f0f7; }
+        .cal-hoy:hover { background: var(--color-primario-suave); }
 
         /* ================= Rejilla del mes ================= */
         .cal-dias-semana {
@@ -95,7 +98,7 @@
             text-align: center;
             font-size: 12px;
             font-weight: bold;
-            color: #5b6b78;
+            color: var(--texto-2);
             padding: 4px 0;
         }
 
@@ -109,8 +112,8 @@
         }
 
         .cal-celda {
-            background: white;
-            border: 1px solid #d5dee6;
+            background: var(--superficie);
+            border: 1px solid var(--borde);
             border-radius: 8px;
             padding: 4px 6px;
             overflow: hidden;
@@ -124,20 +127,20 @@
         .cal-celda-vacia { background: transparent; border: none; cursor: default; }
         .cal-celda-hoy { outline: 2px solid var(--color-primario); outline-offset: -2px; }
 
-        .cal-numero { font-size: 13px; font-weight: bold; color: #33424f; }
+        .cal-numero { font-size: 13px; font-weight: bold; color: var(--texto); }
 
         .cal-notas-celda { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
         .cal-chip-nota {
             font-size: 11px;
-            background: rgba(42, 107, 175, 0.14);
-            color: #1a4971;
+            background: var(--color-primario-suave);
+            color: var(--color-primario);
             border-radius: 4px;
             padding: 1px 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .cal-chip-mas { font-size: 10px; color: #5b6b78; padding-left: 3px; }
+        .cal-chip-mas { font-size: 10px; color: var(--texto-2); padding-left: 3px; }
 
         /* ================= Panel de un día ================= */
         .cal-panel-fondo {
@@ -154,9 +157,9 @@
 
         .cal-panel-dia {
             position: relative;
-            background: white;
+            background: var(--superficie);
             border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px var(--sombra-2);
             padding: 22px 24px;
             max-width: 460px;
             width: 100%;
@@ -169,48 +172,49 @@
             top: 14px; right: 14px;
             width: 28px; height: 28px;
             border: none;
-            background: #eef2f5;
+            background: var(--superficie-2);
             border-radius: 7px;
             cursor: pointer;
             font-size: 13px;
         }
-        .cal-panel-cerrar:hover { background: #e0e6ea; }
+        .cal-panel-cerrar:hover { background: var(--borde); }
 
         .cal-bloque { margin-bottom: 18px; }
-        .cal-bloque h3 { font-size: 13px; margin: 0 0 8px 0; color: #33424f; }
+        .cal-bloque h3 { font-size: 13px; margin: 0 0 8px 0; color: var(--texto); }
 
         .cal-colores { display: flex; flex-wrap: wrap; gap: 8px; }
         .cal-swatch {
             width: 30px; height: 30px;
-            border: 2px solid #cdd7df;
+            border: 2px solid var(--borde-2);
             border-radius: 8px;
             cursor: pointer;
             padding: 0;
         }
-        .cal-swatch.activo { border-color: #1c2733; box-shadow: 0 0 0 2px white inset; }
-        .cal-swatch-ninguno { background: white; color: #99a6b0; font-size: 13px; }
+        .cal-swatch.activo { border-color: var(--texto); box-shadow: 0 0 0 2px var(--superficie) inset; }
+        .cal-swatch-ninguno { background: var(--superficie); color: var(--texto-3); font-size: 13px; }
 
-        .cal-vacio { font-size: 13px; color: #5b6b78; margin: 0; }
+        .cal-vacio { font-size: 13px; color: var(--texto-2); margin: 0; }
 
         .cal-nota {
-            border: 1px solid #e0e6ea;
+            border: 1px solid var(--borde);
             border-radius: 10px;
             padding: 10px 12px;
             margin-bottom: 8px;
         }
         .cal-nota-titulo { font-weight: bold; font-size: 14px; }
-        .cal-nota-situacion { font-size: 12px; color: #44515c; margin-top: 4px; }
-        .cal-nota-info { font-size: 12px; color: #44515c; margin-top: 4px; white-space: pre-wrap; }
+        .cal-nota-situacion { font-size: 12px; color: var(--texto-2); margin-top: 4px; }
+        .cal-nota-info { font-size: 12px; color: var(--texto-2); margin-top: 4px; white-space: pre-wrap; }
         .cal-nota-acciones { margin-top: 8px; display: flex; gap: 8px; }
         .cal-nota-acciones button {
             font-size: 12px;
             padding: 4px 10px;
-            border: 1px solid #b8c6d3;
-            background: white;
+            color: var(--texto);
+            border: 1px solid var(--borde-2);
+            background: var(--superficie);
             border-radius: 6px;
             cursor: pointer;
         }
-        .cal-nota-acciones .cal-borrar { color: #b02b2b; border-color: #e3b7b7; }
+        .cal-nota-acciones .cal-borrar { color: #d9534f; border-color: rgba(217, 83, 79, 0.4); }
 
         .cal-badge {
             display: inline-block;
@@ -218,8 +222,8 @@
             font-weight: bold;
             padding: 1px 7px;
             border-radius: 999px;
-            background: #e2e8ee;
-            color: #44515c;
+            background: var(--superficie-2);
+            color: var(--texto-2);
         }
         .cal-badge-pendiente { background: #fceccf; color: #8a5a00; }
         .cal-badge-en-curso { background: #cfe0f7; color: #1a4b86; }
@@ -228,18 +232,18 @@
 
         /* ================= Formulario de nota ================= */
         .cal-form {
-            border-top: 1px solid #e0e6ea;
+            border-top: 1px solid var(--borde);
             padding-top: 14px;
         }
         .cal-form h3 { font-size: 13px; margin: 0 0 10px 0; }
         .cal-campo { margin-bottom: 10px; }
-        .cal-etiqueta { display: block; font-size: 12px; font-weight: bold; color: #33424f; margin-bottom: 4px; }
+        .cal-etiqueta { display: block; font-size: 12px; font-weight: bold; color: var(--texto); margin-bottom: 4px; }
         .cal-input, .cal-select {
             width: 100%;
             padding: 8px 10px;
             font-family: inherit;
             font-size: 13px;
-            border: 1px solid #b8c6d3;
+            border: 1px solid var(--borde-2);
             border-radius: 7px;
             box-sizing: border-box;
         }
@@ -253,7 +257,7 @@
         .cal-boton-principal {
             padding: 9px 18px;
             font-size: 13px;
-            color: white;
+            color: #fff;
             background: var(--color-primario);
             border: none;
             border-radius: 8px;
@@ -264,7 +268,7 @@
             padding: 9px 16px;
             font-size: 13px;
             color: var(--color-primario);
-            background: white;
+            background: var(--superficie);
             border: 1px solid var(--color-primario);
             border-radius: 8px;
             cursor: pointer;
@@ -275,7 +279,7 @@
             position: fixed;
             inset: 0;
             z-index: 100;
-            background: #eef4f9;
+            background: var(--fondo);
             overflow-y: auto;
             display: flex;
             align-items: flex-start;
@@ -286,14 +290,14 @@
         .vista-boveda {
             max-width: 560px;
             width: 100%;
-            background: white;
+            background: var(--superficie);
             border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 20px var(--sombra-2);
             padding: 28px 30px;
         }
 
         .vista-boveda h2 { font-size: 19px; margin: 0 0 10px 0; }
-        .vista-boveda p { font-size: 13.5px; line-height: 1.55; color: #3a4650; }
+        .vista-boveda p { font-size: 13.5px; line-height: 1.55; color: var(--texto-2); }
 
         .cuadricula-palabras {
             display: grid;
@@ -306,14 +310,14 @@
             align-items: center;
             gap: 6px;
             padding: 8px 10px;
-            background: #f1f5f9;
-            border: 1px solid #dce4ec;
+            background: var(--superficie-2);
+            border: 1px solid var(--borde);
             border-radius: 8px;
             font-size: 14px;
         }
         .numero-palabra {
             font-size: 11px;
-            color: #8a97a2;
+            color: var(--texto-3);
             min-width: 16px;
         }
 
@@ -332,7 +336,7 @@
         .campo-verificacion input {
             padding: 8px 10px;
             font-size: 14px;
-            border: 1px solid #b8c6d3;
+            border: 1px solid var(--borde-2);
             border-radius: 7px;
         }
 
@@ -342,17 +346,17 @@
             padding: 10px 12px;
             font-family: inherit;
             font-size: 14px;
-            border: 1px solid #b8c6d3;
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
             margin: 10px 0;
         }
 
-        .mensaje-error-boveda { color: #b02b2b; font-size: 13px; font-weight: bold; min-height: 18px; }
+        .mensaje-error-boveda { color: #d9534f; font-size: 13px; font-weight: bold; min-height: 18px; }
 
         .boton-boveda-principal {
             padding: 10px 20px;
             font-size: 14px;
-            color: white;
+            color: #fff;
             background: var(--color-primario);
             border: none;
             border-radius: 8px;
@@ -363,7 +367,7 @@
             padding: 10px 16px;
             font-size: 13px;
             color: var(--color-primario);
-            background: white;
+            background: var(--superficie);
             border: 1px solid var(--color-primario);
             border-radius: 8px;
             cursor: pointer;
@@ -372,7 +376,7 @@
 
         .salida-frase-perdida {
             margin-top: 22px;
-            border-top: 1px solid #e3e9ee;
+            border-top: 1px solid var(--borde);
             padding-top: 14px;
         }
         .salida-frase-perdida summary { cursor: pointer; font-size: 13px; color: var(--color-primario); }

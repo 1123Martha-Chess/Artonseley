@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artonseley — Mis cuadernos</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
     <style>
         * { box-sizing: border-box; }
 
@@ -19,7 +21,9 @@
         }
 
         :root {
-            --color-primario: #2A6BAF;
+            /* El color de acento (--color-primario) y el resto de los
+               tokens de color viven en tema.css; aquí solo van las
+               medidas de layout propias del editor. */
             /* Ancho del sidebar izquierdo (buscador + resultados) y de la
                columna de Notas a la derecha del editor — el mismo valor en
                los dos para que, junto con "Documentos seleccionados"
@@ -51,7 +55,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f7f7f7;
+            background: var(--fondo);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -72,8 +76,8 @@
             align-items: center;
             gap: 10px;
             padding: 6px 14px;
-            background: white;
-            border-bottom: 1px solid #ddd;
+            background: var(--superficie);
+            border-bottom: 1px solid var(--borde);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             position: relative;
             z-index: 1001;
@@ -90,9 +94,9 @@
             padding: 7px 12px;
             font-size: 12px;
             font-weight: bold;
-            color: white;
-            background: #2B6CB0;
-            border: 1px solid #999;
+            color: #fff;
+            background: var(--color-primario);
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
@@ -102,7 +106,7 @@
         }
 
         .boton-doc-seleccionados:hover {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         .panel-doc-seleccionados {
@@ -114,8 +118,8 @@
             max-width: 90vw;
             max-height: 70vh;
             overflow-y: auto;
-            background: white;
-            border: 1px solid #999;
+            background: var(--superficie);
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
             padding: 12px;
@@ -178,13 +182,13 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            background: #fff8e1;
-            border: 1px solid #f0d375;
+            background: var(--aviso-fondo);
+            border: 1px solid var(--aviso-borde);
             border-radius: 6px;
             padding: 4px 10px;
             font-size: 10px;
             line-height: 1.2;
-            color: #7a5c00;
+            color: var(--aviso-texto);
         }
 
         .banner-advertencia-cache strong {
@@ -208,8 +212,8 @@
             align-items: center;
             justify-content: center;
             padding: 6px;
-            background: #2B6CB0;
-            border: 1px solid #999;
+            background: var(--color-primario);
+            border: 1px solid var(--borde-2);
             border-radius: 7px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
@@ -222,7 +226,7 @@
         }
 
         .boton-icono:hover {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         .menu-configuracion {
@@ -231,8 +235,8 @@
             top: 110%;
             right: 0;
             min-width: 200px;
-            background: white;
-            border: 1px solid #999;
+            background: var(--superficie);
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             overflow: hidden;
@@ -248,9 +252,9 @@
             width: 100%;
             box-sizing: border-box;
             padding: 10px 14px;
-            background: white;
+            background: var(--superficie);
             border: none;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--linea);
             text-align: left;
             cursor: pointer;
             font-size: 13px;
@@ -261,7 +265,7 @@
         }
 
         .opcion-menu-configuracion:hover {
-            background: #f2f2f2;
+            background: var(--superficie-2);
         }
 
         /* Panel lateral compartido por Configuración/Personalización y
@@ -273,8 +277,8 @@
             width: min(320px, 90vw);
             height: calc(100vh - var(--altura-barra-superior, 78px));
             box-sizing: border-box;
-            background: white;
-            border-left: 2px solid #ccc;
+            background: var(--superficie);
+            border-left: 2px solid var(--borde);
             box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
             padding: 16px;
             overflow-y: auto;
@@ -288,12 +292,12 @@
         }
 
         .mensaje-carga {
-            color: #555;
+            color: var(--texto-2);
             font-style: italic;
         }
 
         .mensaje-error {
-            color: #b02b2b;
+            color: #d9534f;
             font-weight: bold;
         }
 
@@ -318,21 +322,21 @@
             display: flex;
             flex-direction: column;
             min-width: 0;
-            background: white;
-            border-right: 2px solid #cbd5e0;
+            background: var(--superficie);
+            border-right: 2px solid var(--borde-2);
         }
 
         .buscador-lateral {
             flex: 0 0 auto;
             padding: 14px;
-            border-bottom: 1px solid #e2e2e2;
+            border-bottom: 1px solid var(--borde);
         }
 
         .buscador-lateral input {
             width: 100%;
             padding: 9px 12px;
             font-size: 13px;
-            border: 1px solid #999;
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
         }
 
@@ -342,7 +346,7 @@
             padding: 9px 12px;
             font-size: 13px;
             font-weight: bold;
-            color: white;
+            color: #fff;
             background: var(--color-primario);
             border: 1px solid var(--color-primario);
             border-radius: 8px;
@@ -361,7 +365,7 @@
         }
 
         .aviso-sin-busqueda {
-            color: #666;
+            color: var(--texto-2);
             font-style: italic;
             font-size: 13px;
             line-height: 1.5;
@@ -401,7 +405,7 @@
         .bloque-sector {
             margin-bottom: 14px;
             padding-left: 10px;
-            border-left: 3px solid #ddd;
+            border-left: 3px solid var(--borde);
         }
 
         .bloque-sector h3 {
@@ -417,8 +421,8 @@
             box-sizing: border-box;
             margin: 4px 0;
             padding: 6px 10px;
-            background: white;
-            border: 1px solid #999;
+            background: var(--superficie);
+            border: 1px solid var(--borde-2);
             border-radius: 6px;
             text-align: left;
             cursor: pointer;
@@ -431,14 +435,14 @@
             width: 14px;
             height: 14px;
             flex-shrink: 0;
-            border: 1px solid #999;
+            border: 1px solid var(--borde-2);
             border-radius: 3px;
-            background: white;
+            background: var(--superficie);
         }
 
         .boton-checkbox.activo {
             background: var(--color-primario);
-            color: white;
+            color: #fff;
             border-color: var(--color-primario);
         }
 
@@ -447,9 +451,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: white;
+            background: var(--superficie);
             color: var(--color-primario);
-            border-color: white;
+            border-color: #fff;
         }
 
         .boton-general {
@@ -471,8 +475,8 @@
            pintarResultadosBusqueda.js) — aquí van apiladas y angostas,
            dentro del sidebar. */
         .tarjeta-articulo {
-            background: #eaf4fd;
-            border: 1px solid #bcdcf7;
+            background: var(--superficie);
+            border: 1px solid var(--borde);
             border-radius: 10px;
             padding: 12px 14px;
             margin-bottom: 12px;
@@ -482,7 +486,7 @@
         .aviso-similares {
             font-size: 12.5px;
             font-style: italic;
-            color: #555;
+            color: var(--texto-2);
             margin: 0 0 10px 0;
         }
 
@@ -490,14 +494,14 @@
             margin: 0 0 6px 0;
             font-weight: bold;
             font-size: 12.5px;
-            color: #1a4971;
+            color: var(--color-primario);
         }
 
         .tarjeta-cuerpo {
             margin: 0;
             font-size: 13px;
             line-height: 1.5;
-            color: #222;
+            color: var(--texto);
         }
 
         /* =========================================================
@@ -539,20 +543,20 @@
             padding: 12px 20px;
             font-size: 14px;
             font-weight: bold;
-            color: white;
-            background: #2B6CB0;
-            border: 1px solid #235a91;
+            color: #fff;
+            background: var(--color-primario);
+            border: 1px solid var(--color-primario);
             border-radius: 8px;
             cursor: pointer;
         }
 
         .boton-accion-cuaderno:hover:not(:disabled) {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         .boton-accion-cuaderno:disabled {
-            background: #a9bfd6;
-            border-color: #a9bfd6;
+            background: var(--borde-2);
+            border-color: var(--borde-2);
             cursor: not-allowed;
         }
 
@@ -561,13 +565,13 @@
            estilo más discreto (contorno, sin relleno) para que no
            compita visualmente con "Crear Cuaderno"/"Importar"/"Exportar". */
         .boton-accion-secundaria {
-            background: white;
-            color: #b02b2b;
-            border: 1px solid #b02b2b;
+            background: var(--superficie);
+            color: #d9534f;
+            border: 1px solid #d9534f;
         }
 
         .boton-accion-secundaria:hover:not(:disabled) {
-            background: #fdf0f0;
+            background: rgba(217, 83, 79, 0.12);
         }
 
         .lista-cuadernos {
@@ -580,7 +584,7 @@
         }
 
         .aviso-sin-cuadernos {
-            color: #666;
+            color: var(--texto-2);
             font-style: italic;
         }
 
@@ -591,8 +595,8 @@
             gap: 12px;
             width: 100%;
             max-width: 460px;
-            background: #2B6CB0;
-            color: white;
+            background: var(--color-primario);
+            color: #fff;
             border-radius: 10px;
             padding: 18px 50px 18px 22px;
             cursor: pointer;
@@ -601,7 +605,7 @@
         }
 
         .tarjeta-cuaderno:hover {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         .nombre-cuaderno-editable {
@@ -628,7 +632,7 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: white;
+            color: #fff;
             font-size: 16px;
             cursor: pointer;
             opacity: 0.85;
@@ -645,7 +649,7 @@
             margin: 0;
             max-width: 460px;
             font-size: 12.5px;
-            color: #666;
+            color: var(--texto-2);
             font-style: italic;
         }
 
@@ -677,15 +681,15 @@
             padding: 8px 14px;
             font-size: 13px;
             font-weight: bold;
-            color: white;
-            background: #2B6CB0;
+            color: #fff;
+            background: var(--color-primario);
             border: none;
             border-radius: 8px;
             cursor: pointer;
         }
 
         .cabecera-editor button:hover {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         .nombre-cuaderno-actual {
@@ -693,7 +697,7 @@
             text-align: center;
             font-size: 15px;
             font-weight: bold;
-            color: #1a4971;
+            color: var(--color-primario);
         }
 
         /* Cuadrícula de hasta 2 columnas × 2 filas: [herramientas+notas | ]
@@ -747,7 +751,7 @@
         .barra-herramientas-edicion {
             flex: 0 0 auto;
             max-width: 100%;
-            background: #2B6CB0;
+            background: var(--color-primario);
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -765,7 +769,7 @@
 
         .boton-herramienta {
             background: rgba(255, 255, 255, 0.12);
-            color: white;
+            color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 5px;
             padding: 4px 8px;
@@ -779,8 +783,8 @@
         }
 
         .boton-herramienta.activo {
-            background: white;
-            color: #2B6CB0;
+            background: var(--superficie);
+            color: var(--color-primario);
             font-weight: bold;
         }
 
@@ -789,8 +793,8 @@
             border-radius: 5px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             font-size: 12px;
-            background: white;
-            color: #222;
+            background: var(--superficie);
+            color: var(--texto);
         }
 
         .entrada-color-herramienta {
@@ -819,7 +823,7 @@
             grid-row: 2;
             min-height: 0;
             overflow-y: auto;
-            background: #e3e6e9;
+            background: var(--borde);
             border-radius: 8px;
             padding: 20px 16px;
         }
@@ -842,21 +846,21 @@
             min-height: var(--alto-pagina);
             margin: 0 auto;
             box-sizing: border-box;
-            background-color: #eaf4fd;
+            background-color: var(--superficie);
             background-image: repeating-linear-gradient(
                 to bottom,
-                #eaf4fd 0,
-                #eaf4fd var(--alto-pagina),
-                #cfd4d9 var(--alto-pagina),
-                #cfd4d9 calc(var(--alto-pagina) + var(--espacio-entre-paginas))
+                var(--superficie) 0,
+                var(--superficie) var(--alto-pagina),
+                var(--borde-2) var(--alto-pagina),
+                var(--borde-2) calc(var(--alto-pagina) + var(--espacio-entre-paginas))
             );
             background-size: 100% calc(var(--alto-pagina) + var(--espacio-entre-paginas));
-            border: 1px solid #bcdcf7;
+            border: 1px solid var(--borde);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
             padding: var(--margen-pagina);
             font-size: 15px;
             line-height: 1.6;
-            color: #222;
+            color: var(--texto);
             outline: none;
         }
 
@@ -867,8 +871,8 @@
             padding: 0 16px;
             font-size: 12px;
             font-weight: bold;
-            color: white;
-            background: #2B6CB0;
+            color: #fff;
+            background: var(--color-primario);
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -876,7 +880,7 @@
         }
 
         .boton-notas-colapsado:hover {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         /* =========================================================
@@ -893,8 +897,8 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            background: #f7f7f7;
-            border: 1px solid #ddd;
+            background: var(--fondo);
+            border: 1px solid var(--borde);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -905,8 +909,8 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            background: #2B6CB0;
-            color: white;
+            background: var(--color-primario);
+            color: #fff;
             padding: 12px 14px;
         }
 
@@ -919,8 +923,8 @@
             padding: 8px 12px;
             font-size: 12.5px;
             font-weight: bold;
-            color: #2B6CB0;
-            background: white;
+            color: var(--color-primario);
+            background: var(--superficie);
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -928,7 +932,7 @@
         }
 
         .boton-crear-nota:hover {
-            background: #e6eefa;
+            background: var(--superficie-2);
         }
 
         .lista-notas {
@@ -942,14 +946,14 @@
         }
 
         .aviso-sin-notas {
-            color: #666;
+            color: var(--texto-2);
             font-style: italic;
             font-size: 13px;
         }
 
         .formulario-nota {
-            background: white;
-            border: 1px solid #ddd;
+            background: var(--superficie);
+            border: 1px solid var(--borde);
             border-radius: 8px;
             padding: 10px;
             display: flex;
@@ -981,7 +985,7 @@
         }
 
         .swatch-color-nota.elegido {
-            border-color: #2B6CB0;
+            border-color: var(--color-primario);
         }
 
         .fila-botones-formulario-nota {
@@ -998,7 +1002,7 @@
         .texto-nota {
             margin: 0 0 10px 0;
             font-size: 13px;
-            color: #222;
+            color: var(--texto);
             white-space: pre-wrap;
             word-break: break-word;
         }
@@ -1015,14 +1019,14 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            border: 2px solid #2B6CB0;
+            border: 2px solid var(--color-primario);
             background: transparent;
             cursor: pointer;
             padding: 0;
         }
 
         .boton-circulo-global.activo {
-            background: #2B6CB0;
+            background: var(--color-primario);
         }
 
         .boton-icono-nota {
@@ -1039,13 +1043,13 @@
 
         .pie-aviso-legal {
             flex: 0 0 auto;
-            background: white;
+            background: var(--superficie);
             text-align: center;
             font-size: 12px;
             line-height: 1.5;
-            color: #777;
+            color: var(--texto-3);
             padding: 10px 20px;
-            border-top: 1px solid #e2e2e2;
+            border-top: 1px solid var(--borde);
         }
 
         /* En celular, todo pasa a apilarse en una sola columna: ya no
@@ -1082,7 +1086,7 @@
 
             .barra-lateral-busqueda {
                 border-right: none;
-                border-bottom: 2px solid #cbd5e0;
+                border-bottom: 2px solid var(--borde-2);
                 max-height: 45vh;
             }
 
@@ -1127,7 +1131,7 @@
         .pantalla-boveda {
             position: fixed;
             inset: 0;
-            background: rgba(247, 247, 247, 0.97);
+            background: var(--fondo);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1139,7 +1143,7 @@
         .tarjeta-boveda {
             max-width: 560px;
             width: 100%;
-            background: white;
+            background: var(--superficie);
             border-radius: 12px;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
             padding: 32px 36px;
@@ -1149,13 +1153,13 @@
         .vista-boveda h2 {
             margin: 0 0 12px 0;
             font-size: 19px;
-            color: #1a4971;
+            color: var(--color-primario);
         }
 
         .vista-boveda p {
             font-size: 13.5px;
             line-height: 1.6;
-            color: #444;
+            color: var(--texto-2);
         }
 
         .cuadricula-palabras {
@@ -1169,19 +1173,19 @@
             display: flex;
             align-items: baseline;
             gap: 6px;
-            background: #eaf4fd;
-            border: 1px solid #bcdcf7;
+            background: var(--superficie);
+            border: 1px solid var(--borde);
             border-radius: 8px;
             padding: 8px 10px;
             font-size: 14px;
             font-weight: bold;
-            color: #1a4971;
+            color: var(--color-primario);
         }
 
         .numero-palabra {
             font-size: 11px;
             font-weight: normal;
-            color: #6b8caf;
+            color: var(--texto-2);
         }
 
         .confirmacion-anotado {
@@ -1210,14 +1214,14 @@
         .campo-verificacion label {
             font-size: 12px;
             font-weight: bold;
-            color: #444;
+            color: var(--texto-2);
         }
 
         .campo-verificacion input,
         .area-frase-desbloqueo {
             padding: 9px 10px;
             font-size: 14px;
-            border: 1px solid #999;
+            border: 1px solid var(--borde-2);
             border-radius: 8px;
             font-family: inherit;
         }
@@ -1230,7 +1234,7 @@
         }
 
         .mensaje-error-boveda {
-            color: #b02b2b;
+            color: #d9534f;
             font-weight: bold;
             font-size: 13px;
             min-height: 18px;
@@ -1252,29 +1256,29 @@
         }
 
         .boton-boveda-principal {
-            color: white;
-            background: #2B6CB0;
-            border: 1px solid #235a91;
+            color: #fff;
+            background: var(--color-primario);
+            border: 1px solid var(--color-primario);
         }
 
         .boton-boveda-principal:hover:not(:disabled) {
-            background: #235a91;
+            filter: brightness(0.9);
         }
 
         .boton-boveda-principal:disabled {
-            background: #a9bfd6;
-            border-color: #a9bfd6;
+            background: var(--borde-2);
+            border-color: var(--borde-2);
             cursor: not-allowed;
         }
 
         .boton-boveda-secundario {
-            color: #2B6CB0;
-            background: white;
-            border: 1px solid #2B6CB0;
+            color: var(--color-primario);
+            background: var(--superficie);
+            border: 1px solid var(--color-primario);
         }
 
         .boton-boveda-secundario:hover {
-            background: #eaf4fd;
+            background: var(--superficie);
         }
 
         /* Bloque "¿Perdiste tus 12 palabras?" al pie de las pantallas de
@@ -1284,19 +1288,19 @@
         .salida-frase-perdida {
             margin-top: 22px;
             padding-top: 14px;
-            border-top: 1px solid #e2e2e2;
+            border-top: 1px solid var(--borde);
         }
 
         .salida-frase-perdida summary {
             font-size: 13px;
             font-weight: bold;
-            color: #2B6CB0;
+            color: var(--color-primario);
             cursor: pointer;
         }
 
         .salida-frase-perdida p {
             font-size: 12.5px;
-            color: #555;
+            color: var(--texto-2);
             margin: 10px 0;
         }
 
@@ -1316,8 +1320,8 @@
         }
 
         .salida-frase-perdida .boton-boveda-secundario:disabled {
-            color: #9bb4cc;
-            border-color: #c8d7e5;
+            color: var(--borde-2);
+            border-color: var(--borde-2);
             cursor: not-allowed;
         }
 
