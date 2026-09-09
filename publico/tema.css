@@ -66,3 +66,32 @@
   --aviso-borde: #5c4e1e;
   --aviso-texto: #e0c877;
 }
+
+/* ===================================================================
+   BASE PARA CELULAR / APP INSTALADA (PWA)
+   Reglas mínimas que valen para TODAS las páginas (este archivo se
+   enlaza en todas). Los ajustes de layout propios de cada pantalla
+   viven en su <style> o en plataforma.css / documento.css.
+   =================================================================== */
+
+/* iOS "infla" el tamaño de letra de algunos bloques al girar el
+   teléfono o en ciertas vistas; con esto el texto se ve igual que en
+   el diseño. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (max-width: 900px) {
+  /* Safari en iPhone hace zoom automático al enfocar un campo cuya
+     letra mide menos de 16px, y deja la página descuadrada. Se fuerza
+     16px en pantallas chicas SOLO en campos de escritura. Lleva
+     !important a propósito: varios <style> de página fijan 14px con un
+     selector de clase (más específico que este). No afecta casillas,
+     interruptores, deslizadores ni el selector de color. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

@@ -13,6 +13,12 @@
 // Los valores de aquí DEBEN coincidir con COLORES/TEMAS de
 // manejaPersonalizacion.js (son 4 constantes, se toleró la duplicación a
 // cambio de no cargar el módulo entero de forma bloqueante).
+//
+// También ajusta <meta name="theme-color"> para que la barra del sistema
+// (reloj/batería en la app instalada, tinte de la barra de direcciones en
+// el navegador móvil) combine con el tema. El valor claro/oscuro es el de
+// --superficie de tema.css (barra superior de casi todas las páginas);
+// duplicado a propósito aquí, como las otras constantes de este archivo.
 // -------------------------------------------------------------------
 (function () {
   try {
@@ -31,6 +37,11 @@
     if (oscuro) {
       raiz.setAttribute('data-tema', 'oscuro');
       raiz.style.colorScheme = 'dark';
+    }
+
+    var metaColor = document.querySelector('meta[name="theme-color"]');
+    if (metaColor) {
+      metaColor.setAttribute('content', oscuro ? '#1e2126' : '#ffffff');
     }
   } catch (e) {
     // Sin localStorage (modo privado estricto): queda el tema claro por

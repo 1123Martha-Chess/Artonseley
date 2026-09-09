@@ -2,7 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
     <title>Panel de administración</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <script src="Sistema/temaGuardado.js"></script>
@@ -15,6 +23,8 @@
             margin: 0;
             background: var(--fondo);
             color: var(--texto);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         header.barra-admin {
@@ -23,7 +33,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 8px;
-            padding: 14px 24px;
+            padding: calc(14px + env(safe-area-inset-top)) 24px 14px 24px;
             background: var(--superficie);
             border-bottom: 1px solid var(--borde);
             box-shadow: 0 2px 8px var(--sombra);
@@ -48,7 +58,7 @@
         main {
             max-width: 900px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 24px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
         }
 
         section.tarjeta {
@@ -318,7 +328,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
             z-index: 1000;
         }
 
@@ -385,8 +395,8 @@
 
         .aviso-flotante {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: calc(20px + env(safe-area-inset-bottom));
+            right: calc(20px + env(safe-area-inset-right));
             padding: 12px 18px;
             border-radius: 8px;
             font-size: 13px;

@@ -45,7 +45,15 @@ function armarPagina({ titulo, cuerpoHTML }) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
     <title>${titulo} - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <script src="Sistema/temaGuardado.js"></script>

@@ -1,17 +1,30 @@
 {
+  "id": "/index.html",
   "name": "Artonseley",
   "short_name": "Artonseley",
   "description": "Consulta ágil de leyes y artículos de México, con calendario y cuadernos cifrados.",
+  "lang": "es-MX",
+  "dir": "ltr",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "categories": ["productivity", "utilities", "books"],
   "background_color": "#f7f7f7",
   "theme_color": "#2A6BAF",
   "icons": [
     {
       "src": "/imagenes/artonseley-favicon.png",
-      "sizes": "any",
-      "type": "image/png"
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/imagenes/artonseley-favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

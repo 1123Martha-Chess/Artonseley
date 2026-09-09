@@ -85,6 +85,13 @@ const BOTONES_SUPERSUB = [
 let areaEscritura = null;
 let rangoGuardado = null;
 
+// En pantalla táctil, tocar un botón de la barra colapsa la selección del
+// área de escritura ANTES de que corra el "click" del botón, así que el
+// comando (negrita, color…) se aplicaba sobre nada. Mientras el dedo (o el
+// ratón) está sobre la barra, "congelarSeleccion" impide que se pierda el
+// último rango bueno; se restaura justo antes de ejecutar el comando.
+let congelarSeleccion = false;
+
 // idArea:  id del <div contenteditable> donde se escribe.
 // idBarra: id del contenedor donde se pintan las dos filas de botones.
 // "+Notas" NO vive aquí — tiene su propia columna a la derecha del
@@ -101,6 +108,27 @@ export function inicializarHerramientasEdicion(idArea, idBarra) {
 
   areaEscritura.addEventListener('mouseup', guardarSeleccion);
   areaEscritura.addEventListener('keyup', guardarSeleccion);
+
+  // Un solo listener en "selectionchange" mantiene "rangoGuardado" al día
+  // también cuando la selección se hace con el dedo (en táctil no hay
+  // "mouseup"). Va junto con actualizarEstadosBotones para no registrar
+  // dos veces el mismo evento.
+  document.addEventListener('selectionchange', () => {
+    guardarSeleccion();
+    actualizarEstadosBotones();
+  });
+
+  // Congela el rango mientras se interactúa con la barra (ver el
+  // comentario en "congelarSeleccion"). "true" = fase de captura, para
+  // llegar antes que cualquier manejador de los botones.
+  barra.addEventListener('pointerdown', () => { congelarSeleccion = true; }, true);
+  const descongelar = () => {
+    // En el siguiente tick: para entonces el "click" del botón ya
+    // ejecutó su comando con el rango correcto.
+    setTimeout(() => { congelarSeleccion = false; }, 0);
+  };
+  document.addEventListener('pointerup', descongelar);
+  document.addEventListener('pointercancel', descongelar);
 
   barra.innerHTML = '';
 
@@ -140,11 +168,10 @@ export function inicializarHerramientasEdicion(idArea, idBarra) {
   fila2.appendChild(crearBotonSimple('Limpiar formato', () => ejecutarComando('removeFormat'), 'Quita todo el formato de lo seleccionado'));
 
   barra.appendChild(fila2);
-
-  document.addEventListener('selectionchange', actualizarEstadosBotones);
 }
 
 function guardarSeleccion() {
+  if (congelarSeleccion) return;
   const seleccion = window.getSelection();
   if (seleccion.rangeCount > 0 && areaEscritura.contains(seleccion.anchorNode)) {
     rangoGuardado = seleccion.getRangeAt(0).cloneRange();
@@ -152,23 +179,33 @@ function guardarSeleccion() {
 }
 
 function restaurarSeleccion() {
-  if (!rangoGuardado) return;
   areaEscritura.focus();
+  if (!rangoGuardado) return;
   const seleccion = window.getSelection();
   seleccion.removeAllRanges();
   seleccion.addRange(rangoGuardado);
 }
 
 function ejecutarComando(comando, valor = null) {
-  areaEscritura.focus();
+  // Reponer el rango antes del comando: en táctil la selección ya se
+  // colapsó al tocar el botón.
+  restaurarSeleccion();
   document.execCommand(comando, false, valor);
+  // Tras el comando el navegador deja una selección nueva dentro del
+  // área — guardarla de una vez (saltando el "congelar", que sigue
+  // activo hasta el pointerup) para que el siguiente comando encadene
+  // sobre lo correcto.
+  const seleccion = window.getSelection();
+  if (seleccion.rangeCount > 0 && areaEscritura.contains(seleccion.anchorNode)) {
+    rangoGuardado = seleccion.getRangeAt(0).cloneRange();
+  }
 }
 
 // Chrome/Edge/Firefox entienden 'hiliteColor' para el color de fondo del
 // marcatextos; por si algún navegador solo conoce 'backColor', se usa
 // como respaldo cuando el primero no funciona.
 function ejecutarComandoResaltado(color) {
-  areaEscritura.focus();
+  restaurarSeleccion();
   const funciono = document.execCommand('hiliteColor', false, color);
   if (!funciono) document.execCommand('backColor', false, color);
 }

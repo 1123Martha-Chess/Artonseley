@@ -2,7 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
     <title>Escritorio - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <script src="Sistema/temaGuardado.js"></script>
@@ -22,6 +30,54 @@
         html, body { height: 100%; }
         body { overflow: hidden; color: var(--texto); background: var(--fondo); }
 
+        /* =========================================================
+           AVISO EN CELULAR
+           El Escritorio (mosaico de ventanas que se arrastran y se
+           redimensionan) está pensado para pantalla grande: en un
+           teléfono los <iframe> quedarían diminutos y el arrastre no
+           tiene sentido. En pantallas angostas se tapa todo con este
+           aviso que manda a "Pestañas", que sí encaja en celular.
+           El JS de abajo igual corre, pero queda detrás del aviso.
+           ========================================================= */
+        .aviso-movil-escritorio { display: none; }
+
+        @media (max-width: 760px) {
+            .aviso-movil-escritorio {
+                display: flex;
+                position: fixed;
+                inset: 0;
+                z-index: 200;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 18px;
+                text-align: center;
+                padding: max(28px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+                background: var(--fondo);
+                font-family: Arial, sans-serif;
+            }
+
+            .aviso-movil-escritorio h1 { font-size: 19px; margin: 0; color: var(--texto); }
+            .aviso-movil-escritorio p { font-size: 14px; line-height: 1.5; color: var(--texto-2); margin: 0; max-width: 420px; }
+
+            .aviso-movil-escritorio a.boton {
+                display: inline-block;
+                padding: 12px 22px;
+                font-size: 15px;
+                font-weight: bold;
+                color: #fff;
+                background: var(--color-primario);
+                border-radius: 10px;
+                text-decoration: none;
+            }
+
+            .aviso-movil-escritorio a.enlace-secundario {
+                font-size: 13px;
+                color: var(--color-primario);
+                text-decoration: none;
+            }
+        }
+
         /* Varias reglas de esta página ponen display: flex en elementos
            que también se ocultan con el atributo "hidden" (la caja de
            piezas). Sin esto, "display: flex" le gana al "display: none"
@@ -31,11 +87,11 @@
         .escritorio-barra {
             position: fixed;
             top: 0; left: 0; right: 0;
-            height: 48px;
+            height: calc(48px + env(safe-area-inset-top));
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 0 14px;
+            padding: env(safe-area-inset-top) calc(14px + env(safe-area-inset-right)) 0 calc(14px + env(safe-area-inset-left));
             background: var(--superficie);
             border-bottom: 1px solid var(--borde);
             box-shadow: 0 1px 6px var(--sombra);
@@ -83,7 +139,8 @@
            para el pie fijo (.escritorio-pie). */
         .lienzo-scroll {
             position: fixed;
-            top: 48px; left: 0; right: 0; bottom: 22px;
+            top: calc(48px + env(safe-area-inset-top)); left: 0; right: 0;
+            bottom: calc(22px + env(safe-area-inset-bottom));
             overflow: auto;
         }
 
@@ -92,7 +149,8 @@
         .escritorio-pie {
             position: fixed;
             left: 0; right: 0; bottom: 0;
-            height: 22px;
+            height: calc(22px + env(safe-area-inset-bottom));
+            padding-bottom: env(safe-area-inset-bottom);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -295,6 +353,20 @@
     </style>
 </head>
 <body>
+    <!-- Solo visible en pantallas angostas (ver .aviso-movil-escritorio
+         en el <style>): el mosaico de ventanas no es usable en un
+         teléfono, así que se manda a "Pestañas". -->
+    <div class="aviso-movil-escritorio">
+        <h1>🧩 El Escritorio es para pantallas grandes</h1>
+        <p>
+            El mosaico de ventanas se arrastra y se redimensiona: en un teléfono
+            las ventanas quedarían diminutas. Para el celular, usa <strong>Pestañas</strong>:
+            las mismas herramientas, una a la vez y a pantalla completa.
+        </p>
+        <a class="boton" href="pestanas.html">Abrir Pestañas</a>
+        <a class="enlace-secundario" href="index.html">← Volver al inicio</a>
+    </div>
+
     <header class="escritorio-barra">
         <a class="marca-mini" href="index.html" title="Volver al inicio">
             <img class="icono" src="imagenes/artonseley-pagina.png" alt="">

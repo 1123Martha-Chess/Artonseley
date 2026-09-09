@@ -33,7 +33,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px 80px 24px;
+  /* Los max(...) con env(safe-area-inset-*) evitan que el notch / la
+     barra de estado tapen el contenido cuando la plataforma se abre
+     como app instalada (standalone) en iOS. En un navegador normal
+     env(...) vale 0 y queda el relleno de siempre. */
+  padding: max(48px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(80px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
   text-align: center;
 }
 
@@ -147,7 +151,8 @@ body {
 .pantalla {
   max-width: 720px;
   margin: 0 auto;
-  padding: 40px 24px 80px 24px;
+  /* Ver la nota de env(safe-area-inset-*) en .inicio. */
+  padding: max(40px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(80px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
 }
 
 .volver {
@@ -295,5 +300,7 @@ textarea.campo-texto {
 
 @media (max-width: 600px) {
   .burbuja { min-width: 100%; }
-  .pantalla { padding: 28px 16px 60px 16px; }
+  .pantalla {
+    padding: max(28px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(60px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
 }

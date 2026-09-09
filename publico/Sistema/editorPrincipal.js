@@ -359,6 +359,25 @@ function crearTarjetaCuaderno(cuaderno) {
   nombre.textContent = cuaderno.nombre;
   tarjeta.appendChild(nombre);
 
+  // Renombrar: activar la edición del nombre ahí mismo. Se llega por el
+  // botón ✎ (indispensable en táctil, donde el doble click no es fiable
+  // y además dispara el zoom de la página) o por doble click en el
+  // nombre (cómodo con ratón).
+  function activarRenombrado(evento) {
+    evento?.stopPropagation();
+    nombre.contentEditable = 'true';
+    nombre.focus();
+    document.execCommand('selectAll', false, null);
+  }
+
+  const botonRenombrar = document.createElement('button');
+  botonRenombrar.type = 'button';
+  botonRenombrar.classList.add('boton-borrar-cuaderno', 'boton-renombrar-cuaderno');
+  botonRenombrar.title = 'Cambiar el nombre';
+  botonRenombrar.textContent = '✎';
+  botonRenombrar.addEventListener('click', activarRenombrado);
+  tarjeta.appendChild(botonRenombrar);
+
   const botonBorrar = document.createElement('button');
   botonBorrar.type = 'button';
   botonBorrar.classList.add('boton-borrar-cuaderno');
@@ -372,15 +391,7 @@ function crearTarjetaCuaderno(cuaderno) {
   });
   tarjeta.appendChild(botonBorrar);
 
-  // Doble click en el nombre: lo hace editable ahí mismo (ver
-  // .nombre-cuaderno-editable en editor.html — crece con el texto y, si
-  // llega al borde derecho, pasa a una segunda línea, sin JS extra).
-  nombre.addEventListener('dblclick', (evento) => {
-    evento.stopPropagation();
-    nombre.contentEditable = 'true';
-    nombre.focus();
-    document.execCommand('selectAll', false, null);
-  });
+  nombre.addEventListener('dblclick', activarRenombrado);
 
   async function confirmarRenombrado() {
     nombre.contentEditable = 'false';

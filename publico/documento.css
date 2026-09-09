@@ -16,7 +16,10 @@ body {
   color: var(--texto);
   background: var(--fondo);
   margin: 0;
-  padding: 40px 20px;
+  /* max(...) con env(safe-area-inset-*): respeta el notch / la barra de
+     estado cuando se abre como app instalada en iOS. En navegador
+     normal env(...) vale 0. */
+  padding: max(40px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
 }
 
 .hoja-documento {
@@ -214,7 +217,7 @@ body {
    para que la lectura no quede apretada contra el borde. */
 @media (max-width: 600px) {
   body {
-    padding: 20px 12px;
+    padding: max(20px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   }
 
   .hoja-documento {

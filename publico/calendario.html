@@ -2,7 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
     <title>Calendario - Artonseley</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <script src="Sistema/temaGuardado.js"></script>
@@ -19,6 +27,10 @@
             margin: 0;
             display: flex;
             flex-direction: column;
+            /* Notch a los lados en la app instalada (iOS); arriba se
+               resuelve en .cal-barra. */
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         /* ================= Barra superior ================= */
@@ -27,7 +39,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 8px 14px;
+            padding: calc(8px + env(safe-area-inset-top)) 14px 8px 14px;
             background: var(--superficie);
             border-bottom: 1px solid var(--borde);
         }
@@ -151,7 +163,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 30px 16px;
+            padding: max(30px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(30px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
             overflow-y: auto;
         }
 
@@ -284,7 +296,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 40px 18px;
+            padding: max(40px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
         }
 
         .vista-boveda {
@@ -381,6 +393,56 @@
         }
         .salida-frase-perdida summary { cursor: pointer; font-size: 13px; color: var(--color-primario); }
         .salida-frase-perdida p { font-size: 12.5px; }
+
+        /* ================= Celular =================
+           En pantalla chica NO se aplasta el mes para que quepa entero:
+           la página hace scroll y cada día tiene alto suficiente para
+           leerse. */
+        @media (max-width: 700px) {
+            html, body { height: auto; }
+
+            #calendario {
+                flex: 0 0 auto;
+                min-height: 0;
+                padding: 10px;
+            }
+
+            /* El título del mes en su propia línea (arriba); debajo, la
+               fila de botones << < > >> y "Hoy". */
+            .cal-encabezado { flex-wrap: wrap; gap: 6px; }
+            .cal-titulo {
+                flex: 1 1 100%;
+                min-width: 0;
+                order: -1;
+                font-size: 18px;
+            }
+            .cal-nav { width: 44px; height: 40px; }
+
+            .cal-dias-semana div { font-size: 11px; }
+
+            /* Filas que crecen con el contenido en vez de repartirse la
+               altura de la pantalla. */
+            .cal-rejilla {
+                flex: 0 0 auto;
+                grid-auto-rows: minmax(76px, auto);
+                gap: 3px;
+            }
+            .cal-celda { padding: 3px 4px; }
+            .cal-numero { font-size: 12px; }
+            .cal-chip-nota { font-size: 10.5px; }
+
+            /* Panel del día: Situación en dos renglones (etiqueta y
+               detalle) para que quepan. */
+            .cal-panel-dia { padding: 20px 16px; }
+            .cal-fila-situacion { flex-wrap: wrap; }
+            .cal-fila-situacion .cal-select,
+            .cal-fila-situacion .cal-input { flex: 1 1 100%; }
+
+            .cal-nota-acciones button { padding: 7px 12px; }
+
+            .vista-boveda { padding: 22px 18px; }
+            .cuadricula-palabras { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        }
     </style>
 </head>
 <body>

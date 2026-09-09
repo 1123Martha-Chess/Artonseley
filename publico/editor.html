@@ -2,7 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
     <title>Artonseley — Mis cuadernos</title>
     <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
     <script src="Sistema/temaGuardado.js"></script>
@@ -59,6 +67,11 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            /* Respeta el notch a los lados cuando se abre como app
+               instalada en iOS (arriba y abajo se resuelven en la barra
+               superior y el pie). En navegador normal env(...) vale 0. */
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         /* =========================================================
@@ -75,7 +88,9 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 6px 14px;
+            /* El env(safe-area-inset-top) baja la barra por debajo de la
+               barra de estado / notch en la app instalada (iOS). */
+            padding: calc(6px + env(safe-area-inset-top)) 14px 6px 14px;
             background: var(--superficie);
             border-bottom: 1px solid var(--borde);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -598,7 +613,7 @@
             background: var(--color-primario);
             color: #fff;
             border-radius: 10px;
-            padding: 18px 50px 18px 22px;
+            padding: 18px 84px 18px 22px;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
             flex-shrink: 0;
@@ -627,15 +642,26 @@
 
         .boton-borrar-cuaderno {
             position: absolute;
-            right: 14px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: none;
             border: none;
             color: #fff;
             font-size: 16px;
             cursor: pointer;
             opacity: 0.85;
+        }
+
+        /* El botón ✎ va a la izquierda del 🗑 (ver .tarjeta-cuaderno, que
+           reserva el espacio a la derecha para los dos). */
+        .boton-renombrar-cuaderno {
+            right: 46px;
         }
 
         .boton-borrar-cuaderno:hover {
@@ -1048,13 +1074,13 @@
             font-size: 12px;
             line-height: 1.5;
             color: var(--texto-3);
-            padding: 10px 20px;
+            padding: 10px 20px calc(10px + env(safe-area-inset-bottom)) 20px;
             border-top: 1px solid var(--borde);
         }
 
         /* En celular, todo pasa a apilarse en una sola columna: ya no
            alcanza el ancho para sidebar + área principal + notas lado a
-           lado. */
+           lado. La página entera hace scroll (nada de scroll anidado). */
         @media (max-width: 900px) {
             :root {
                 --ancho-lateral: 100%;
@@ -1062,8 +1088,15 @@
                 /* En pantallas angostas, el margen de 1" completo (96px)
                    dejaría casi sin espacio para escribir — se reduce el
                    margen y el ancho "de hoja" se adapta al que haya. */
-                --margen-pagina: 20px;
+                --margen-pagina: 18px;
                 --ancho-pagina: 100%;
+                /* La "hoja" vacía a alto de carta real (1056px) dejaría
+                   siempre un vacío enorme para hacer scroll en un
+                   teléfono. Se acorta el alto visual de página; los
+                   renglones de separación entre hojas quedan más
+                   seguidos, pero esto es un cuaderno de notas, no una
+                   vista previa de impresión. */
+                --alto-pagina: 620px;
             }
 
             .barra-superior {
@@ -1077,39 +1110,105 @@
 
             .celda-resto-superior {
                 order: 1;
+                flex-wrap: wrap;
             }
 
+            /* El documento va primero; el buscador de leyes embebido
+               baja al final para que en el móvil no ocupe la mitad de
+               arriba de la pantalla. */
             .fila-contenido {
                 flex-direction: column;
-                overflow-y: auto;
+                overflow: visible;
+            }
+
+            .area-principal {
+                order: 1;
+                overflow: visible;
             }
 
             .barra-lateral-busqueda {
+                order: 2;
+                /* Que mida lo que ocupe su contenido (el "flex: 0 0 100%"
+                   base, con --ancho-lateral a 100%, en columna intentaría
+                   ocupar toda la altura). */
+                flex: 0 0 auto;
                 border-right: none;
-                border-bottom: 2px solid var(--borde-2);
-                max-height: 45vh;
+                border-top: 2px solid var(--borde-2);
+                max-height: none;
             }
 
-            /* Con la pantalla angosta, "notas-abierta" apila el panel
-               debajo en vez de ponerlo al lado (una sola columna, una
-               fila extra para él). Colapsada sigue siendo una sola
-               columna igual que en escritorio. */
+            .resultados-lateral {
+                max-height: none;
+                overflow: visible;
+            }
+
+            .vista-cuadernos,
+            .vista-editor {
+                overflow: visible;
+            }
+
+            .lienzo-escritura {
+                overflow: visible;
+            }
+
+            /* Editor: en vez de cuadrícula, una sola columna que apila
+               herramientas + hoja + notas. Evita el problema de altura
+               de las filas de grid en pantallas chicas. */
+            .cuerpo-editor,
             .cuerpo-editor.notas-abierta {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr var(--ancho-notas);
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .columna-notas {
+                max-height: none;
             }
 
             .fila-superior-editor {
                 flex-wrap: wrap;
             }
 
-            .cuerpo-editor.notas-abierta .columna-notas {
-                grid-column: 1;
-                grid-row: 3;
+            .cabecera-editor {
+                gap: 8px;
             }
 
-            .columna-notas {
-                max-height: 45vh;
+            /* El nombre del cuaderno en su propia línea arriba, para que
+               "← Cuadernos" y "Exportar" quepan sin encimarse. */
+            .nombre-cuaderno-actual {
+                order: -1;
+                flex-basis: 100%;
+            }
+
+            /* Blanco de toque más grande para el dedo en la barra de
+               formato. */
+            .boton-herramienta {
+                padding: 7px 11px;
+                font-size: 13px;
+                min-width: 34px;
+            }
+
+            .selector-herramienta {
+                padding: 6px;
+            }
+
+            .entrada-color-herramienta {
+                width: 34px;
+                height: 32px;
+            }
+
+            .swatch-color-nota {
+                width: 30px;
+                height: 30px;
+            }
+
+            .tarjeta-boveda {
+                padding: 22px 18px;
+            }
+
+            .cuadricula-palabras {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
             }
 
             .logo-marca {
@@ -1135,7 +1234,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
             z-index: 2000;
             overflow-y: auto;
         }
