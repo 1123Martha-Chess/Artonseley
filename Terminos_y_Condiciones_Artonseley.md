@@ -1,6 +1,6 @@
 # TÉRMINOS Y CONDICIONES DE USO Y SERVICIO
 
-**Artonseley — Última actualización: 31 de agosto de 2026**
+**Artonseley — Última actualización: 9 de septiembre de 2026**
 
 Los presentes Términos y Condiciones de Uso y Servicio (los "Términos") regulan el acceso y uso de Artonseley (la "Plataforma" o el "Servicio"), un sistema de consulta y búsqueda de información jurídica mexicana, operado por **Martha Leticia Gradilla Bermúdez** (el "Responsable"), disponible a través del sitio web, aplicaciones, sistemas y demás medios electrónicos —actuales o que en el futuro se pongan a disposición— mediante los cuales se preste el Servicio.
 
@@ -52,7 +52,7 @@ Los presentes Términos y Condiciones de Uso y Servicio (los "Términos") regula
 
 3.1 **Lanzamiento escalonado.** El Responsable podrá dar a conocer sus planes de servicio de manera escalonada y promover un plan a la vez, conforme a su estrategia comercial. El hecho de que un plan no se encuentre visible, promocionado o disponible públicamente en un momento determinado no implica su cancelación ni constituye trato discriminatorio hacia el público en general, sino una decisión de mercadotecnia del Responsable.
 
-3.2 **Cronograma de disponibilidad.** A partir de las 20:00 horas (hora del centro de México) del día de su publicación en la Plataforma —la cual quedará registrada por el Responsable—, el "Plan Fundadores" estará disponible para su contratación durante 168 (ciento sesenta y ocho) horas continuas (una semana). Concluido dicho plazo, el Responsable dará a conocer el "Plan Co-fundadores", el cual permanecerá disponible durante 336 (trescientas treinta y seis) horas continuas (dos semanas), contadas de la misma manera. De forma simultánea, y desde el inicio de la disponibilidad del "Plan Fundadores", el "Plan Mensual" se encuentra también disponible de forma continua para el público en general —en el entendido de que siempre existirá una modalidad de suscripción mensual disponible—, con el precio promocional y el precio ordinario señalados en la Cláusula 3.3, sin perjuicio de que su denominación comercial y/o precio puedan actualizarse en el futuro conforme a la Cláusula 3.6.
+3.2 **Cronograma de disponibilidad.** A partir de las 19:00 horas (hora del centro de México) del día de su publicación en la Plataforma —la cual quedará registrada por el Responsable—, el "Plan Fundadores" estará disponible para su contratación durante 168 (ciento sesenta y ocho) horas continuas (una semana). Concluido dicho plazo, el Responsable dará a conocer el "Plan Co-fundadores", el cual permanecerá disponible durante 336 (trescientas treinta y seis) horas continuas (dos semanas), contadas de la misma manera. De forma simultánea, y desde el inicio de la disponibilidad del "Plan Fundadores", el "Plan Mensual" se encuentra también disponible de forma continua para el público en general —en el entendido de que siempre existirá una modalidad de suscripción mensual disponible—, con el precio promocional y el precio ordinario señalados en la Cláusula 3.3, sin perjuicio de que su denominación comercial y/o precio puedan actualizarse en el futuro conforme a la Cláusula 3.6.
 
 3.3 **Precios vigentes.** Los precios de los planes se expresan en pesos mexicanos (MXN), incluyen el Impuesto al Valor Agregado (IVA), y corresponden a los siguientes:
 
