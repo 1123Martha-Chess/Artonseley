@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
+    <title>Encuestas - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        /* Caja del aviso de privacidad propio de este apartado — mismo
+           lenguaje visual que el descargo de plantillas.html (aviso-fondo /
+           aviso-borde / aviso-texto de tema.css). */
+        .enc-aviso p { margin: 0 0 12px 0; }
+        .enc-aviso .caja-texto-aviso {
+            background: var(--aviso-fondo);
+            border: 1px solid var(--aviso-borde);
+            color: var(--aviso-texto);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13.5px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .enc-aviso .caja-texto-aviso a { color: var(--aviso-texto); text-decoration: underline; }
+
+        .enc-encuesta { }
+        .enc-encuesta h3 { margin: 0 0 4px 0; }
+        .enc-descripcion-encuesta {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            color: var(--texto-2);
+            margin: 0 0 14px 0;
+            line-height: 1.5;
+        }
+        .enc-estado {
+            display: inline-block;
+            font-family: Arial, sans-serif;
+            font-size: 12.5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+        }
+        .enc-estado-editable { background: var(--color-primario-suave); color: var(--color-primario); }
+        .enc-estado-definitiva { background: rgba(60, 154, 60, 0.13); color: #3c9a3c; }
+
+        .enc-pregunta { margin-bottom: 18px; }
+        .enc-pregunta label.enc-texto-pregunta {
+            display: block;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .enc-opciones { display: flex; flex-wrap: wrap; gap: 8px; }
+
+        .enc-respuesta-congelada {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            padding: 8px 10px;
+            background: var(--superficie-2);
+            border-radius: 6px;
+            color: var(--texto-2);
+        }
+
+        .enc-vacio { color: var(--texto-2); font-size: 14px; font-family: Arial, sans-serif; }
+
+        .enc-retirar {
+            display: block;
+            text-align: center;
+            margin-top: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: var(--texto-3);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="pantalla">
+        <a href="index.html" class="volver">← Volver al inicio</a>
+        <h1>Encuestas</h1>
+        <p class="pantalla-descripcion">
+            Encuestas sobre la plataforma y sus funciones que puedes contestar si quieres — es
+            completamente opcional.
+        </p>
+
+        <!-- =========================================================
+             AVISO DE PRIVACIDAD PROPIO DEL APARTADO. Se muestra antes de
+             poder usar las encuestas (mientras no exista el consentimiento
+             guardado en localStorage, ver encuestasPrincipal.js). "Aceptar"
+             dispara una SEGUNDA confirmación (window.confirm) a propósito,
+             para evitar que un clic accidental active el envío del correo
+             junto con las respuestas — ver el mismo patrón en
+             calendarioPrincipal.js para acciones que no quieren un solo
+             clic de por medio.
+             ========================================================= -->
+        <div id="bloqueAviso" class="bloque enc-aviso" hidden>
+            <h2>Antes de continuar</h2>
+            <div class="caja-texto-aviso">
+                <p>
+                    Si decides contestar estas encuestas, debes dar tu correo electrónico — el
+                    mismo que está registrado en esta cuenta/licencia activa — para poder ser
+                    beneficiario de alguna recompensa o beneficio al que puedas acceder por
+                    responderlas.
+                </p>
+                <p>
+                    Los únicos datos que se recopilan son el mensaje que escribas, ligado a tu
+                    correo registrado; siempre puedes consultar cómo lo tratamos en los
+                    <a href="avisos-de-privacidad.html" target="_blank" rel="noopener">Avisos de Privacidad</a>
+                    y los
+                    <a href="terminos-y-condiciones.html" target="_blank" rel="noopener">Términos y Condiciones</a>.
+                </p>
+                <p>
+                    Dejamos en claro que estos datos no se comparten ni se usan para otro fin más
+                    que mejorar la plataforma, optimizarla, agregarle funciones, o algún programa
+                    interno de la misma — nunca se comparten con ningún tercero.
+                </p>
+            </div>
+            <p style="font-family: Arial, sans-serif; font-size: 13px; color: var(--texto-2);">
+                Es tu decisión: puedes aceptar y participar, o simplemente no usar este apartado.
+                Puedes retirar tu aceptación cuando quieras desde aquí mismo.
+            </p>
+            <button type="button" id="botonAceptarEncuestas" class="boton-plataforma">Aceptar</button>
+        </div>
+
+        <div id="bloqueEncuestas" hidden></div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/encuestasPrincipal.js"></script>
+</body>
+</html>

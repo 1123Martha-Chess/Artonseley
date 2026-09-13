@@ -1515,6 +1515,256 @@ formularioPlantilla.addEventListener('submit', async (evento) => {
 });
 
 // ---------------------------------------------------------------------
+// Encuestas. Cada encuesta agrupa varias preguntas (opción múltiple, con
+// sus opciones una por línea, o respuesta abierta) — el formulario las
+// arma dinámicamente con "+ Agregar pregunta" / "Quitar pregunta". Guardar
+// (crear o editar) siempre manda la lista completa de preguntas: el
+// servidor reemplaza todas las de esa encuesta de una vez (ver PUT
+// /api/admin/encuestas/:id).
+// ---------------------------------------------------------------------
+
+const formularioEncuesta = document.getElementById('formularioEncuesta');
+const campoIdEncuesta = document.getElementById('campoIdEncuesta');
+const campoTituloEncuesta = document.getElementById('campoTituloEncuesta');
+const campoDescripcionEncuesta = document.getElementById('campoDescripcionEncuesta');
+const listaPreguntasEncuesta = document.getElementById('listaPreguntasEncuesta');
+const botonAgregarPregunta = document.getElementById('botonAgregarPregunta');
+const botonGuardarEncuesta = document.getElementById('botonGuardarEncuesta');
+const botonCancelarEncuesta = document.getElementById('botonCancelarEncuesta');
+const resultadoEncuesta = document.getElementById('resultadoEncuesta');
+const contenedorEncuestas = document.getElementById('listaEncuestas');
+const contenedorHojaEncuestas = document.getElementById('listaHojaEncuestas');
+
+function crearFilaPregunta(pregunta) {
+  const fila = document.createElement('div');
+  fila.classList.add('fila-pregunta-encuesta');
+
+  const campoTexto = document.createElement('input');
+  campoTexto.type = 'text';
+  campoTexto.classList.add('campo-texto-pregunta-encuesta');
+  campoTexto.placeholder = 'Texto de la pregunta';
+  campoTexto.value = pregunta?.texto || '';
+
+  const campoTipo = document.createElement('select');
+  campoTipo.classList.add('campo-tipo-pregunta-encuesta');
+  campoTipo.innerHTML =
+    '<option value="abierta">Respuesta abierta</option>' +
+    '<option value="opcion_multiple">Opción múltiple</option>';
+  campoTipo.value = pregunta?.tipo === 'opcion_multiple' ? 'opcion_multiple' : 'abierta';
+
+  const campoOpciones = document.createElement('textarea');
+  campoOpciones.classList.add('campo-opciones-pregunta-encuesta');
+  campoOpciones.rows = 3;
+  campoOpciones.placeholder = 'Una opción por línea (mínimo 2)';
+  campoOpciones.value = (pregunta?.opciones || []).join('\n');
+  campoOpciones.style.display = campoTipo.value === 'opcion_multiple' ? '' : 'none';
+
+  campoTipo.addEventListener('change', () => {
+    campoOpciones.style.display = campoTipo.value === 'opcion_multiple' ? '' : 'none';
+  });
+
+  const botonQuitar = document.createElement('button');
+  botonQuitar.type = 'button';
+  botonQuitar.classList.add('boton-peligro');
+  botonQuitar.textContent = 'Quitar pregunta';
+  botonQuitar.addEventListener('click', () => fila.remove());
+
+  fila.append(campoTexto, campoTipo, campoOpciones, botonQuitar);
+  return fila;
+}
+
+function limpiarFormularioEncuesta() {
+  formularioEncuesta.reset();
+  campoIdEncuesta.value = '';
+  listaPreguntasEncuesta.innerHTML = '';
+  listaPreguntasEncuesta.appendChild(crearFilaPregunta(null));
+  botonGuardarEncuesta.textContent = 'Guardar encuesta';
+  botonCancelarEncuesta.style.display = 'none';
+}
+
+botonAgregarPregunta.addEventListener('click', () => {
+  listaPreguntasEncuesta.appendChild(crearFilaPregunta(null));
+});
+botonCancelarEncuesta.addEventListener('click', limpiarFormularioEncuesta);
+limpiarFormularioEncuesta();
+
+function recogerPreguntasDelFormulario() {
+  return [...listaPreguntasEncuesta.querySelectorAll('.fila-pregunta-encuesta')].map((fila) => {
+    const tipo = fila.querySelector('.campo-tipo-pregunta-encuesta').value;
+    const opciones = fila.querySelector('.campo-opciones-pregunta-encuesta').value
+      .split('\n')
+      .map((linea) => linea.trim())
+      .filter(Boolean);
+    return {
+      texto: fila.querySelector('.campo-texto-pregunta-encuesta').value.trim(),
+      tipo,
+      opciones: tipo === 'opcion_multiple' ? opciones : []
+    };
+  });
+}
+
+async function cargarEncuestasAdmin() {
+  try {
+    const { encuestas } = await peticionAdmin('/api/admin/encuestas');
+
+    contenedorEncuestas.innerHTML = '';
+    if (encuestas.length === 0) {
+      contenedorEncuestas.innerHTML = '<p>Todavía no hay ninguna encuesta.</p>';
+      return;
+    }
+
+    encuestas.forEach((encuesta) => {
+      const fila = document.createElement('div');
+      fila.classList.add('fila-notificacion');
+      if (!encuesta.activa) fila.classList.add('inactiva');
+
+      const texto = document.createElement('span');
+      texto.textContent = `${encuesta.titulo}  ·  ${encuesta.preguntas.length} pregunta${encuesta.preguntas.length === 1 ? '' : 's'}`;
+
+      const contenedorBotones = document.createElement('div');
+      contenedorBotones.style.display = 'flex';
+      contenedorBotones.style.gap = '6px';
+
+      const botonActiva = document.createElement('button');
+      botonActiva.type = 'button';
+      botonActiva.classList.add('boton-secundario');
+      botonActiva.textContent = encuesta.activa ? 'Desactivar' : 'Activar';
+      botonActiva.addEventListener('click', () => alternarActivaEncuesta(encuesta));
+
+      const botonEditar = document.createElement('button');
+      botonEditar.type = 'button';
+      botonEditar.classList.add('boton-secundario');
+      botonEditar.textContent = 'Editar';
+      botonEditar.addEventListener('click', () => editarEncuesta(encuesta));
+
+      const botonEliminar = document.createElement('button');
+      botonEliminar.type = 'button';
+      botonEliminar.classList.add('boton-peligro');
+      botonEliminar.textContent = 'Eliminar';
+      botonEliminar.addEventListener('click', () => eliminarEncuesta(encuesta));
+
+      contenedorBotones.append(botonActiva, botonEditar, botonEliminar);
+      fila.append(texto, contenedorBotones);
+      contenedorEncuestas.appendChild(fila);
+    });
+  } catch (error) {
+    contenedorEncuestas.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+function editarEncuesta(encuesta) {
+  campoIdEncuesta.value = String(encuesta.id);
+  campoTituloEncuesta.value = encuesta.titulo;
+  campoDescripcionEncuesta.value = encuesta.descripcion || '';
+
+  listaPreguntasEncuesta.innerHTML = '';
+  encuesta.preguntas.forEach((pregunta) => {
+    listaPreguntasEncuesta.appendChild(crearFilaPregunta(pregunta));
+  });
+
+  botonGuardarEncuesta.textContent = 'Guardar cambios';
+  botonCancelarEncuesta.style.display = '';
+  formularioEncuesta.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function alternarActivaEncuesta(encuesta) {
+  try {
+    await peticionAdmin(`/api/admin/encuestas/${encuesta.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ activa: !encuesta.activa })
+    });
+    await cargarEncuestasAdmin();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function eliminarEncuesta(encuesta) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar encuesta',
+    mensaje: `¿Eliminar "${encuesta.titulo}"? Esto no se puede deshacer.`,
+    textoConfirmar: 'Eliminar',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+  try {
+    await peticionAdmin(`/api/admin/encuestas/${encuesta.id}`, { method: 'DELETE' });
+    if (campoIdEncuesta.value === String(encuesta.id)) limpiarFormularioEncuesta();
+    await cargarEncuestasAdmin();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+formularioEncuesta.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  resultadoEncuesta.innerHTML = '<p class="mensaje-carga">Guardando…</p>';
+
+  const id = campoIdEncuesta.value;
+  const cuerpo = {
+    titulo: campoTituloEncuesta.value.trim(),
+    descripcion: campoDescripcionEncuesta.value.trim(),
+    preguntas: recogerPreguntasDelFormulario()
+  };
+
+  try {
+    await peticionAdmin(id ? `/api/admin/encuestas/${id}` : '/api/admin/encuestas', {
+      method: id ? 'PUT' : 'POST',
+      body: JSON.stringify(cuerpo)
+    });
+    resultadoEncuesta.innerHTML = `<p class="mensaje-exito">Encuesta ${id ? 'actualizada' : 'creada'}.</p>`;
+    limpiarFormularioEncuesta();
+    await cargarEncuestasAdmin();
+  } catch (error) {
+    resultadoEncuesta.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+});
+
+// La "hoja" de respuestas ya definitivas (ver el comentario de
+// encuestas_hoja en conexion.js): solo lectura, con el botón "Descargar
+// CSV" del propio admin.html para exportarla.
+async function cargarHojaEncuestas() {
+  try {
+    const { filas } = await peticionAdmin('/api/admin/encuestas/hoja');
+
+    if (filas.length === 0) {
+      contenedorHojaEncuestas.innerHTML = '<p>Todavía no hay ninguna respuesta definitiva.</p>';
+      return;
+    }
+
+    const tabla = document.createElement('table');
+    tabla.innerHTML = `
+      <thead>
+        <tr>
+          <th>Encuesta</th>
+          <th>Pregunta</th>
+          <th>Correo</th>
+          <th>Respuesta</th>
+          <th>Respondido</th>
+        </tr>
+      </thead>
+    `;
+    const cuerpo = document.createElement('tbody');
+    filas.forEach((fila) => {
+      const tr = document.createElement('tr');
+      [fila.encuesta_titulo, fila.pregunta_texto, fila.correo, fila.respuesta, new Date(fila.respondido_en).toLocaleString('es-MX')]
+        .forEach((valor) => {
+          const td = document.createElement('td');
+          td.textContent = valor;
+          tr.appendChild(td);
+        });
+      cuerpo.appendChild(tr);
+    });
+    tabla.appendChild(cuerpo);
+
+    contenedorHojaEncuestas.innerHTML = '';
+    contenedorHojaEncuestas.appendChild(envolverConScroll(tabla));
+  } catch (error) {
+    contenedorHojaEncuestas.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+// ---------------------------------------------------------------------
 // Arranque: cargar las secciones en paralelo.
 // ---------------------------------------------------------------------
 cargarSectores();
@@ -1526,3 +1776,5 @@ cargarNotificaciones();
 cargarCanciones();
 cargarIndicesEconomicos();
 cargarPlantillasAdmin();
+cargarEncuestasAdmin();
+cargarHojaEncuestas();

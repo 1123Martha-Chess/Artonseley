@@ -411,6 +411,24 @@
             color: #d9534f;
         }
 
+        .fila-pregunta-encuesta {
+            border: 1px solid var(--borde-2);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .fila-pregunta-encuesta select,
+        .fila-pregunta-encuesta input,
+        .fila-pregunta-encuesta textarea {
+            margin-bottom: 8px;
+        }
+
+        .etiqueta-inactiva {
+            background: var(--superficie-2);
+            color: var(--texto-2);
+        }
+
         .aviso-flotante-exito {
             background: rgba(60, 154, 60, 0.13);
             border: 1px solid rgba(60, 154, 60, 0.4);
@@ -651,6 +669,52 @@
                 <button type="button" class="boton-secundario" id="botonCancelarPlantilla" style="margin-left:8px; display:none;">Cancelar edición</button>
             </form>
             <div id="resultadoPlantilla"></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Encuestas</h2>
+            <p class="ayuda">
+                Formularios opcionales que el usuario contesta desde la burbuja "Encuestas". Cada
+                encuesta agrupa una o varias preguntas del mismo tema, de opción múltiple (escribe
+                cada opción en una línea) o de respuesta abierta. Al mandar una respuesta el
+                usuario acepta compartir su correo junto con ella; puede corregirla durante
+                <strong>3 días</strong> desde que la contestó — pasado ese plazo queda definitiva y
+                se archiva sola en la "hoja" de abajo, para poder otorgarle el beneficio ofrecido.
+            </p>
+            <div id="listaEncuestas"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioEncuesta">
+                <input type="hidden" id="campoIdEncuesta" value="">
+
+                <label for="campoTituloEncuesta">Título de la encuesta</label>
+                <input type="text" id="campoTituloEncuesta" placeholder='Ej. "Encuesta de satisfacción"' required>
+
+                <label for="campoDescripcionEncuesta">Descripción (opcional)</label>
+                <textarea id="campoDescripcionEncuesta" rows="2" placeholder="Para qué es esta encuesta, breve."></textarea>
+
+                <label>Preguntas</label>
+                <div id="listaPreguntasEncuesta"></div>
+                <button type="button" class="boton-secundario" id="botonAgregarPregunta">+ Agregar pregunta</button>
+
+                <div>
+                    <button type="submit" class="boton-primario" id="botonGuardarEncuesta">Guardar encuesta</button>
+                    <button type="button" class="boton-secundario" id="botonCancelarEncuesta" style="display:none;">Cancelar edición</button>
+                </div>
+            </form>
+            <div id="resultadoEncuesta"></div>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Respuestas de encuestas (hoja)</h2>
+            <p class="ayuda">
+                Respuestas ya <strong>definitivas</strong> (pasaron sus 3 días de corrección), en
+                formato de filas y columnas como una hoja de cálculo — de aquí se revisa quién
+                contestó qué, para otorgar el beneficio ofrecido. No es una integración con Google
+                Sheets real, solo el mismo formato. Las respuestas todavía corregibles no aparecen
+                aquí; aparecerán solas cuando se congelen.
+            </p>
+            <a href="/api/admin/encuestas/hoja/csv" class="boton-secundario" style="text-decoration:none; display:inline-block;">Descargar CSV</a>
+            <div id="listaHojaEncuestas" style="margin-top:14px;"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
         <section class="tarjeta">

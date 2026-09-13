@@ -242,6 +242,71 @@ db.exec(`
     creado_en TEXT NOT NULL DEFAULT (datetime('now')),
     actualizado_en TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  -- Encuestas (apartado "Encuestas", opcional para el usuario): formularios
+  -- que el administrador arma desde el panel — una o varias preguntas de
+  -- opción múltiple o de respuesta abierta, agrupadas por tema en una misma
+  -- encuesta. "opciones" de encuestas_preguntas guarda un JSON (arreglo de
+  -- texto) solo cuando tipo = 'opcion_multiple'.
+  CREATE TABLE IF NOT EXISTS encuestas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo TEXT NOT NULL,
+    descripcion TEXT,
+    activa INTEGER NOT NULL DEFAULT 1,
+    orden INTEGER NOT NULL DEFAULT 0,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+    actualizado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS encuestas_preguntas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    encuesta_id INTEGER NOT NULL REFERENCES encuestas(id) ON DELETE CASCADE,
+    texto TEXT NOT NULL,
+    tipo TEXT NOT NULL DEFAULT 'abierta' CHECK (tipo IN ('abierta', 'opcion_multiple')),
+    opciones TEXT,
+    orden INTEGER NOT NULL DEFAULT 0
+  );
+
+  -- Una fila por usuario por encuesta (UNIQUE): responder y corregir la
+  -- respuesta son la misma operación (UPSERT) mientras siga dentro del
+  -- plazo de corrección (ver DIAS_PLAZO_EDICION_ENCUESTA en
+  -- servidor/db/respuestasEncuestas.js). "correo" se guarda tal cual
+  -- porque es justo el dato que el usuario aceptó compartir al mandar su
+  -- respuesta (ver el aviso de encuestas.html) — nunca se vuelve a leer
+  -- de otro lado. "primera_respuesta_en" nunca cambia (de ahí se cuenta
+  -- el plazo de 3 días); "migrada_en" se llena cuando el barrido ya la
+  -- archivó en encuestas_hoja, y desde ahí la respuesta queda congelada.
+  CREATE TABLE IF NOT EXISTS encuestas_respuestas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    encuesta_id INTEGER NOT NULL REFERENCES encuestas(id) ON DELETE CASCADE,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    correo TEXT NOT NULL,
+    respuestas TEXT NOT NULL,
+    primera_respuesta_en TEXT NOT NULL DEFAULT (datetime('now')),
+    actualizado_en TEXT NOT NULL DEFAULT (datetime('now')),
+    migrada_en TEXT,
+    UNIQUE (encuesta_id, usuario_id)
+  );
+
+  -- "Hoja" de respuestas ya definitivas, en el mismo formato de filas y
+  -- columnas que tendría una hoja de cálculo tipo Google Sheets — esto NO
+  -- es una integración real con Google Sheets, solo imita su forma (una
+  -- fila por pregunta contestada) para que el administrador la revise o
+  -- la exporte y así pueda otorgar el beneficio prometido a quien
+  -- contestó. El barrido (servidor/encuestas/barridoRespuestas.js) copia
+  -- aquí cada respuesta de encuestas_respuestas ya pasado el plazo de
+  -- corrección de 3 días.
+  CREATE TABLE IF NOT EXISTS encuestas_hoja (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    encuesta_id INTEGER NOT NULL,
+    encuesta_titulo TEXT NOT NULL,
+    pregunta_id INTEGER NOT NULL,
+    pregunta_texto TEXT NOT NULL,
+    correo TEXT NOT NULL,
+    respuesta TEXT NOT NULL,
+    respondido_en TEXT NOT NULL,
+    archivado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
 `);
 
 // Siembra las plantillas de EJEMPLO la primera vez (tabla vacía). Si el

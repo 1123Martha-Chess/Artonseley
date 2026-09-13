@@ -123,6 +123,26 @@ import {
 } from './servidor/db/plantillas.js';
 import { extraerVariables } from './servidor/plantillas/extraerVariables.js';
 import {
+  listarEncuestasActivasConPreguntas,
+  listarEncuestasParaAdmin,
+  listarPreguntasDeEncuesta,
+  buscarEncuestaPorId,
+  crearEncuestaConPreguntas,
+  actualizarEncuestaConPreguntas,
+  actualizarActivaDeEncuesta,
+  eliminarEncuesta
+} from './servidor/db/encuestas.js';
+import {
+  DIAS_PLAZO_EDICION_ENCUESTA,
+  buscarRespuesta,
+  listarRespuestasDeUsuarioComoMapa,
+  crearRespuesta,
+  actualizarRespuesta,
+  listarHojaParaAdmin,
+  haPasadoElPlazo
+} from './servidor/db/respuestasEncuestas.js';
+import { barrerYArchivar as barrerYArchivarEncuestas } from './servidor/encuestas/barridoRespuestas.js';
+import {
   limitadorLogin,
   limitadorSugerencias,
   limitadorGeneralAPI,
@@ -239,7 +259,7 @@ app.get(['/', '/index.html'], requiereSesionParaPagina, (peticion, respuesta) =>
 // propias, cada una con su enlace "← Volver al inicio". Todas piden
 // sesión igual que index.html (no rol admin).
 app.get(
-  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html'],
+  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html', '/encuestas.html'],
   requiereSesionParaPagina,
   (peticion, respuesta) => {
     respuesta.sendFile(path.join(__dirname, 'publico', path.basename(peticion.path)));
@@ -563,6 +583,87 @@ app.get('/api/plantillas/:id', requiereSesionAPI, requiereLicenciaVigente, (peti
     version: plantilla.version,
     variables: extraerVariables(plantilla.cuerpo)
   });
+});
+
+// ---------------------------------------------------------------------
+// Encuestas: apartado OPCIONAL. El usuario decide si contesta o no; al
+// mandar una respuesta acepta que su correo (el de su cuenta) viaje
+// junto con ella para poder ser beneficiario de alguna recompensa por
+// contestar (ver el aviso de privacidad propio de encuestas.html, antes
+// de poder usar el apartado). Solo pide sesión, sin licencia vigente —
+// igual que Música y Calendario: es para conocer la opinión de
+// cualquier cuenta registrada, tenga o no licencia activa.
+//
+// Una respuesta se puede corregir (reenviando el mismo formulario) hasta
+// DIAS_PLAZO_EDICION_ENCUESTA días después de la primera vez que se
+// contestó esa encuesta; pasado ese plazo queda definitiva y el barrido
+// interno (ver iniciarBarridoDeEncuestas más abajo) la archiva en la
+// "hoja" que revisa el administrador para otorgar el beneficio.
+// ---------------------------------------------------------------------
+app.get('/api/encuestas', requiereSesionAPI, (peticion, respuesta) => {
+  const encuestas = listarEncuestasActivasConPreguntas();
+  const respuestasDeUsuario = listarRespuestasDeUsuarioComoMapa(peticion.usuario.id);
+  respuesta.json({
+    encuestas: encuestas.map((encuesta) => ({
+      ...encuesta,
+      miRespuesta: respuestasDeUsuario.get(encuesta.id) || null
+    })),
+    diasPlazoEdicion: DIAS_PLAZO_EDICION_ENCUESTA
+  });
+});
+
+const LARGO_MAXIMO_RESPUESTA_ENCUESTA = 2000;
+
+app.post('/api/encuestas/:id/respuestas', jsonEstandar, requiereSesionAPI, (peticion, respuesta) => {
+  const encuesta = buscarEncuestaPorId(Number(peticion.params.id));
+  if (!encuesta || !encuesta.activa) {
+    return respuesta.status(404).json({ error: 'Esa encuesta ya no está disponible.' });
+  }
+
+  const preguntas = listarPreguntasDeEncuesta(encuesta.id);
+  const respuestasBody = peticion.body?.respuestas ?? {};
+  const respuestasLimpias = {};
+  const errores = [];
+
+  for (const pregunta of preguntas) {
+    const valor = String(respuestasBody[pregunta.id] ?? '').trim();
+    if (!valor) {
+      errores.push(`Falta responder: "${pregunta.texto}".`);
+      continue;
+    }
+    if (valor.length > LARGO_MAXIMO_RESPUESTA_ENCUESTA) {
+      errores.push(`Tu respuesta a "${pregunta.texto}" es muy larga (máximo ${LARGO_MAXIMO_RESPUESTA_ENCUESTA} caracteres).`);
+      continue;
+    }
+    if (pregunta.tipo === 'opcion_multiple' && !pregunta.opciones.includes(valor)) {
+      errores.push(`La respuesta a "${pregunta.texto}" no es una de las opciones válidas.`);
+      continue;
+    }
+    respuestasLimpias[pregunta.id] = valor;
+  }
+
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+
+  const existente = buscarRespuesta(encuesta.id, peticion.usuario.id);
+  if (existente) {
+    if (existente.migrada_en || haPasadoElPlazo(existente.primera_respuesta_en)) {
+      return respuesta.status(409).json({
+        error: `Ya pasaron los ${DIAS_PLAZO_EDICION_ENCUESTA} días para corregir esta respuesta — quedó definitiva.`
+      });
+    }
+    actualizarRespuesta(existente.id, respuestasLimpias);
+  } else {
+    crearRespuesta({
+      encuestaId: encuesta.id,
+      usuarioId: peticion.usuario.id,
+      correo: peticion.usuario.email,
+      respuestas: respuestasLimpias
+    });
+  }
+
+  respuesta.json({ ok: true });
 });
 
 const LARGO_MAXIMO_SUGERENCIA = 2000;
@@ -1312,6 +1413,142 @@ app.delete('/api/admin/plantillas/:id', (peticion, respuesta) => {
 });
 
 // ---------------------------------------------------------------------
+// Encuestas (panel de administración). El admin crea/edita/borra cada
+// encuesta y sus preguntas (opción múltiple o abierta), y revisa la
+// "hoja" de respuestas ya definitivas para otorgar el beneficio ofrecido
+// a quien contestó (ver el comentario de encuestas_hoja en conexion.js).
+// ---------------------------------------------------------------------
+const LARGO_MAXIMO_TITULO_ENCUESTA = 150;
+const LARGO_MAXIMO_DESCRIPCION_ENCUESTA = 1000;
+const LARGO_MAXIMO_TEXTO_PREGUNTA = 300;
+const LARGO_MAXIMO_OPCION_PREGUNTA = 150;
+const MAXIMO_PREGUNTAS_POR_ENCUESTA = 30;
+const MAXIMO_OPCIONES_POR_PREGUNTA = 20;
+
+function validarEncuesta(cuerpoPeticion) {
+  const titulo = String(cuerpoPeticion?.titulo ?? '').trim();
+  const descripcion = String(cuerpoPeticion?.descripcion ?? '').trim();
+  const preguntasCrudas = Array.isArray(cuerpoPeticion?.preguntas) ? cuerpoPeticion.preguntas : [];
+  const errores = [];
+
+  if (!titulo || titulo.length > LARGO_MAXIMO_TITULO_ENCUESTA) {
+    errores.push(`El título es obligatorio (máximo ${LARGO_MAXIMO_TITULO_ENCUESTA} caracteres).`);
+  }
+  if (descripcion.length > LARGO_MAXIMO_DESCRIPCION_ENCUESTA) {
+    errores.push(`La descripción es muy larga (máximo ${LARGO_MAXIMO_DESCRIPCION_ENCUESTA} caracteres).`);
+  }
+  if (preguntasCrudas.length === 0) {
+    errores.push('Agrega al menos una pregunta.');
+  }
+  if (preguntasCrudas.length > MAXIMO_PREGUNTAS_POR_ENCUESTA) {
+    errores.push(`Una encuesta admite como máximo ${MAXIMO_PREGUNTAS_POR_ENCUESTA} preguntas.`);
+  }
+
+  const preguntas = [];
+  preguntasCrudas.forEach((preguntaCruda, indice) => {
+    const texto = String(preguntaCruda?.texto ?? '').trim();
+    const tipo = preguntaCruda?.tipo === 'opcion_multiple' ? 'opcion_multiple' : 'abierta';
+
+    if (!texto || texto.length > LARGO_MAXIMO_TEXTO_PREGUNTA) {
+      errores.push(`Pregunta ${indice + 1}: el texto es obligatorio (máximo ${LARGO_MAXIMO_TEXTO_PREGUNTA} caracteres).`);
+    }
+
+    let opciones = [];
+    if (tipo === 'opcion_multiple') {
+      opciones = Array.isArray(preguntaCruda?.opciones)
+        ? preguntaCruda.opciones.map((op) => String(op ?? '').trim()).filter(Boolean)
+        : [];
+      if (opciones.length < 2) {
+        errores.push(`Pregunta ${indice + 1}: una pregunta de opción múltiple necesita al menos 2 opciones.`);
+      }
+      if (opciones.length > MAXIMO_OPCIONES_POR_PREGUNTA) {
+        errores.push(`Pregunta ${indice + 1}: como máximo ${MAXIMO_OPCIONES_POR_PREGUNTA} opciones.`);
+      }
+      if (opciones.some((op) => op.length > LARGO_MAXIMO_OPCION_PREGUNTA)) {
+        errores.push(`Pregunta ${indice + 1}: alguna opción es muy larga (máximo ${LARGO_MAXIMO_OPCION_PREGUNTA} caracteres).`);
+      }
+    }
+
+    preguntas.push({ texto, tipo, opciones });
+  });
+
+  return { titulo, descripcion, preguntas, errores };
+}
+
+app.get('/api/admin/encuestas', (peticion, respuesta) => {
+  respuesta.json({ encuestas: listarEncuestasParaAdmin() });
+});
+
+app.post('/api/admin/encuestas', jsonEstandar, (peticion, respuesta) => {
+  const { titulo, descripcion, preguntas, errores } = validarEncuesta(peticion.body);
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+  const encuesta = crearEncuestaConPreguntas({ titulo, descripcion, preguntas });
+  respuesta.json({ ok: true, encuesta: { id: encuesta.id, titulo: encuesta.titulo } });
+});
+
+app.put('/api/admin/encuestas/:id', jsonEstandar, (peticion, respuesta) => {
+  const existente = buscarEncuestaPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Esa encuesta ya no existe.' });
+  }
+  const { titulo, descripcion, preguntas, errores } = validarEncuesta(peticion.body);
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+  actualizarEncuestaConPreguntas(existente.id, { titulo, descripcion, preguntas });
+  respuesta.json({ ok: true });
+});
+
+app.patch('/api/admin/encuestas/:id', jsonEstandar, (peticion, respuesta) => {
+  const existente = buscarEncuestaPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Esa encuesta ya no existe.' });
+  }
+  actualizarActivaDeEncuesta(existente.id, Boolean(peticion.body?.activa));
+  respuesta.json({ ok: true });
+});
+
+app.delete('/api/admin/encuestas/:id', (peticion, respuesta) => {
+  const existente = buscarEncuestaPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Esa encuesta ya no existe.' });
+  }
+  eliminarEncuesta(existente.id);
+  respuesta.json({ ok: true });
+});
+
+// La "hoja" de respuestas ya definitivas (ver encuestas_hoja en
+// conexion.js). JSON para pintar la tabla en el panel; CSV para
+// exportarla y trabajarla en una hoja de cálculo de verdad si se quiere.
+app.get('/api/admin/encuestas/hoja', (peticion, respuesta) => {
+  respuesta.json({ filas: listarHojaParaAdmin() });
+});
+
+function celdaCSV(valor) {
+  const texto = String(valor ?? '');
+  return /[",\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
+}
+
+app.get('/api/admin/encuestas/hoja/csv', (peticion, respuesta) => {
+  const encabezados = ['Encuesta', 'Pregunta', 'Correo', 'Respuesta', 'Respondido', 'Archivado'];
+  const filas = listarHojaParaAdmin().map((fila) => [
+    fila.encuesta_titulo,
+    fila.pregunta_texto,
+    fila.correo,
+    fila.respuesta,
+    fila.respondido_en,
+    fila.archivado_en
+  ]);
+  const csv = [encabezados, ...filas].map((fila) => fila.map(celdaCSV).join(',')).join('\r\n');
+
+  respuesta.type('text/csv; charset=utf-8');
+  respuesta.set('Content-Disposition', 'attachment; filename="encuestas-respuestas.csv"');
+  respuesta.send('﻿' + csv);
+});
+
+// ---------------------------------------------------------------------
 // Música (panel de administración). El admin sube una canción (audio
 // obligatorio + imagen opcional), la renombra, la reordena o la borra.
 // Los archivos van a CARPETA_DATOS/musica/ (ver servidor/musicaArchivos.js);
@@ -1436,6 +1673,7 @@ app.listen(PUERTO, '0.0.0.0', () => {
   }
   console.log(`  - Duración de sesión: ${DIAS_DURACION_SESION} días.`);
   iniciarRecordatoriosCalendario();
+  iniciarBarridoDeEncuestas();
 });
 
 // Temporizador interno de los "Recordatorios del calendario": cada 30 min
@@ -1456,4 +1694,23 @@ function iniciarRecordatoriosCalendario() {
     console.error('recordatoriosCalendario: barrido falló:', error));
   barrer();
   setInterval(barrer, 30 * 60 * 1000);
+}
+
+// Archiva en "encuestas_hoja" las respuestas cuyo plazo de corrección de
+// DIAS_PLAZO_EDICION_ENCUESTA días ya venció (ver
+// servidor/encuestas/barridoRespuestas.js). Una vez por hora es de sobra:
+// no hace falta precisión al minuto, solo que no se acumulen respuestas
+// vencidas sin archivar por mucho tiempo. En NODE_ENV=test no arranca,
+// igual que el barrido de recordatorios.
+function iniciarBarridoDeEncuestas() {
+  if (process.env.NODE_ENV === 'test') return;
+  const barrer = () => {
+    try {
+      barrerYArchivarEncuestas();
+    } catch (error) {
+      console.error('barridoRespuestas (encuestas): falló:', error);
+    }
+  };
+  barrer();
+  setInterval(barrer, 60 * 60 * 1000);
 }
