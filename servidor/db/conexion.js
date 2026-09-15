@@ -141,6 +141,13 @@ db.exec(`
     expira_en TEXT NOT NULL
   );
 
+  -- El buzón de sugerencias es ANÓNIMO a propósito: "usuario_id" se deja
+  -- en la tabla (nunca se borra una columna en este proyecto, ver el
+  -- comentario grande más abajo sobre ALTER TABLE) pero servidor/db/sugerencias.js
+  -- ya NO lo guarda ni lo expone — ni el propio dueño de la plataforma ve
+  -- qué cuenta mandó cada mensaje. Además cada sugerencia se borra sola a
+  -- las 24 horas de mandarse, la haya revisado el administrador o no (ver
+  -- eliminarSugerenciasVencidas y el barrido en servidor.js).
   CREATE TABLE IF NOT EXISTS sugerencias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
@@ -275,7 +282,8 @@ db.exec(`
   -- respuesta (ver el aviso de encuestas.html) — nunca se vuelve a leer
   -- de otro lado. "primera_respuesta_en" nunca cambia (de ahí se cuenta
   -- el plazo de 3 días); "migrada_en" se llena cuando el barrido ya la
-  -- archivó en encuestas_hoja, y desde ahí la respuesta queda congelada.
+  -- archivó en la tabla "hoja" del día (ver hojaEncuestasDiaria.js), y
+  -- desde ahí la respuesta queda congelada.
   CREATE TABLE IF NOT EXISTS encuestas_respuestas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     encuesta_id INTEGER NOT NULL REFERENCES encuestas(id) ON DELETE CASCADE,
@@ -288,26 +296,36 @@ db.exec(`
     UNIQUE (encuesta_id, usuario_id)
   );
 
-  -- "Hoja" de respuestas ya definitivas, en el mismo formato de filas y
-  -- columnas que tendría una hoja de cálculo tipo Google Sheets — esto NO
-  -- es una integración real con Google Sheets, solo imita su forma (una
-  -- fila por pregunta contestada) para que el administrador la revise o
-  -- la exporte y así pueda otorgar el beneficio prometido a quien
-  -- contestó. El barrido (servidor/encuestas/barridoRespuestas.js) copia
-  -- aquí cada respuesta de encuestas_respuestas ya pasado el plazo de
-  -- corrección de 3 días.
-  CREATE TABLE IF NOT EXISTS encuestas_hoja (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    encuesta_id INTEGER NOT NULL,
-    encuesta_titulo TEXT NOT NULL,
-    pregunta_id INTEGER NOT NULL,
-    pregunta_texto TEXT NOT NULL,
-    correo TEXT NOT NULL,
-    respuesta TEXT NOT NULL,
-    respondido_en TEXT NOT NULL,
-    archivado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  -- "Hoja" de respuestas ya definitivas — ver servidor/db/hojaEncuestasDiaria.js.
+  -- Cada DÍA en que el barrido archiva algo (ver
+  -- servidor/encuestas/barridoRespuestas.js) se crea una tabla nueva,
+  -- propia de ese día ("encuestas_hoja_AAAAMMDD"), en el mismo formato de
+  -- filas y columnas que tendría una hoja de cálculo tipo Google Sheets
+  -- (esto NO es una integración real con Google Sheets, solo imita su
+  -- forma). Esta tabla es solo el REGISTRO de qué tablas diarias existen y
+  -- cuándo le toca a cada una borrarse definitivamente — 3 meses después
+  -- de su propio día. El administrador puede además borrar una tabla
+  -- antes de tiempo a mano (ej. justo después de descargar su CSV).
+  CREATE TABLE IF NOT EXISTS encuestas_hoja_tablas (
+    fecha TEXT PRIMARY KEY,
+    nombre_tabla TEXT NOT NULL UNIQUE,
+    creada_en TEXT NOT NULL DEFAULT (datetime('now')),
+    elimina_en TEXT NOT NULL
   );
 `);
+
+// La tabla única "encuestas_hoja" (de la primera versión de este
+// apartado, antes de que se pidiera una tabla nueva por día con borrado
+// automático a los 3 meses) nunca llegó a tener datos reales — se
+// elimina para no dejarla como peso muerto en el esquema.
+db.exec('DROP TABLE IF EXISTS encuestas_hoja');
+
+// El buzón de sugerencias se volvió anónimo (ver el comentario de la
+// tabla "sugerencias" arriba): esto limpia cualquier vínculo con una
+// cuenta que ya se hubiera guardado antes de este cambio. Correr esto en
+// cada arranque no tiene costo — después de la primera vez ya no
+// encuentra nada que actualizar.
+db.exec('UPDATE sugerencias SET usuario_id = NULL WHERE usuario_id IS NOT NULL');
 
 // Siembra las plantillas de EJEMPLO la primera vez (tabla vacía). Si el
 // administrador las borra, no vuelven: la biblioteca real es suya.

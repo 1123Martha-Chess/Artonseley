@@ -411,6 +411,27 @@
             color: #d9534f;
         }
 
+        .bloque-hoja-dia {
+            border: 1px solid var(--borde-2);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .bloque-hoja-dia .encabezado-hoja-dia {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .bloque-hoja-dia .botones-hoja-dia {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
         .fila-pregunta-encuesta {
             border: 1px solid var(--borde-2);
             border-radius: 6px;
@@ -550,6 +571,11 @@
 
         <section class="tarjeta">
             <h2>Bandeja de sugerencias</h2>
+            <p class="ayuda">
+                El buzón es <strong>anónimo</strong>: no se guarda ni se muestra qué cuenta mandó
+                cada mensaje. Además, cualquier sugerencia que nadie marque con ✓ o ✗ se borra sola
+                a las 24 horas de haberse mandado.
+            </p>
             <div id="listaSugerencias"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
@@ -713,8 +739,15 @@
                 Sheets real, solo el mismo formato. Las respuestas todavía corregibles no aparecen
                 aquí; aparecerán solas cuando se congelen.
             </p>
-            <a href="/api/admin/encuestas/hoja/csv" class="boton-secundario" style="text-decoration:none; display:inline-block;">Descargar CSV</a>
-            <div id="listaHojaEncuestas" style="margin-top:14px;"><p class="mensaje-carga">Cargando…</p></div>
+            <p class="ayuda">
+                Se genera <strong>una tabla nueva por cada día</strong> en que se archiva algo, y
+                cada una se borra sola y definitivamente <strong>3 meses</strong> después de su
+                propio día — no hay que hacer nada para que eso pase. Si descargas el CSV de una
+                tabla, guardar o eliminar esa copia descargada ya es tu responsabilidad (recuerda
+                lo que digan tus propios Términos y Condiciones / Avisos de Privacidad al
+                respecto). "Eliminar ahora" borra esa tabla de inmediato, sin esperar los 3 meses.
+            </p>
+            <div id="listaHojaEncuestas"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
         <section class="tarjeta">

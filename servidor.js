@@ -58,7 +58,12 @@ import {
   requiereAdmin,
   obtenerUsuarioDesdeCookie
 } from './servidor/auth/middleware.js';
-import { guardarSugerencia, listarSugerencias, eliminarSugerencia } from './servidor/db/sugerencias.js';
+import {
+  guardarSugerencia,
+  listarSugerencias,
+  eliminarSugerencia,
+  eliminarSugerenciasVencidas
+} from './servidor/db/sugerencias.js';
 import {
   guardarSolicitudRegistro,
   listarSolicitudesRegistro,
@@ -138,9 +143,13 @@ import {
   listarRespuestasDeUsuarioComoMapa,
   crearRespuesta,
   actualizarRespuesta,
-  listarHojaParaAdmin,
   haPasadoElPlazo
 } from './servidor/db/respuestasEncuestas.js';
+import {
+  listarTablasHoja,
+  listarFilasDeTabla,
+  eliminarTablaHojaAhora
+} from './servidor/db/hojaEncuestasDiaria.js';
 import { barrerYArchivar as barrerYArchivarEncuestas } from './servidor/encuestas/barridoRespuestas.js';
 import {
   limitadorLogin,
@@ -668,10 +677,12 @@ app.post('/api/encuestas/:id/respuestas', jsonEstandar, requiereSesionAPI, (peti
 
 const LARGO_MAXIMO_SUGERENCIA = 2000;
 
-// Buzón de sugerencias: ahora requiere sesión (ya no es anónimo desde
-// que todo el sitio vive detrás de login), y guarda quién la mandó.
-// limitadorSugerencias frena a quien intente mandar cientos de forma
-// automatizada.
+// Buzón de sugerencias: requiere sesión para mandar una (como todo el
+// sitio), pero el mensaje en sí es ANÓNIMO — no se guarda qué cuenta lo
+// mandó (ver el comentario de servidor/db/sugerencias.js) y además se
+// borra solo a las 24 horas, la haya revisado el administrador o no (ver
+// iniciarBarridoDeSugerencias más abajo). limitadorSugerencias frena a
+// quien intente mandar cientos de forma automatizada.
 app.post('/api/sugerencias', limitadorSugerencias, jsonEstandar, requiereSesionAPI, (peticion, respuesta) => {
   try {
     const { mensaje, urgencia } = peticion.body ?? {};
@@ -686,7 +697,7 @@ app.post('/api/sugerencias', limitadorSugerencias, jsonEstandar, requiereSesionA
       });
     }
 
-    guardarSugerencia({ usuarioId: peticion.usuario.id, mensaje: mensajeLimpio, urgencia });
+    guardarSugerencia({ mensaje: mensajeLimpio, urgencia });
     respuesta.json({ ok: true });
   } catch (error) {
     console.error('Error en /api/sugerencias:', error);
@@ -1416,7 +1427,7 @@ app.delete('/api/admin/plantillas/:id', (peticion, respuesta) => {
 // Encuestas (panel de administración). El admin crea/edita/borra cada
 // encuesta y sus preguntas (opción múltiple o abierta), y revisa la
 // "hoja" de respuestas ya definitivas para otorgar el beneficio ofrecido
-// a quien contestó (ver el comentario de encuestas_hoja en conexion.js).
+// a quien contestó (ver servidor/db/hojaEncuestasDiaria.js).
 // ---------------------------------------------------------------------
 const LARGO_MAXIMO_TITULO_ENCUESTA = 150;
 const LARGO_MAXIMO_DESCRIPCION_ENCUESTA = 1000;
@@ -1519,11 +1530,25 @@ app.delete('/api/admin/encuestas/:id', (peticion, respuesta) => {
   respuesta.json({ ok: true });
 });
 
-// La "hoja" de respuestas ya definitivas (ver encuestas_hoja en
-// conexion.js). JSON para pintar la tabla en el panel; CSV para
-// exportarla y trabajarla en una hoja de cálculo de verdad si se quiere.
+// La "hoja" de respuestas ya definitivas, una tabla por día (ver
+// servidor/db/hojaEncuestasDiaria.js) — cada una se borra sola 3 meses
+// después de su propio día; el administrador también puede adelantar
+// ese borrado a mano (ej. justo después de descargar el CSV de ese día).
+const PATRON_FECHA_HOJA = /^\d{4}-\d{2}-\d{2}$/;
+
 app.get('/api/admin/encuestas/hoja', (peticion, respuesta) => {
-  respuesta.json({ filas: listarHojaParaAdmin() });
+  respuesta.json({ tablas: listarTablasHoja() });
+});
+
+app.get('/api/admin/encuestas/hoja/:fecha', (peticion, respuesta) => {
+  if (!PATRON_FECHA_HOJA.test(peticion.params.fecha)) {
+    return respuesta.status(400).json({ error: 'Fecha inválida.' });
+  }
+  const filas = listarFilasDeTabla(peticion.params.fecha);
+  if (filas === null) {
+    return respuesta.status(404).json({ error: 'Esa tabla ya no existe.' });
+  }
+  respuesta.json({ filas });
 });
 
 function celdaCSV(valor) {
@@ -1531,9 +1556,17 @@ function celdaCSV(valor) {
   return /[",\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
 }
 
-app.get('/api/admin/encuestas/hoja/csv', (peticion, respuesta) => {
+app.get('/api/admin/encuestas/hoja/:fecha/csv', (peticion, respuesta) => {
+  if (!PATRON_FECHA_HOJA.test(peticion.params.fecha)) {
+    return respuesta.status(400).json({ error: 'Fecha inválida.' });
+  }
+  const filas = listarFilasDeTabla(peticion.params.fecha);
+  if (filas === null) {
+    return respuesta.status(404).json({ error: 'Esa tabla ya no existe.' });
+  }
+
   const encabezados = ['Encuesta', 'Pregunta', 'Correo', 'Respuesta', 'Respondido', 'Archivado'];
-  const filas = listarHojaParaAdmin().map((fila) => [
+  const filasCSV = filas.map((fila) => [
     fila.encuesta_titulo,
     fila.pregunta_texto,
     fila.correo,
@@ -1541,11 +1574,25 @@ app.get('/api/admin/encuestas/hoja/csv', (peticion, respuesta) => {
     fila.respondido_en,
     fila.archivado_en
   ]);
-  const csv = [encabezados, ...filas].map((fila) => fila.map(celdaCSV).join(',')).join('\r\n');
+  const csv = [encabezados, ...filasCSV].map((fila) => fila.map(celdaCSV).join(',')).join('\r\n');
 
   respuesta.type('text/csv; charset=utf-8');
-  respuesta.set('Content-Disposition', 'attachment; filename="encuestas-respuestas.csv"');
+  respuesta.set('Content-Disposition', `attachment; filename="encuestas-respuestas-${peticion.params.fecha}.csv"`);
   respuesta.send('﻿' + csv);
+});
+
+// Borrado manual e inmediato de la tabla de un día (en vez de esperar a
+// que se cumplan sus 3 meses) — pensado para justo después de descargar
+// su CSV: a partir de ahí, conservar o no esa copia descargada es
+// responsabilidad del administrador (ver el aviso en admin.html).
+app.delete('/api/admin/encuestas/hoja/:fecha', (peticion, respuesta) => {
+  if (!PATRON_FECHA_HOJA.test(peticion.params.fecha)) {
+    return respuesta.status(400).json({ error: 'Fecha inválida.' });
+  }
+  if (!eliminarTablaHojaAhora(peticion.params.fecha)) {
+    return respuesta.status(404).json({ error: 'Esa tabla ya no existe.' });
+  }
+  respuesta.json({ ok: true });
 });
 
 // ---------------------------------------------------------------------
@@ -1674,6 +1721,7 @@ app.listen(PUERTO, '0.0.0.0', () => {
   console.log(`  - Duración de sesión: ${DIAS_DURACION_SESION} días.`);
   iniciarRecordatoriosCalendario();
   iniciarBarridoDeEncuestas();
+  iniciarBarridoDeSugerencias();
 });
 
 // Temporizador interno de los "Recordatorios del calendario": cada 30 min
@@ -1696,12 +1744,12 @@ function iniciarRecordatoriosCalendario() {
   setInterval(barrer, 30 * 60 * 1000);
 }
 
-// Archiva en "encuestas_hoja" las respuestas cuyo plazo de corrección de
-// DIAS_PLAZO_EDICION_ENCUESTA días ya venció (ver
+// Archiva en la "hoja" del día las respuestas cuyo plazo de corrección de
+// DIAS_PLAZO_EDICION_ENCUESTA días ya venció, y borra las tablas-día de
+// la hoja cuyos 3 meses de retención ya se cumplieron (ver
 // servidor/encuestas/barridoRespuestas.js). Una vez por hora es de sobra:
-// no hace falta precisión al minuto, solo que no se acumulen respuestas
-// vencidas sin archivar por mucho tiempo. En NODE_ENV=test no arranca,
-// igual que el barrido de recordatorios.
+// no hace falta precisión al minuto. En NODE_ENV=test no arranca, igual
+// que el barrido de recordatorios.
 function iniciarBarridoDeEncuestas() {
   if (process.env.NODE_ENV === 'test') return;
   const barrer = () => {
@@ -1713,4 +1761,22 @@ function iniciarBarridoDeEncuestas() {
   };
   barrer();
   setInterval(barrer, 60 * 60 * 1000);
+}
+
+// Borra cualquier sugerencia que ya lleve 24 horas mandada, la haya
+// revisado el administrador o no (ver eliminarSugerenciasVencidas en
+// servidor/db/sugerencias.js — el buzón ya es anónimo por sí solo, esto
+// además evita que un mensaje se quede guardado indefinidamente si nadie
+// lo revisa). Cada 30 min es más que suficiente para un plazo de 24 h.
+function iniciarBarridoDeSugerencias() {
+  if (process.env.NODE_ENV === 'test') return;
+  const barrer = () => {
+    try {
+      eliminarSugerenciasVencidas();
+    } catch (error) {
+      console.error('barrido de sugerencias vencidas: falló:', error);
+    }
+  };
+  barrer();
+  setInterval(barrer, 30 * 60 * 1000);
 }

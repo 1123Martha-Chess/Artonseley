@@ -1,29 +1,24 @@
 // sugerencias.js
 // -------------------------------------------------------------------
-// Reemplaza al viejo servidor/datos/sugerencias.json (leer todo el
-// archivo, agregarle una línea, y volver a guardarlo completo). Ahora
-// cada sugerencia es una fila, y guardamos también quién la mandó
-// (usuario_id) ya que /api/sugerencias ahora vive detrás de sesión.
+// El buzón de sugerencias es ANÓNIMO: no se guarda ni se expone qué
+// cuenta mandó cada mensaje (ver el comentario de la tabla "sugerencias"
+// en conexion.js — la columna usuario_id sigue ahí sin usarse, nunca se
+// borra una columna en este proyecto). Además cada sugerencia se borra
+// sola a las 24 horas de mandarse, la haya revisado el administrador o
+// no (ver eliminarSugerenciasVencidas, y el barrido en servidor.js).
 // -------------------------------------------------------------------
 
 import { db } from './conexion.js';
 
-export function guardarSugerencia({ usuarioId = null, mensaje, urgencia }) {
-  db.prepare('INSERT INTO sugerencias (usuario_id, mensaje, urgencia) VALUES (?, ?, ?)')
-    .run(usuarioId, mensaje, urgencia || 'No especificada');
+export function guardarSugerencia({ mensaje, urgencia }) {
+  db.prepare('INSERT INTO sugerencias (mensaje, urgencia) VALUES (?, ?)')
+    .run(mensaje, urgencia || 'No especificada');
 }
 
-// Para el buzón que verá el administrador (panel de administración,
-// Fase 3). Por ahora esto ya queda protegido detrás de GET /api/sugerencias
-// (ver servidor.js), solo que sin una pantalla dedicada todavía.
+// Para el buzón que ve el administrador. Deliberadamente NO incluye
+// ningún dato de quién la mandó.
 export function listarSugerencias() {
-  return db.prepare(`
-    SELECT sugerencias.id, sugerencias.mensaje, sugerencias.urgencia, sugerencias.creado_en,
-           usuarios.email AS usuario_email
-    FROM sugerencias
-    LEFT JOIN usuarios ON usuarios.id = sugerencias.usuario_id
-    ORDER BY sugerencias.creado_en DESC
-  `).all();
+  return db.prepare('SELECT id, mensaje, urgencia, creado_en FROM sugerencias ORDER BY creado_en DESC').all();
 }
 
 // El botón de "atendida" (palomita) y el de "descartar" (tacha) en el
@@ -33,4 +28,12 @@ export function listarSugerencias() {
 // simplemente la borran de la bandeja.
 export function eliminarSugerencia(id) {
   db.prepare('DELETE FROM sugerencias WHERE id = ?').run(id);
+}
+
+// Red de seguridad de privacidad: aunque el administrador nunca la haya
+// revisado (ni le haya dado ✓ ni ✗), ninguna sugerencia sobrevive más de
+// 24 horas. Se corre en un barrido periódico (ver servidor.js).
+export function eliminarSugerenciasVencidas() {
+  const info = db.prepare(`DELETE FROM sugerencias WHERE creado_en <= datetime('now', '-24 hours')`).run();
+  return info.changes;
 }

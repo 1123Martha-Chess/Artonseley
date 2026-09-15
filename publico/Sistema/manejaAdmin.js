@@ -461,22 +461,21 @@ async function cargarSugerencias() {
     }
 
     const tabla = document.createElement('table');
-    tabla.innerHTML = '<thead><tr><th>Fecha</th><th>Usuario</th><th>Urgencia</th><th>Mensaje</th><th></th></tr></thead>';
+    tabla.innerHTML = '<thead><tr><th>Fecha</th><th>Urgencia</th><th>Mensaje</th><th></th></tr></thead>';
     const cuerpo = document.createElement('tbody');
 
     sugerencias.forEach(s => {
       const fila = document.createElement('tr');
 
-      // Todo lo que viene de la sugerencia (usuario, urgencia, mensaje)
-      // se inserta con textContent, nunca con innerHTML: aunque
-      // "urgencia" normalmente viene de los 3 botones fijos del buzón,
-      // la ruta POST /api/sugerencias no obliga a que así sea, así que
-      // se trata igual que cualquier otro texto escrito por un usuario.
+      // Todo lo que viene de la sugerencia (urgencia, mensaje) se inserta
+      // con textContent, nunca con innerHTML: aunque "urgencia"
+      // normalmente viene de los 3 botones fijos del buzón, la ruta POST
+      // /api/sugerencias no obliga a que así sea, así que se trata igual
+      // que cualquier otro texto escrito por un usuario. El buzón es
+      // anónimo a propósito (ver servidor/db/sugerencias.js) — no hay
+      // columna de usuario/correo que pintar.
       const celdaFecha = document.createElement('td');
       celdaFecha.textContent = new Date(s.creado_en).toLocaleString('es-MX');
-
-      const celdaUsuario = document.createElement('td');
-      celdaUsuario.textContent = s.usuario_email || '(usuario eliminado)';
 
       const celdaUrgencia = document.createElement('td');
       celdaUrgencia.textContent = s.urgencia;
@@ -509,7 +508,7 @@ async function cargarSugerencias() {
       contenedorBotones.append(botonAtendida, botonDescartar);
       celdaAcciones.appendChild(contenedorBotones);
 
-      fila.append(celdaFecha, celdaUsuario, celdaUrgencia, celdaMensaje, celdaAcciones);
+      fila.append(celdaFecha, celdaUrgencia, celdaMensaje, celdaAcciones);
       cuerpo.appendChild(fila);
     });
 
@@ -1720,47 +1719,133 @@ formularioEncuesta.addEventListener('submit', async (evento) => {
   }
 });
 
-// La "hoja" de respuestas ya definitivas (ver el comentario de
-// encuestas_hoja en conexion.js): solo lectura, con el botón "Descargar
-// CSV" del propio admin.html para exportarla.
+// La "hoja" de respuestas ya definitivas: una tabla por día (ver
+// servidor/db/hojaEncuestasDiaria.js), cada una con su propio borrado
+// automático a los 3 meses. Se lista un renglón por día; "Ver respuestas"
+// carga esa tabla en particular bajo demanda (no todas de una vez).
 async function cargarHojaEncuestas() {
   try {
-    const { filas } = await peticionAdmin('/api/admin/encuestas/hoja');
+    const { tablas } = await peticionAdmin('/api/admin/encuestas/hoja');
 
-    if (filas.length === 0) {
+    contenedorHojaEncuestas.innerHTML = '';
+    if (tablas.length === 0) {
       contenedorHojaEncuestas.innerHTML = '<p>Todavía no hay ninguna respuesta definitiva.</p>';
       return;
     }
 
-    const tabla = document.createElement('table');
-    tabla.innerHTML = `
-      <thead>
-        <tr>
-          <th>Encuesta</th>
-          <th>Pregunta</th>
-          <th>Correo</th>
-          <th>Respuesta</th>
-          <th>Respondido</th>
-        </tr>
-      </thead>
-    `;
-    const cuerpo = document.createElement('tbody');
-    filas.forEach((fila) => {
-      const tr = document.createElement('tr');
-      [fila.encuesta_titulo, fila.pregunta_texto, fila.correo, fila.respuesta, new Date(fila.respondido_en).toLocaleString('es-MX')]
-        .forEach((valor) => {
-          const td = document.createElement('td');
-          td.textContent = valor;
-          tr.appendChild(td);
-        });
-      cuerpo.appendChild(tr);
+    tablas.forEach((tablaDia) => {
+      contenedorHojaEncuestas.appendChild(crearBloqueTablaHoja(tablaDia));
     });
-    tabla.appendChild(cuerpo);
-
-    contenedorHojaEncuestas.innerHTML = '';
-    contenedorHojaEncuestas.appendChild(envolverConScroll(tabla));
   } catch (error) {
     contenedorHojaEncuestas.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+function crearBloqueTablaHoja(tablaDia) {
+  const bloque = document.createElement('div');
+  bloque.classList.add('bloque-hoja-dia');
+
+  const encabezado = document.createElement('div');
+  encabezado.classList.add('encabezado-hoja-dia');
+
+  const texto = document.createElement('span');
+  const totalRespuestas = `${tablaDia.filas} respuesta${tablaDia.filas === 1 ? '' : 's'}`;
+  texto.textContent = `${tablaDia.fecha}  ·  ${totalRespuestas}  ·  se borra sola el ${tablaDia.eliminaEn}`;
+
+  const botones = document.createElement('div');
+  botones.classList.add('botones-hoja-dia');
+
+  const botonVer = document.createElement('button');
+  botonVer.type = 'button';
+  botonVer.classList.add('boton-secundario');
+  botonVer.textContent = 'Ver respuestas';
+
+  const enlaceCSV = document.createElement('a');
+  enlaceCSV.href = `/api/admin/encuestas/hoja/${tablaDia.fecha}/csv`;
+  enlaceCSV.classList.add('boton-secundario');
+  enlaceCSV.style.textDecoration = 'none';
+  enlaceCSV.style.display = 'inline-block';
+  enlaceCSV.textContent = 'Descargar CSV';
+
+  const botonEliminar = document.createElement('button');
+  botonEliminar.type = 'button';
+  botonEliminar.classList.add('boton-peligro');
+  botonEliminar.textContent = 'Eliminar ahora';
+  botonEliminar.addEventListener('click', () => eliminarTablaHoja(tablaDia, bloque));
+
+  botones.append(botonVer, enlaceCSV, botonEliminar);
+  encabezado.append(texto, botones);
+  bloque.appendChild(encabezado);
+
+  const contenedorFilas = document.createElement('div');
+  contenedorFilas.style.marginTop = '10px';
+  contenedorFilas.hidden = true;
+  bloque.appendChild(contenedorFilas);
+
+  botonVer.addEventListener('click', async () => {
+    if (!contenedorFilas.hidden) {
+      contenedorFilas.hidden = true;
+      return;
+    }
+    contenedorFilas.hidden = false;
+    if (contenedorFilas.childElementCount > 0) return; // ya se cargó antes
+    contenedorFilas.innerHTML = '<p class="mensaje-carga">Cargando…</p>';
+    try {
+      const { filas } = await peticionAdmin(`/api/admin/encuestas/hoja/${tablaDia.fecha}`);
+      contenedorFilas.innerHTML = '';
+      contenedorFilas.appendChild(crearTablaDeRespuestas(filas));
+    } catch (error) {
+      contenedorFilas.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+    }
+  });
+
+  return bloque;
+}
+
+function crearTablaDeRespuestas(filas) {
+  const tabla = document.createElement('table');
+  tabla.innerHTML = `
+    <thead>
+      <tr>
+        <th>Encuesta</th>
+        <th>Pregunta</th>
+        <th>Correo</th>
+        <th>Respuesta</th>
+        <th>Respondido</th>
+      </tr>
+    </thead>
+  `;
+  const cuerpo = document.createElement('tbody');
+  filas.forEach((fila) => {
+    const tr = document.createElement('tr');
+    [fila.encuesta_titulo, fila.pregunta_texto, fila.correo, fila.respuesta, new Date(fila.respondido_en).toLocaleString('es-MX')]
+      .forEach((valor) => {
+        const td = document.createElement('td');
+        td.textContent = valor;
+        tr.appendChild(td);
+      });
+    cuerpo.appendChild(tr);
+  });
+  tabla.appendChild(cuerpo);
+  return envolverConScroll(tabla);
+}
+
+async function eliminarTablaHoja(tablaDia, elementoBloque) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar tabla de respuestas',
+    mensaje: `¿Eliminar definitivamente la tabla del ${tablaDia.fecha} (${tablaDia.filas} respuesta${tablaDia.filas === 1 ? '' : 's'})? Esto no se puede deshacer.`,
+    textoConfirmar: 'Eliminar',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+  try {
+    await peticionAdmin(`/api/admin/encuestas/hoja/${tablaDia.fecha}`, { method: 'DELETE' });
+    elementoBloque.remove();
+    if (!contenedorHojaEncuestas.querySelector('.bloque-hoja-dia')) {
+      contenedorHojaEncuestas.innerHTML = '<p>Todavía no hay ninguna respuesta definitiva.</p>';
+    }
+  } catch (error) {
+    mostrarAviso(error.message);
   }
 }
 

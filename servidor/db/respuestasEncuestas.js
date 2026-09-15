@@ -79,33 +79,6 @@ export function marcarRespuestaMigrada(id) {
   db.prepare(`UPDATE encuestas_respuestas SET migrada_en = datetime('now') WHERE id = ?`).run(id);
 }
 
-// Vuelca una respuesta (una fila por pregunta contestada) a la "hoja" —
-// ver el comentario de encuestas_hoja en conexion.js sobre por qué tiene
-// esta forma. preguntasPorId permite seguir mostrando el texto de la
-// pregunta aunque el administrador la haya editado o borrado después.
-export function archivarEnHoja({ encuestaId, encuestaTitulo, correo, respuestas, respondidoEn, preguntasPorId }) {
-  const insertar = db.prepare(
-    `INSERT INTO encuestas_hoja
-       (encuesta_id, encuesta_titulo, pregunta_id, pregunta_texto, correo, respuesta, respondido_en)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  );
-  for (const [preguntaId, respuesta] of Object.entries(respuestas)) {
-    const pregunta = preguntasPorId.get(Number(preguntaId));
-    insertar.run(
-      encuestaId,
-      encuestaTitulo,
-      Number(preguntaId),
-      pregunta ? pregunta.texto : '(pregunta eliminada)',
-      correo,
-      String(respuesta ?? ''),
-      respondidoEn
-    );
-  }
-}
-
-// Para el panel de administración: las respuestas ya definitivas, más
-// nuevas primero — es la que se revisa para otorgar el beneficio
-// ofrecido a quien contestó.
-export function listarHojaParaAdmin() {
-  return db.prepare('SELECT * FROM encuestas_hoja ORDER BY archivado_en DESC, id DESC').all();
-}
+// El volcado a la "hoja" de respuestas definitivas vive en
+// servidor/db/hojaEncuestasDiaria.js (una tabla nueva por día, cada una
+// con su propio borrado automático a los 3 meses).
