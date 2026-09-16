@@ -114,6 +114,19 @@ export function restaurarUsuarioDePapelera(usuarioId) {
   db.prepare('UPDATE usuarios SET activo = 1, suspendido_hasta = NULL, eliminado_en = NULL WHERE id = ?').run(usuarioId);
 }
 
+// Borrado DEFINITIVO, solo desde la papelera (ver el resguardo en
+// servidor.js: exige eliminado_en). A diferencia de moverUsuarioAPapelera,
+// esto sí quita la fila por completo — no se puede deshacer — y libera el
+// correo para que se pueda volver a registrar una cuenta nueva con él
+// (email es UNIQUE, así que mientras la fila siga ahí, aunque esté en la
+// papelera, ese correo sigue "ocupado"). Las tablas con clave foránea a
+// usuarios (sesiones, suscripciones_push, encuestas_respuestas, …) tienen
+// ON DELETE CASCADE / SET NULL en su esquema (ver conexion.js), así que
+// esto también se lleva sus filas relacionadas.
+export function eliminarUsuarioDefinitivamente(usuarioId) {
+  db.prepare('DELETE FROM usuarios WHERE id = ?').run(usuarioId);
+}
+
 // Límite de sesiones simultáneas que el admin fija a mano para ESTA
 // cuenta (ver POST /api/admin/usuarios/:id/limite-sesiones en
 // servidor.js). "limite" en null vuelve a dejar la cuenta en el valor

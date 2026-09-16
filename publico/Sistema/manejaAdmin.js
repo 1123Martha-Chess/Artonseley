@@ -856,7 +856,15 @@ async function cargarCuentas() {
         celdaEliminada.textContent = new Date(u.eliminadoEn).toLocaleString('es-MX');
 
         const celdaAcciones = document.createElement('td');
-        celdaAcciones.appendChild(pintarBotonAccion('Reactivar y reutilizar', 'boton-secundario', () => restaurarCuenta(u)));
+        const contenedorBotones = document.createElement('div');
+        contenedorBotones.style.display = 'flex';
+        contenedorBotones.style.flexWrap = 'wrap';
+        contenedorBotones.style.gap = '6px';
+        contenedorBotones.append(
+          pintarBotonAccion('Reactivar y reutilizar', 'boton-secundario', () => restaurarCuenta(u)),
+          pintarBotonAccion('Eliminar definitivamente', 'boton-peligro', () => eliminarCuentaDefinitivamente(u))
+        );
+        celdaAcciones.appendChild(contenedorBotones);
 
         fila.append(celdaCorreo, celdaRol, celdaEliminada, celdaAcciones);
         return fila;
@@ -1067,6 +1075,24 @@ async function restaurarCuenta(usuario) {
   try {
     await peticionAdmin(`/api/admin/usuarios/${usuario.id}/restaurar`, { method: 'POST' });
     mostrarAviso(`Cuenta de "${usuario.email}" restaurada.`, 'exito');
+    await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function eliminarCuentaDefinitivamente(usuario) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar definitivamente',
+    mensaje: `¿Borrar PARA SIEMPRE la cuenta de "${usuario.email}"? Esto NO se puede deshacer — a diferencia de "Eliminar", aquí no queda nada en la papelera. Su correo quedará libre para volver a registrarse con una cuenta nueva.`,
+    textoConfirmar: 'Borrar para siempre',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+
+  try {
+    await peticionAdmin(`/api/admin/usuarios/${usuario.id}/definitivo`, { method: 'DELETE' });
+    mostrarAviso(`Cuenta de "${usuario.email}" eliminada definitivamente. Su correo ya está disponible.`, 'exito');
     await cargarCuentas();
   } catch (error) {
     mostrarAviso(error.message);

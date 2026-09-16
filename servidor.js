@@ -44,6 +44,7 @@ import {
   reactivarUsuario,
   moverUsuarioAPapelera,
   restaurarUsuarioDePapelera,
+  eliminarUsuarioDefinitivamente,
   fijarLimiteSesiones,
   actualizarContrasena
 } from './servidor/db/usuarios.js';
@@ -994,6 +995,26 @@ app.post('/api/admin/usuarios/:id/restaurar', (peticion, respuesta) => {
   }
 
   restaurarUsuarioDePapelera(id);
+  respuesta.json({ ok: true });
+});
+
+// Borrar DE VERDAD una cuenta que ya está en la papelera: a diferencia de
+// "Eliminar" (arriba), esto no se puede deshacer y libera su correo para
+// que se pueda volver a registrar (email es UNIQUE — ver
+// eliminarUsuarioDefinitivamente en db/usuarios.js). Solo se permite desde
+// la papelera: primero hay que "Eliminar" la cuenta y confirmarlo aquí,
+// nunca de un solo paso desde una cuenta activa.
+app.delete('/api/admin/usuarios/:id/definitivo', (peticion, respuesta) => {
+  const id = Number(peticion.params.id);
+  const usuario = buscarUsuarioPorId(id);
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+  if (!usuario.eliminado_en) {
+    return respuesta.status(400).json({ error: 'Esta cuenta no está en la papelera.' });
+  }
+
+  eliminarUsuarioDefinitivamente(id);
   respuesta.json({ ok: true });
 });
 
