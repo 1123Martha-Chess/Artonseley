@@ -3,7 +3,7 @@
 // "Personalización": dos ejes INDEPENDIENTES que el usuario elige en
 // Configuración y se guardan en este navegador (localStorage):
 //
-//   - COLOR de acento:  Azul (clásico)  /  Morado
+//   - COLOR de acento:  Azul (clásico)  /  Morado  /  Verde limón
 //        cambia --color-primario y --color-primario-suave, y tiñe el
 //        logo de la barra (ícono + nombre) al color elegido.
 //   - TEMA:             Claro  /  Oscuro
@@ -55,6 +55,16 @@ const COLORES = [
     color: '#8b0999',
     suaveClaro: '#f6ebf7',
     suaveOscuro: '#241026',
+    logoIcono: 'imagenes/artonseley-pagina.png',
+    logoLetras: 'imagenes/artonseley-letras.png',
+    recolorLogo: true
+  },
+  {
+    id: 'verde',
+    nombre: 'Verde limón',
+    color: '#4f7a1e',
+    suaveClaro: '#eef5e0',
+    suaveOscuro: '#1c2414',
     logoIcono: 'imagenes/artonseley-pagina.png',
     logoLetras: 'imagenes/artonseley-letras.png',
     recolorLogo: true

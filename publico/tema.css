@@ -2,16 +2,18 @@
    -------------------------------------------------------------------
    Tokens de color de la plataforma. Son DOS ejes independientes:
 
-     1) COLOR de acento (azul / morado) — lo pone manejaPersonalizacion.js
-        (o el bootstrap Sistema/temaGuardado.js) escribiendo
-        --color-primario / --color-primario-suave inline en <html>.
+     1) COLOR de acento (azul / morado / verde limón) — lo pone
+        manejaPersonalizacion.js (o el bootstrap Sistema/temaGuardado.js)
+        escribiendo --color-primario / --color-primario-suave inline en
+        <html>.
      2) TEMA claro / oscuro — lo controla este archivo, según el
         atributo <html data-tema="oscuro">. Cuando no está el atributo,
         vale el bloque :root de abajo (claro).
 
    Se combinan libremente: azul+claro, azul+oscuro, morado+claro,
-   morado+oscuro. El valor por defecto (sin nada guardado) es azul+claro,
-   que es el aspecto con el que se lanzó el sitio.
+   morado+oscuro, verde+claro, verde+oscuro. El valor por defecto (sin
+   nada guardado) es azul+claro, que es el aspecto con el que se lanzó
+   el sitio.
 
    Se enlaza ANTES que plataforma.css / documento.css / los <style>
    embebidos, para que todos puedan usar var(--...). Junto con él va
