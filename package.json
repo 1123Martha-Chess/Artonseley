@@ -11,6 +11,7 @@
     "migrar-datos": "node servidor/scripts/migrarDatosIniciales.js",
     "crear-usuario": "node servidor/scripts/crearUsuario.js",
     "actualizar-licencia": "node servidor/scripts/actualizarLicencia.js",
+    "cambiar-contrasena": "node servidor/scripts/cambiarContrasena.js",
     "probar-cifrado": "node servidor/scripts/probarCifradoCuadernos.js",
     "generar-vapid": "node servidor/scripts/generarVapid.js"
   },

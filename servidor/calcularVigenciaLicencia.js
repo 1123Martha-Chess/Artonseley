@@ -15,12 +15,19 @@
 // ese mismo texto (API).
 // -------------------------------------------------------------------
 
-export function calcularVigenciaLicencia(valor, { porDefectoMeses = null } = {}) {
+// "desde": fecha base para el "número de meses" (por defecto, hoy). Al
+// RENOVAR una licencia que todavía no vence, servidor.js manda aquí la
+// fecha de vencimiento actual en vez de "hoy", para que los meses
+// nuevos se SUMEN al tiempo que ya le quedaba en vez de reiniciar la
+// cuenta desde cero — así una renovación anticipada nunca le quita
+// tiempo a nadie. Al CREAR una cuenta nueva no aplica (no hay nada que
+// extender), así que ese caso simplemente no manda "desde".
+export function calcularVigenciaLicencia(valor, { porDefectoMeses = null, desde = null } = {}) {
   if (valor === undefined || valor === null || String(valor).trim() === '') {
     if (porDefectoMeses === null) {
       throw new Error('Falta indicar la vigencia de la licencia (número de meses o fecha AAAA-MM-DD).');
     }
-    return mesesDesdeHoy(porDefectoMeses);
+    return mesesDesde(porDefectoMeses, desde);
   }
 
   const texto = String(valor).trim();
@@ -30,7 +37,7 @@ export function calcularVigenciaLicencia(valor, { porDefectoMeses = null } = {})
     if (meses <= 0) {
       throw new Error('El número de meses debe ser mayor a 0.');
     }
-    return mesesDesdeHoy(meses);
+    return mesesDesde(meses, desde);
   }
 
   const fecha = new Date(texto);
@@ -40,8 +47,8 @@ export function calcularVigenciaLicencia(valor, { porDefectoMeses = null } = {})
   return fecha.toISOString();
 }
 
-function mesesDesdeHoy(meses) {
-  const fecha = new Date();
+function mesesDesde(meses, desde) {
+  const fecha = desde ? new Date(desde) : new Date();
   fecha.setMonth(fecha.getMonth() + meses);
   return fecha.toISOString();
 }

@@ -43,3 +43,17 @@ export function buscarSolicitudRegistroPorId(id) {
 export function eliminarSolicitudRegistro(id) {
   db.prepare('DELETE FROM solicitudes_registro WHERE id = ?').run(id);
 }
+
+export const DIAS_RETENCION_SOLICITUD_REGISTRO = 30;
+
+// Red de seguridad de privacidad (ver la Sección II del Aviso de
+// Privacidad sobre la IP): si nadie revisa una solicitud —ni se aprueba
+// ni se descarta— en DIAS_RETENCION_SOLICITUD_REGISTRO días, desaparece
+// sola por completo (correo, hash de contraseña, IP y user-agent
+// incluidos). Se corre en un barrido periódico (ver servidor.js).
+export function eliminarSolicitudesRegistroVencidas() {
+  const info = db.prepare(
+    `DELETE FROM solicitudes_registro WHERE creado_en <= datetime('now', ?)`
+  ).run(`-${DIAS_RETENCION_SOLICITUD_REGISTRO} days`);
+  return info.changes;
+}

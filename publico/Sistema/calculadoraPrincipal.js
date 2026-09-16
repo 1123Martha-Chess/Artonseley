@@ -1,12 +1,17 @@
 // calculadoraPrincipal.js
 // -------------------------------------------------------------------
-// Punto de entrada de calculadora.html. Solo interfaz: recoge lo que el
-// usuario capturó, lo manda a POST /api/calculadora/indemnizacion-laboral,
-// y pinta el desglose que regresa el servidor. NADA de lógica de cálculo
-// vive aquí (mismo principio que el buscador).
+// Punto de entrada de calculadora.html. El cálculo YA NO se manda al
+// servidor: corre íntegramente aquí, en el navegador, con la lógica
+// pura de Sistema/calculadoraLogica.js — así ningún dato del caso
+// (salario, fechas, causa de despido) viaja por la red, ni siquiera
+// cifrado, eliminando cualquier riesgo de interceptación. Lo único que
+// se le pide al servidor es GET /api/calculadora/indices: los valores
+// económicos vigentes (salario mínimo, UMA) que fija el administrador,
+// que no son un dato del Usuario.
 // -------------------------------------------------------------------
 
 import { aplicarModoGuardado } from './manejaPersonalizacion.js';
+import { validar, calcular, indicesEconomicosListos } from './calculadoraLogica.js';
 
 aplicarModoGuardado();
 
@@ -20,17 +25,30 @@ const campoMesesJuicio = document.getElementById('campoMesesJuicio');
 const bloqueSdiCalcular = document.getElementById('bloqueSdiCalcular');
 const bloqueSdiDirecto = document.getElementById('bloqueSdiDirecto');
 
+let indices = null;
+
 iniciar();
 
 async function iniciar() {
   try {
-    const respuesta = await fetch('/api/sesion');
+    const respuesta = await fetch('/api/calculadora/indices');
     if (respuesta.status === 401) {
       window.location.href = 'login.html';
       return;
     }
+    if (respuesta.status === 403) {
+      const datos = await respuesta.json().catch(() => ({}));
+      contenedorResultado.innerHTML = `<div class="bloque"><p class="mensaje-error">${escapar(datos.error || 'No tienes acceso a la calculadora.')}</p></div>`;
+      botonCalcular.disabled = true;
+      return;
+    }
+    if (!respuesta.ok) throw new Error('respuesta ' + respuesta.status);
+    ({ indices } = await respuesta.json());
   } catch (error) {
-    console.error('calculadoraPrincipal.js: no se pudo confirmar la sesión:', error);
+    console.error('calculadoraPrincipal.js: no se pudieron obtener los índices económicos:', error);
+    contenedorResultado.innerHTML = '<div class="bloque"><p class="mensaje-error">No se pudo conectar con el servidor.</p></div>';
+    botonCalcular.disabled = true;
+    return;
   }
 
   actualizarCamposCondicionales();
@@ -90,39 +108,27 @@ function construirCuerpo() {
   return cuerpo;
 }
 
-async function enviar(evento) {
+function enviar(evento) {
   evento.preventDefault();
-  botonCalcular.disabled = true;
-  contenedorResultado.innerHTML = '<p class="mensaje-carga">Calculando…</p>';
+
+  if (!indicesEconomicosListos(indices)) {
+    contenedorResultado.innerHTML =
+      '<div class="bloque"><p class="mensaje-error">La calculadora todavía no tiene cargados los valores económicos vigentes (salario mínimo, UMA). Contacta al administrador.</p></div>';
+    return;
+  }
+
+  const entradas = construirCuerpo();
+  const errores = validar(entradas);
+  if (errores.length > 0) {
+    pintarErrores(errores);
+    return;
+  }
 
   try {
-    const respuesta = await fetch('/api/calculadora/indemnizacion-laboral', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(construirCuerpo())
-    });
-
-    if (respuesta.status === 401) {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    const datos = await respuesta.json().catch(() => ({}));
-
-    if (datos.tipo === 'errores') {
-      pintarErrores(datos.errores || ['No se pudo calcular.']);
-    } else if (datos.tipo === 'mensaje') {
-      contenedorResultado.innerHTML = `<div class="bloque"><p class="mensaje-error">${escapar(datos.mensaje)}</p></div>`;
-    } else if (datos.tipo === 'resultado') {
-      pintarResultado(datos);
-    } else {
-      pintarErrores([datos.error || 'No se pudo calcular. Intenta de nuevo.']);
-    }
+    pintarResultado(calcular(entradas, indices));
   } catch (error) {
     console.error('calculadoraPrincipal.js: error al calcular:', error);
-    pintarErrores(['No se pudo conectar con el servidor. Intenta de nuevo.']);
-  } finally {
-    botonCalcular.disabled = false;
+    pintarErrores(['No se pudo calcular con esos datos. Revísalos e intenta de nuevo.']);
   }
 }
 

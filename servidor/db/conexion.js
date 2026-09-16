@@ -145,8 +145,12 @@ db.exec(`
   -- en la tabla (nunca se borra una columna en este proyecto, ver el
   -- comentario grande más abajo sobre ALTER TABLE) pero servidor/db/sugerencias.js
   -- ya NO lo guarda ni lo expone — ni el propio dueño de la plataforma ve
-  -- qué cuenta mandó cada mensaje. Además cada sugerencia se borra sola a
-  -- las 24 horas de mandarse, la haya revisado el administrador o no (ver
+  -- qué cuenta mandó cada mensaje. Por el mismo motivo, "urgencia" ya
+  -- tampoco se guarda ni se pide (se deja la columna, sin usarse, mismo
+  -- criterio); "creado_en" se conserva, pero ÚNICAMENTE de forma interna,
+  -- para poder calcular cuándo ya pasaron las 24 horas — nunca se expone
+  -- en la bandeja del administrador. Cada sugerencia se borra sola a las
+  -- 24 horas de mandarse, la haya revisado el administrador o no (ver
   -- eliminarSugerenciasVencidas y el barrido en servidor.js).
   CREATE TABLE IF NOT EXISTS sugerencias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -388,4 +392,16 @@ if (!yaTieneNombre) {
 const yaTieneLimiteSesiones = columnasDeUsuarios.some(columna => columna.name === 'limite_sesiones');
 if (!yaTieneLimiteSesiones) {
   db.exec('ALTER TABLE usuarios ADD COLUMN limite_sesiones INTEGER');
+}
+
+// "licencia_vitalicia": el Plan Fundador (acceso de por vida a la
+// Plataforma, bajo cualquier operador que la llegue a tener en el
+// futuro) se representa con esta bandera explícita, NO con una fecha muy
+// lejana disfrazada de "para siempre" — así nunca hay una fecha falsa
+// escondida en el sistema. Cuando vale 1, requiereLicenciaVigente (ver
+// servidor/auth/middleware.js) y todo el código que reporta si la
+// licencia está vigente ignoran por completo licencia_vence_en.
+const yaTieneLicenciaVitalicia = columnasDeUsuarios.some(columna => columna.name === 'licencia_vitalicia');
+if (!yaTieneLicenciaVitalicia) {
+  db.exec('ALTER TABLE usuarios ADD COLUMN licencia_vitalicia INTEGER NOT NULL DEFAULT 0');
 }

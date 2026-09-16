@@ -21,6 +21,7 @@
 // -------------------------------------------------------------------
 
 import { db } from './conexion.js';
+import { anonimizarRespuestasArchivadasDelDia } from './respuestasEncuestas.js';
 
 export const MESES_RETENCION_HOJA_ENCUESTAS = 3;
 
@@ -113,9 +114,16 @@ export function listarFilasDeTabla(fecha) {
   return db.prepare(`SELECT * FROM "${registro.nombre_tabla}" ORDER BY id DESC`).all();
 }
 
+// Borra la tabla del día Y anonimiza (correo y respuestas vacíos) la
+// fila original de cada respuesta que se había archivado ese día en
+// encuestas_respuestas — para que no quede ningún rastro del correo,
+// ni en la hoja ni en el registro original, una vez que la tabla del
+// día desaparece (ver el comentario de anonimizarRespuestasArchivadasDelDia
+// en respuestasEncuestas.js).
 function borrarTabla(registro) {
   db.exec(`DROP TABLE IF EXISTS "${registro.nombre_tabla}"`);
   db.prepare('DELETE FROM encuestas_hoja_tablas WHERE fecha = ?').run(registro.fecha);
+  anonimizarRespuestasArchivadasDelDia(registro.fecha);
 }
 
 // Borrado manual desde el panel (ej. justo después de descargar el CSV

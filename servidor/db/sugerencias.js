@@ -1,24 +1,25 @@
 // sugerencias.js
 // -------------------------------------------------------------------
 // El buzón de sugerencias es ANÓNIMO: no se guarda ni se expone qué
-// cuenta mandó cada mensaje (ver el comentario de la tabla "sugerencias"
-// en conexion.js — la columna usuario_id sigue ahí sin usarse, nunca se
-// borra una columna en este proyecto). Además cada sugerencia se borra
-// sola a las 24 horas de mandarse, la haya revisado el administrador o
-// no (ver eliminarSugerenciasVencidas, y el barrido en servidor.js).
+// cuenta mandó cada mensaje, ni la urgencia que haya elegido, ni cuándo
+// lo mandó (ver el comentario de la tabla "sugerencias" en conexion.js —
+// esas columnas siguen ahí sin usarse, nunca se borra una columna en
+// este proyecto). "creado_en" es la única excepción: se sigue guardando,
+// pero solo para poder calcular las 24 horas (ver
+// eliminarSugerenciasVencidas más abajo, y el barrido en servidor.js) —
+// nunca se lee de vuelta para mostrárselo al administrador.
 // -------------------------------------------------------------------
 
 import { db } from './conexion.js';
 
-export function guardarSugerencia({ mensaje, urgencia }) {
-  db.prepare('INSERT INTO sugerencias (mensaje, urgencia) VALUES (?, ?)')
-    .run(mensaje, urgencia || 'No especificada');
+export function guardarSugerencia({ mensaje }) {
+  db.prepare('INSERT INTO sugerencias (mensaje) VALUES (?)').run(mensaje);
 }
 
 // Para el buzón que ve el administrador. Deliberadamente NO incluye
-// ningún dato de quién la mandó.
+// ningún dato de quién la mandó, ni la urgencia, ni la fecha/hora.
 export function listarSugerencias() {
-  return db.prepare('SELECT id, mensaje, urgencia, creado_en FROM sugerencias ORDER BY creado_en DESC').all();
+  return db.prepare('SELECT id, mensaje FROM sugerencias ORDER BY id DESC').all();
 }
 
 // El botón de "atendida" (palomita) y el de "descartar" (tacha) en el

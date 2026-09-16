@@ -1,11 +1,18 @@
-// indemnizacionLaboral.js
+// calculadoraLogica.js
 // -------------------------------------------------------------------
 // Calculadora Jurídica Financiera — Fase 1: indemnización / liquidación
 // laboral conforme a la Ley Federal del Trabajo (LFT).
 //
-// TODO el cálculo vive aquí, en el servidor: el cliente solo manda los
-// datos que el usuario capturó y pinta el desglose que regresa esta
-// función. Mismo principio que el buscador de leyes.
+// TODO el cálculo corre AQUÍ, en el navegador del propio Usuario — los
+// datos que captura (salario, fechas, causa de despido...) nunca salen
+// de su equipo ni se transmiten al servidor. El servidor únicamente
+// expone los índices económicos vigentes (salario mínimo, UMA; ver
+// GET /api/calculadora/indices en servidor.js), que no son un dato
+// personal del Usuario, sino un valor público que fija el administrador.
+// Este archivo es, a propósito, casi idéntico a como vivía antes en
+// servidor/calculadoras/indemnizacionLaboral.js: es la misma lógica
+// pura (sin nada específico de Node), solo que ahora se ejecuta del
+// lado del navegador para que ningún dato del caso viaje por la red.
 //
 // El resultado NO es solo un número: es un desglose renglón por renglón,
 // cada uno citando el artículo de la LFT que lo sustenta, más los
@@ -21,6 +28,12 @@
 //     real del juicio, que no se conoce de antemano. Solo se calculan si
 //     el usuario da 'mesesJuicio' > 0, y siempre con un aviso fuerte.
 // -------------------------------------------------------------------
+
+// ¿Ya tiene el administrador cargados los valores vigentes? Mientras los
+// salarios mínimos valgan 0, la calculadora no debe calcular (daría ceros).
+export function indicesEconomicosListos(indices) {
+  return !!indices && indices.salarioMinimoGeneral > 0 && indices.salarioMinimoFronteraNorte > 0;
+}
 
 const CAUSAS = ['despido-injustificado', 'despido-justificado', 'renuncia', 'rescision-trabajador'];
 const RESOLUCIONES = ['indemnizacion', 'reinstalacion'];

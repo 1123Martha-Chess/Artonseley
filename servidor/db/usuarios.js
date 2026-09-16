@@ -22,7 +22,7 @@ export function buscarUsuarioPorId(id) {
 
 export function listarUsuarios() {
   return db.prepare(`
-    SELECT id, email, rol, licencia_vence_en, activo, suspendido_hasta, eliminado_en,
+    SELECT id, email, rol, licencia_vence_en, licencia_vitalicia, activo, suspendido_hasta, eliminado_en,
            limite_sesiones, creado_en
     FROM usuarios
     ORDER BY creado_en DESC
@@ -31,17 +31,45 @@ export function listarUsuarios() {
 
 // licenciaVenceEn debe venir ya como fecha ISO (ver servidor/scripts/crearUsuario.js,
 // que es quien decide si esa fecha sale de "hoy + N meses" o de una fecha exacta).
-export function crearUsuario({ email, hashContrasena, rol = 'abogado', licenciaVenceEn }) {
+// licenciaVitalicia (Plan Fundador, acceso de por vida): cuando es true, la
+// cuenta NUNCA se trata como vencida sin importar lo que diga
+// licencia_vence_en (ver requiereLicenciaVigente en servidor/auth/middleware.js)
+// — licencia_vence_en de cualquier forma se guarda con un valor lejano, solo
+// como respaldo para cualquier código que llegara a comparar fechas sin
+// revisar primero la bandera.
+const FECHA_LEJANA_VITALICIA = '2200-01-01T00:00:00.000Z';
+
+export function crearUsuario({ email, hashContrasena, rol = 'abogado', licenciaVenceEn, licenciaVitalicia = false }) {
   const info = db.prepare(`
-    INSERT INTO usuarios (email, hash_contrasena, rol, licencia_vence_en)
-    VALUES (?, ?, ?, ?)
-  `).run(normalizarEmail(email), hashContrasena, rol, licenciaVenceEn);
+    INSERT INTO usuarios (email, hash_contrasena, rol, licencia_vence_en, licencia_vitalicia)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(
+    normalizarEmail(email),
+    hashContrasena,
+    rol,
+    licenciaVitalicia ? FECHA_LEJANA_VITALICIA : licenciaVenceEn,
+    licenciaVitalicia ? 1 : 0
+  );
 
   return buscarUsuarioPorId(info.lastInsertRowid);
 }
 
-export function actualizarLicencia(usuarioId, licenciaVenceEn) {
-  db.prepare('UPDATE usuarios SET licencia_vence_en = ? WHERE id = ?').run(licenciaVenceEn, usuarioId);
+export function actualizarLicencia(usuarioId, { licenciaVenceEn, licenciaVitalicia = false }) {
+  db.prepare('UPDATE usuarios SET licencia_vence_en = ?, licencia_vitalicia = ? WHERE id = ?').run(
+    licenciaVitalicia ? FECHA_LEJANA_VITALICIA : licenciaVenceEn,
+    licenciaVitalicia ? 1 : 0,
+    usuarioId
+  );
+}
+
+// Para "cambiar contraseña" desde el panel o desde la terminal (ver
+// servidor/scripts/cambiarContrasena.js): repone la contraseña de una
+// cuenta YA EXISTENTE — a diferencia de crearUsuario, no toca nada más
+// (rol, licencia, etc.). Es el mecanismo real de recuperación de acceso
+// hoy: el Titular avisa por correo/WhatsApp que perdió su contraseña, el
+// Responsable verifica que es él y le repone una nueva a mano.
+export function actualizarContrasena(usuarioId, hashContrasena) {
+  db.prepare('UPDATE usuarios SET hash_contrasena = ? WHERE id = ?').run(hashContrasena, usuarioId);
 }
 
 // Apodo opcional que el usuario elige en "Mi cuenta" (ver configuracion.html):

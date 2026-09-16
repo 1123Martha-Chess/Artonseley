@@ -44,7 +44,8 @@ import {
   reactivarUsuario,
   moverUsuarioAPapelera,
   restaurarUsuarioDePapelera,
-  fijarLimiteSesiones
+  fijarLimiteSesiones,
+  actualizarContrasena
 } from './servidor/db/usuarios.js';
 import { calcularVigenciaLicencia } from './servidor/calcularVigenciaLicencia.js';
 import { manejarPaginaLegal } from './servidor/paginasLegales.js';
@@ -68,7 +69,8 @@ import {
   guardarSolicitudRegistro,
   listarSolicitudesRegistro,
   buscarSolicitudRegistroPorId,
-  eliminarSolicitudRegistro
+  eliminarSolicitudRegistro,
+  eliminarSolicitudesRegistroVencidas
 } from './servidor/db/solicitudesRegistro.js';
 import {
   listarDocumentosConConteo,
@@ -112,12 +114,7 @@ import {
   eliminarSuscripcionPorEndpoint
 } from './servidor/db/suscripcionesPush.js';
 import { configurarWebPush, barrerYEnviar } from './servidor/recordatoriosCalendario.js';
-import {
-  CALCULADORAS,
-  obtenerIndicesEconomicos,
-  indicesEconomicosListos
-} from './servidor/calculadoras/registro.js';
-import { guardarIndicesEconomicos } from './servidor/db/indicesEconomicos.js';
+import { obtenerIndicesEconomicos, guardarIndicesEconomicos } from './servidor/db/indicesEconomicos.js';
 import {
   listarPlantillas,
   listarPlantillasParaAdmin,
@@ -313,6 +310,26 @@ app.get('/sw.js', (peticion, respuesta) => {
 
 app.use(express.static(path.join(__dirname, 'publico')));
 
+// El Plan Fundador (acceso de por vida) nunca se trata como vencido,
+// sin importar licencia_vence_en (ver el comentario de esa columna en
+// conexion.js). Centralizado aquí porque /api/sesion, el panel de
+// administración y requiereLicenciaVigente (servidor/auth/middleware.js)
+// necesitan el mismo criterio.
+function licenciaVigenteDe(usuario) {
+  return !!usuario.licencia_vitalicia || new Date(usuario.licencia_vence_en) > new Date();
+}
+
+// El mismo campo de texto libre "vigencia" que ya se usaba para "24" o
+// "2026-12-31" ahora también acepta la palabra "vitalicia" (Plan
+// Fundador, acceso de por vida) — así no hace falta un campo aparte en
+// ningún formulario del panel. Devuelve { licenciaVenceEn, vitalicia }.
+function resolverVigencia(vigencia, opciones = {}) {
+  if (String(vigencia ?? '').trim().toLowerCase() === 'vitalicia') {
+    return { licenciaVenceEn: null, vitalicia: true };
+  }
+  return { licenciaVenceEn: calcularVigenciaLicencia(vigencia, opciones), vitalicia: false };
+}
+
 function fijarCookieDeSesion(respuesta, token, expiraEn) {
   respuesta.cookie('sesion', token, {
     httpOnly: true,
@@ -491,7 +508,8 @@ app.get('/api/sesion', requiereSesionAPI, (peticion, respuesta) => {
     nombre: peticion.usuario.nombre,
     rol: peticion.usuario.rol,
     licenciaVenceEn: peticion.usuario.licencia_vence_en,
-    licenciaVigente: new Date(peticion.usuario.licencia_vence_en) > new Date()
+    licenciaVitalicia: !!peticion.usuario.licencia_vitalicia,
+    licenciaVigente: licenciaVigenteDe(peticion.usuario)
   });
 });
 
@@ -539,36 +557,16 @@ app.post('/api/buscar', jsonEstandar, requiereSesionAPI, requiereLicenciaVigente
   }
 });
 
-// Calculadora Jurídica Financiera. Igual que el buscador: todo el cálculo
-// vive en servidor/ (servidor/calculadoras/), el cliente solo manda los
-// datos que capturó el usuario y pinta el desglose. Requiere sesión +
-// licencia vigente (es función para abogados, como la búsqueda). El
-// resultado sigue el patrón { tipo: 'resultado' | 'errores' | 'mensaje' }.
-app.post('/api/calculadora/:tipo', jsonEstandar, requiereSesionAPI, requiereLicenciaVigente, (peticion, respuesta) => {
-  try {
-    const calculadora = CALCULADORAS[peticion.params.tipo];
-    if (!calculadora) {
-      return respuesta.status(404).json({ error: 'Esa calculadora no existe.' });
-    }
-
-    const errores = calculadora.validar(peticion.body ?? {});
-    if (errores.length > 0) {
-      return respuesta.status(400).json({ tipo: 'errores', errores });
-    }
-
-    const indices = obtenerIndicesEconomicos();
-    if (!indicesEconomicosListos(indices)) {
-      return respuesta.json({
-        tipo: 'mensaje',
-        mensaje: 'La calculadora todavía no tiene cargados los valores económicos vigentes (salario mínimo, UMA). Contacta al administrador.'
-      });
-    }
-
-    respuesta.json(calculadora.calcular(peticion.body, indices));
-  } catch (error) {
-    console.error('Error en POST /api/calculadora/:tipo:', error);
-    respuesta.status(500).json({ error: 'Ocurrió un error al calcular.' });
-  }
+// Calculadora Jurídica Financiera. El cálculo YA NO corre en el
+// servidor: corre íntegramente en el navegador (Sistema/calculadoraLogica.js)
+// para que ningún dato del caso capturado por el Usuario (salario,
+// fechas, causa de despido...) viaje por la red — mismo principio que
+// Plantillas. Lo único que expone el servidor son los índices
+// económicos vigentes que fija el administrador (salario mínimo, UMA):
+// un valor público, no un dato personal del Usuario. Requiere sesión +
+// licencia vigente, como el resto de la calculadora.
+app.get('/api/calculadora/indices', requiereSesionAPI, requiereLicenciaVigente, (peticion, respuesta) => {
+  respuesta.json({ indices: obtenerIndicesEconomicos() });
 });
 
 // Generador de Plantillas y Documentos. El servidor solo guarda el TEXTO
@@ -679,13 +677,14 @@ const LARGO_MAXIMO_SUGERENCIA = 2000;
 
 // Buzón de sugerencias: requiere sesión para mandar una (como todo el
 // sitio), pero el mensaje en sí es ANÓNIMO — no se guarda qué cuenta lo
-// mandó (ver el comentario de servidor/db/sugerencias.js) y además se
-// borra solo a las 24 horas, la haya revisado el administrador o no (ver
-// iniciarBarridoDeSugerencias más abajo). limitadorSugerencias frena a
-// quien intente mandar cientos de forma automatizada.
+// mandó, ni la urgencia, ni la fecha/hora (ver el comentario de
+// servidor/db/sugerencias.js) — y además se borra solo a las 24 horas,
+// la haya revisado el administrador o no (ver iniciarBarridoDeSugerencias
+// más abajo). limitadorSugerencias frena a quien intente mandar cientos
+// de forma automatizada.
 app.post('/api/sugerencias', limitadorSugerencias, jsonEstandar, requiereSesionAPI, (peticion, respuesta) => {
   try {
-    const { mensaje, urgencia } = peticion.body ?? {};
+    const { mensaje } = peticion.body ?? {};
     const mensajeLimpio = String(mensaje ?? '').trim();
 
     if (!mensajeLimpio) {
@@ -697,7 +696,7 @@ app.post('/api/sugerencias', limitadorSugerencias, jsonEstandar, requiereSesionA
       });
     }
 
-    guardarSugerencia({ mensaje: mensajeLimpio, urgencia });
+    guardarSugerencia({ mensaje: mensajeLimpio });
     respuesta.json({ ok: true });
   } catch (error) {
     console.error('Error en /api/sugerencias:', error);
@@ -873,7 +872,8 @@ function usuarioAJSON(usuario) {
     email: usuario.email,
     rol: usuario.rol,
     licenciaVenceEn: usuario.licencia_vence_en,
-    licenciaVigente: new Date(usuario.licencia_vence_en) > new Date(),
+    licenciaVitalicia: !!usuario.licencia_vitalicia,
+    licenciaVigente: licenciaVigenteDe(usuario),
     creadoEn: usuario.creado_en,
     // Límite de sesiones simultáneas (ver la Cláusula 2.7 de los
     // Términos): sesionesActivas se cuenta al momento de responder (igual
@@ -1082,9 +1082,9 @@ app.post('/api/admin/usuarios', jsonEstandar, (peticion, respuesta) => {
     return respuesta.status(409).json({ error: 'Ya existe una cuenta con este correo.' });
   }
 
-  let licenciaVenceEn;
+  let licenciaVenceEn, licenciaVitalicia;
   try {
-    licenciaVenceEn = calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
+    ({ licenciaVenceEn, vitalicia: licenciaVitalicia } = resolverVigencia(vigencia, { porDefectoMeses: 24 }));
   } catch (error) {
     return respuesta.status(400).json({ error: error.message });
   }
@@ -1093,15 +1093,18 @@ app.post('/api/admin/usuarios', jsonEstandar, (peticion, respuesta) => {
     email: emailLimpio,
     hashContrasena: hashContrasena(String(contrasena)),
     rol,
-    licenciaVenceEn
+    licenciaVenceEn,
+    licenciaVitalicia
   });
 
   respuesta.json({ ok: true, usuario: usuarioAJSON(usuario) });
 });
 
 // Renovar (o corregir) la fecha de vencimiento de licencia de una cuenta
-// existente. "vigencia" = número de meses a partir de hoy, o una fecha
-// AAAA-MM-DD.
+// existente. "vigencia" = número de meses, una fecha AAAA-MM-DD, o la
+// palabra "vitalicia" (Plan Fundador). Cuando es un número de meses y la
+// cuenta todavía no vence (y no era vitalicia), esos meses se SUMAN a lo
+// que ya le quedaba en vez de reiniciar la cuenta desde hoy.
 app.post('/api/admin/usuarios/:id/licencia', jsonEstandar, (peticion, respuesta) => {
   const id = Number(peticion.params.id);
   const usuario = buscarUsuarioPorId(id);
@@ -1109,15 +1112,45 @@ app.post('/api/admin/usuarios/:id/licencia', jsonEstandar, (peticion, respuesta)
     return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
   }
 
-  let licenciaVenceEn;
+  const licenciaVigenteYNoVitalicia = !usuario.licencia_vitalicia && new Date(usuario.licencia_vence_en) > new Date();
+
+  let licenciaVenceEn, licenciaVitalicia;
   try {
-    licenciaVenceEn = calcularVigenciaLicencia(peticion.body?.vigencia);
+    ({ licenciaVenceEn, vitalicia: licenciaVitalicia } = resolverVigencia(peticion.body?.vigencia, {
+      desde: licenciaVigenteYNoVitalicia ? usuario.licencia_vence_en : null
+    }));
   } catch (error) {
     return respuesta.status(400).json({ error: error.message });
   }
 
-  actualizarLicencia(id, licenciaVenceEn);
-  respuesta.json({ ok: true, licenciaVenceEn });
+  actualizarLicencia(id, { licenciaVenceEn, licenciaVitalicia });
+  respuesta.json({ ok: true, licenciaVenceEn: licenciaVitalicia ? null : licenciaVenceEn, licenciaVitalicia });
+});
+
+// Reponer la contraseña de una cuenta EXISTENTE — es el mecanismo real
+// de recuperación de acceso hoy: el Titular avisa (por correo o
+// WhatsApp) que la olvidó, el administrador verifica que es él y le
+// pone una nueva desde aquí (o con "npm run cambiar-contrasena" en la
+// terminal, ver servidor/scripts/cambiarContrasena.js), y le avisa que
+// ya puede entrar con ella. No cierra sus sesiones activas — a
+// diferencia de cambiar el límite de sesiones, no hay motivo para
+// desconectar dispositivos donde la sesión sigue siendo válida.
+app.post('/api/admin/usuarios/:id/contrasena', jsonEstandar, (peticion, respuesta) => {
+  const id = Number(peticion.params.id);
+  const usuario = buscarUsuarioPorId(id);
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+
+  const contrasena = String(peticion.body?.contrasena ?? '');
+  if (contrasena.length < MINIMO_CONTRASENA_REGISTRO || contrasena.length > 200) {
+    return respuesta.status(400).json({
+      error: `La contraseña debe tener entre ${MINIMO_CONTRASENA_REGISTRO} y 200 caracteres.`
+    });
+  }
+
+  actualizarContrasena(id, hashContrasena(contrasena));
+  respuesta.json({ ok: true });
 });
 
 // Aprobar una solicitud del formulario público "Crear Cuenta": crea la
@@ -1140,9 +1173,9 @@ app.post('/api/admin/solicitudes-registro/:id/aprobar', jsonEstandar, (peticion,
     });
   }
 
-  let licenciaVenceEn;
+  let licenciaVenceEn, licenciaVitalicia;
   try {
-    licenciaVenceEn = calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
+    ({ licenciaVenceEn, vitalicia: licenciaVitalicia } = resolverVigencia(vigencia, { porDefectoMeses: 24 }));
   } catch (error) {
     return respuesta.status(400).json({ error: error.message });
   }
@@ -1151,7 +1184,8 @@ app.post('/api/admin/solicitudes-registro/:id/aprobar', jsonEstandar, (peticion,
     email: solicitud.email,
     hashContrasena: solicitud.hash_contrasena,
     rol,
-    licenciaVenceEn
+    licenciaVenceEn,
+    licenciaVitalicia
   });
   eliminarSolicitudRegistro(solicitud.id);
 
@@ -1722,6 +1756,7 @@ app.listen(PUERTO, '0.0.0.0', () => {
   iniciarRecordatoriosCalendario();
   iniciarBarridoDeEncuestas();
   iniciarBarridoDeSugerencias();
+  iniciarBarridoDeSolicitudesRegistro();
 });
 
 // Temporizador interno de los "Recordatorios del calendario": cada 30 min
@@ -1779,4 +1814,22 @@ function iniciarBarridoDeSugerencias() {
   };
   barrer();
   setInterval(barrer, 30 * 60 * 1000);
+}
+
+// Borra por completo (correo, hash de contraseña, IP y user-agent) toda
+// solicitud de "Crear Cuenta" que lleve más de DIAS_RETENCION_SOLICITUD_REGISTRO
+// días sin que el administrador la apruebe ni la descarte (ver
+// eliminarSolicitudesRegistroVencidas en servidor/db/solicitudesRegistro.js).
+// Una vez al día es de sobra para un plazo de semanas.
+function iniciarBarridoDeSolicitudesRegistro() {
+  if (process.env.NODE_ENV === 'test') return;
+  const barrer = () => {
+    try {
+      eliminarSolicitudesRegistroVencidas();
+    } catch (error) {
+      console.error('barrido de solicitudes de registro vencidas: falló:', error);
+    }
+  };
+  barrer();
+  setInterval(barrer, 24 * 60 * 60 * 1000);
 }

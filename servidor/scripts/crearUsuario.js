@@ -17,7 +17,8 @@
 //   2) contraseña en texto plano (solo se usa para calcular el hash; nunca se guarda así)
 //   3) rol: "abogado" o "admin" (opcional, por defecto "abogado")
 //   4) vigencia de la licencia: un número = meses a partir de hoy,
-//      o una fecha AAAA-MM-DD (opcional, por defecto 24 meses desde hoy)
+//      una fecha AAAA-MM-DD, o la palabra "vitalicia" (Plan Fundador,
+//      acceso de por vida) (opcional, por defecto 24 meses desde hoy)
 // -------------------------------------------------------------------
 
 import { crearUsuario, buscarUsuarioPorEmail } from '../db/usuarios.js';
@@ -44,19 +45,25 @@ function main() {
     process.exit(1);
   }
 
-  const licenciaVenceEn = calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
+  const esVitalicia = vigencia?.trim().toLowerCase() === 'vitalicia';
+  const licenciaVenceEn = esVitalicia ? null : calcularVigenciaLicencia(vigencia, { porDefectoMeses: 24 });
   const usuario = crearUsuario({
     email,
     hashContrasena: hashContrasena(contrasena),
     rol,
-    licenciaVenceEn
+    licenciaVenceEn,
+    licenciaVitalicia: esVitalicia
   });
 
   console.log('Usuario creado:');
   console.log(`  id: ${usuario.id}`);
   console.log(`  email: ${usuario.email}`);
   console.log(`  rol: ${usuario.rol}`);
-  console.log(`  licencia vence: ${new Date(usuario.licencia_vence_en).toLocaleString('es-MX')}`);
+  console.log(
+    usuario.licencia_vitalicia
+      ? '  licencia: vitalicia (Plan Fundador)'
+      : `  licencia vence: ${new Date(usuario.licencia_vence_en).toLocaleString('es-MX')}`
+  );
 }
 
 main();

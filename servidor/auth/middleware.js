@@ -77,8 +77,11 @@ export function requiereAdminParaPagina(req, res, next) {
   next();
 }
 
+// El Plan Fundador (licencia_vitalicia = 1) nunca se trata como vencido,
+// sin importar lo que diga licencia_vence_en (ver el comentario de esa
+// columna en conexion.js).
 export function requiereLicenciaVigente(req, res, next) {
-  const licenciaVigente = new Date(req.usuario.licencia_vence_en) > new Date();
+  const licenciaVigente = !!req.usuario.licencia_vitalicia || new Date(req.usuario.licencia_vence_en) > new Date();
   if (!licenciaVigente) {
     return res.status(403).json({
       error: `Tu licencia venció el ${new Date(req.usuario.licencia_vence_en).toLocaleDateString('es-MX')}. Contacta al administrador para renovarla.`

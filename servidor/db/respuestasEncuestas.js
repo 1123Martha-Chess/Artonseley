@@ -82,3 +82,23 @@ export function marcarRespuestaMigrada(id) {
 // El volcado a la "hoja" de respuestas definitivas vive en
 // servidor/db/hojaEncuestasDiaria.js (una tabla nueva por día, cada una
 // con su propio borrado automático a los 3 meses).
+
+// Cuando la tabla-hoja de un día se borra a los 3 meses (ver
+// purgarTablasVencidas en hojaEncuestasDiaria.js), esta función borra el
+// correo y el contenido de la respuesta TAMBIÉN de la fila original en
+// encuestas_respuestas — de lo contrario el correo del Titular seguiría
+// viviendo ahí para siempre, aunque ya hubiera desaparecido de la hoja
+// exportable. La fila en sí NO se borra por completo: se conserva vacía
+// (sin correo ni respuestas) únicamente para que esa Cuenta no pueda
+// volver a contestar la misma encuesta y reclamar el beneficio dos
+// veces. "correo"/"respuestas" son NOT NULL en el esquema (ver
+// conexion.js), por eso se dejan en un valor vacío explícito en vez de
+// NULL.
+export function anonimizarRespuestasArchivadasDelDia(fecha) {
+  const info = db.prepare(
+    `UPDATE encuestas_respuestas
+       SET correo = '[eliminado]', respuestas = '{}'
+     WHERE migrada_en IS NOT NULL AND date(migrada_en) = ?`
+  ).run(fecha);
+  return info.changes;
+}

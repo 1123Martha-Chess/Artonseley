@@ -424,7 +424,7 @@ async function aprobarSolicitudRegistro(solicitud) {
         nombre: 'vigencia',
         etiqueta: 'Vigencia de la licencia',
         tipo: 'text',
-        placeholder: 'Meses (ej. 24) o fecha AAAA-MM-DD',
+        placeholder: 'Meses (ej. 24), fecha AAAA-MM-DD, o "vitalicia" (Plan Fundador)',
         valor: '24'
       }
     ],
@@ -461,25 +461,16 @@ async function cargarSugerencias() {
     }
 
     const tabla = document.createElement('table');
-    tabla.innerHTML = '<thead><tr><th>Fecha</th><th>Urgencia</th><th>Mensaje</th><th></th></tr></thead>';
+    tabla.innerHTML = '<thead><tr><th>Mensaje</th><th></th></tr></thead>';
     const cuerpo = document.createElement('tbody');
 
     sugerencias.forEach(s => {
       const fila = document.createElement('tr');
 
-      // Todo lo que viene de la sugerencia (urgencia, mensaje) se inserta
-      // con textContent, nunca con innerHTML: aunque "urgencia"
-      // normalmente viene de los 3 botones fijos del buzón, la ruta POST
-      // /api/sugerencias no obliga a que así sea, así que se trata igual
-      // que cualquier otro texto escrito por un usuario. El buzón es
-      // anónimo a propósito (ver servidor/db/sugerencias.js) — no hay
-      // columna de usuario/correo que pintar.
-      const celdaFecha = document.createElement('td');
-      celdaFecha.textContent = new Date(s.creado_en).toLocaleString('es-MX');
-
-      const celdaUrgencia = document.createElement('td');
-      celdaUrgencia.textContent = s.urgencia;
-
+      // El mensaje se inserta con textContent, nunca con innerHTML: es
+      // texto libre escrito por un usuario. El buzón es anónimo a
+      // propósito (ver servidor/db/sugerencias.js) — no hay columna de
+      // usuario/correo, ni de fecha, ni de urgencia que pintar.
       const celdaMensaje = document.createElement('td');
       celdaMensaje.textContent = s.mensaje;
 
@@ -508,7 +499,7 @@ async function cargarSugerencias() {
       contenedorBotones.append(botonAtendida, botonDescartar);
       celdaAcciones.appendChild(contenedorBotones);
 
-      fila.append(celdaFecha, celdaUrgencia, celdaMensaje, celdaAcciones);
+      fila.append(celdaMensaje, celdaAcciones);
       cuerpo.appendChild(fila);
     });
 
@@ -743,7 +734,7 @@ function pintarBotonAccion(texto, clase, alHacerClick) {
 
 function celdaLicencia(u) {
   const celda = document.createElement('td');
-  celda.textContent = new Date(u.licenciaVenceEn).toLocaleDateString('es-MX');
+  celda.textContent = u.licenciaVitalicia ? 'Vitalicia (Plan Fundador)' : new Date(u.licenciaVenceEn).toLocaleDateString('es-MX');
   const etiqueta = document.createElement('span');
   etiqueta.classList.add('etiqueta-estado', u.licenciaVigente ? 'etiqueta-activa' : 'etiqueta-vencida');
   etiqueta.textContent = u.licenciaVigente ? 'Vigente' : 'Vencida';
@@ -809,6 +800,7 @@ async function cargarCuentas() {
         contenedorBotones.style.gap = '6px';
         contenedorBotones.append(
           pintarBotonAccion('Renovar licencia', 'boton-secundario', () => renovarLicencia(u)),
+          pintarBotonAccion('Cambiar contraseña', 'boton-secundario', () => cambiarContrasenaCuenta(u)),
           pintarBotonAccion('Cambiar límite', 'boton-secundario', () => cambiarLimiteSesiones(u)),
           pintarBotonAccion('Cerrar sesiones', 'boton-peligro', () => cerrarSesionesCuenta(u)),
           pintarBotonAccion('Suspender', 'boton-peligro', () => suspenderCuenta(u)),
@@ -878,19 +870,23 @@ async function cargarCuentas() {
 }
 
 async function renovarLicencia(usuario) {
+  const licenciaActualTexto = usuario.licenciaVitalicia
+    ? 'es vitalicia (Plan Fundador)'
+    : `vence el ${new Date(usuario.licenciaVenceEn).toLocaleDateString('es-MX')}`;
+
   const valores = await abrirModalConCampos({
     titulo: 'Renovar licencia',
-    mensaje: `Licencia actual de "${usuario.email}": vence el ${new Date(usuario.licenciaVenceEn).toLocaleDateString('es-MX')}. Escribe la nueva vigencia.`,
+    mensaje: `Licencia actual de "${usuario.email}": ${licenciaActualTexto}. Escribe la nueva vigencia. Si todavía no vence, los meses que escribas se SUMAN al tiempo que le queda, en vez de reiniciar desde hoy.`,
     campos: [
       {
         nombre: 'vigencia',
         etiqueta: 'Nueva vigencia',
         tipo: 'text',
-        placeholder: 'Meses desde hoy (ej. 24) o fecha AAAA-MM-DD'
+        placeholder: 'Meses (ej. 24), fecha AAAA-MM-DD, o "vitalicia" (Plan Fundador)'
       }
     ],
     textoConfirmar: 'Actualizar licencia',
-    validar: valores => (valores.vigencia ? null : 'Escribe la nueva vigencia (número de meses o fecha).')
+    validar: valores => (valores.vigencia ? null : 'Escribe la nueva vigencia (número de meses, fecha, o "vitalicia").')
   });
   if (!valores) return;
 
@@ -900,10 +896,40 @@ async function renovarLicencia(usuario) {
       body: JSON.stringify({ vigencia: valores.vigencia })
     });
     mostrarAviso(
-      `Licencia de "${usuario.email}" actualizada: ahora vence el ${new Date(datos.licenciaVenceEn).toLocaleDateString('es-MX')}.`,
+      `Licencia de "${usuario.email}" actualizada: ahora ${datos.licenciaVitalicia ? 'es vitalicia (Plan Fundador)' : `vence el ${new Date(datos.licenciaVenceEn).toLocaleDateString('es-MX')}`}.`,
       'exito'
     );
     await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function cambiarContrasenaCuenta(usuario) {
+  const valores = await abrirModalConCampos({
+    titulo: 'Cambiar contraseña',
+    mensaje: `Repone la contraseña de "${usuario.email}". Avísale la contraseña nueva por un medio seguro — esto no cierra sus sesiones ya iniciadas.`,
+    campos: [
+      {
+        nombre: 'contrasena',
+        etiqueta: 'Contraseña nueva (mínimo 8 caracteres)',
+        tipo: 'text',
+        placeholder: 'Contraseña nueva para esta cuenta'
+      }
+    ],
+    textoConfirmar: 'Cambiar contraseña',
+    validar: valores => (valores.contrasena && valores.contrasena.length >= 8
+      ? null
+      : 'Escribe una contraseña de al menos 8 caracteres.')
+  });
+  if (!valores) return;
+
+  try {
+    await peticionAdmin(`/api/admin/usuarios/${usuario.id}/contrasena`, {
+      method: 'POST',
+      body: JSON.stringify({ contrasena: valores.contrasena })
+    });
+    mostrarAviso(`Contraseña de "${usuario.email}" actualizada.`, 'exito');
   } catch (error) {
     mostrarAviso(error.message);
   }

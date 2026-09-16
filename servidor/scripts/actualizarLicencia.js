@@ -5,9 +5,14 @@
 // Útil tanto para renovar de verdad a alguien como para PROBAR el
 // bloqueo por licencia vencida (poniéndole una fecha pasada).
 //
+// Si la cuenta todavía no vence (y no es vitalicia) y le das un número
+// de meses, esos meses se SUMAN al tiempo que ya le quedaba, en vez de
+// reiniciar la cuenta desde hoy — igual que al renovar desde el panel.
+//
 // Uso:
-//   npm run actualizar-licencia -- correo@ejemplo.com 24            (24 meses desde hoy)
+//   npm run actualizar-licencia -- correo@ejemplo.com 24            (24 meses, sumados a lo que le quedaba)
 //   npm run actualizar-licencia -- correo@ejemplo.com 2024-01-01    (fecha ya pasada, para probar el bloqueo)
+//   npm run actualizar-licencia -- correo@ejemplo.com vitalicia     (Plan Fundador: acceso de por vida)
 // -------------------------------------------------------------------
 
 import { buscarUsuarioPorEmail, actualizarLicencia } from '../db/usuarios.js';
@@ -17,7 +22,7 @@ function main() {
   const [email, vigencia] = process.argv.slice(2);
 
   if (!email || !vigencia) {
-    console.error('Uso: npm run actualizar-licencia -- correo@ejemplo.com [meses|AAAA-MM-DD]');
+    console.error('Uso: npm run actualizar-licencia -- correo@ejemplo.com [meses|AAAA-MM-DD|vitalicia]');
     process.exit(1);
   }
 
@@ -27,8 +32,17 @@ function main() {
     process.exit(1);
   }
 
-  const licenciaVenceEn = calcularVigenciaLicencia(vigencia);
-  actualizarLicencia(usuario.id, licenciaVenceEn);
+  if (vigencia.trim().toLowerCase() === 'vitalicia') {
+    actualizarLicencia(usuario.id, { licenciaVenceEn: null, licenciaVitalicia: true });
+    console.log(`Licencia de ${usuario.email} actualizada: ahora es vitalicia (Plan Fundador).`);
+    return;
+  }
+
+  const licenciaVigenteYNoVitalicia = !usuario.licencia_vitalicia && new Date(usuario.licencia_vence_en) > new Date();
+  const licenciaVenceEn = calcularVigenciaLicencia(vigencia, {
+    desde: licenciaVigenteYNoVitalicia ? usuario.licencia_vence_en : null
+  });
+  actualizarLicencia(usuario.id, { licenciaVenceEn, licenciaVitalicia: false });
 
   console.log(`Licencia de ${usuario.email} actualizada. Ahora vence: ${new Date(licenciaVenceEn).toLocaleString('es-MX')}`);
 }
