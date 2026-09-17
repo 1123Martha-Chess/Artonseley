@@ -1,6 +1,6 @@
 # AVISO DE PRIVACIDAD INTEGRAL
 
-**Artonseley — Última actualización: 15 de septiembre de 2026**
+**Artonseley — Última actualización: 17 de septiembre de 2026**
 
 De conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (la "Ley"), su Reglamento y los Lineamientos del Aviso de Privacidad, se emite el presente Aviso de Privacidad Integral, aplicable a los usuarios de Artonseley, sistema de consulta y búsqueda de información jurídica mexicana (la "Plataforma").
 
@@ -82,6 +82,8 @@ El Responsable **no** utiliza los datos personales del Titular con fines mercado
 ## V. Transferencia de Datos Personales
 
 El Responsable no vende, cede ni transmite los datos personales del Titular a terceros ajenos a su organización. El tratamiento de los datos se limita a los fines internos descritos en este Aviso: creación y administración de cuentas, procesamiento de pagos, envío de notificaciones y atención de sugerencias. En congruencia con lo señalado en la Sección III, el contenido de Mis Cuadernos nunca ha estado en posesión del Responsable y, por lo tanto, no puede ser objeto de transferencia alguna por parte de éste.
+
+Para operar la Plataforma, el Responsable aloja su base de datos en los servidores de **Render Services, Inc.** ("Render"), su proveedor de hospedaje (hosting) en la nube, los cuales pueden ubicarse fuera del territorio nacional. Conforme al artículo 3, fracciones IX y XIX, de la Ley, Render actúa exclusivamente como **encargado del tratamiento**: procesa los datos personales del Titular únicamente por cuenta y siguiendo las instrucciones del Responsable, sin decidir sobre su tratamiento ni utilizarlos para fines propios. Por tratarse de un encargado y no de un tercero distinto del Responsable, la comunicación de dichos datos a Render no constituye una transferencia de datos personales en los términos de la Ley y no requiere el consentimiento adicional del Titular. Lo anterior no exime al Responsable de su obligación de responder por el tratamiento de los datos personales del Titular: el Responsable permanece en todo momento como único responsable frente al Titular y frente a la autoridad, con independencia de la ubicación geográfica de los servidores donde éstos residan.
 
 ## VI. Ejercicio de Derechos ARCO y Revocación del Consentimiento
 
