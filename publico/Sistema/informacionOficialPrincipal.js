@@ -58,7 +58,7 @@ async function cargarInformacionOficial() {
     }
 
     contenedor.appendChild(crearSeccionDeEnlaces('Cuentas oficiales', cuentasOficiales));
-    contenedor.appendChild(crearSeccionDeEnlaces('Fuentes oficiales (DOF)', fuentesOficiales));
+    contenedor.appendChild(crearSeccionDeEnlaces('Fuentes Oficiales de nuestras Normas Jurídicas implementadas', fuentesOficiales));
   } catch (error) {
     contenedor.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
   }
