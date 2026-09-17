@@ -1430,6 +1430,180 @@ formularioIndices.addEventListener('submit', async (evento) => {
 });
 
 // ---------------------------------------------------------------------
+// Información oficial (página pública informacion-oficial.html): el
+// texto de presentación más las dos listas fijas de enlaces (cuentas
+// oficiales / fuentes oficiales-DOF). Mismo patrón de ↑ / ↓ que Música.
+// ---------------------------------------------------------------------
+
+const formularioDescripcionOficial = document.getElementById('formularioDescripcionOficial');
+const campoDescripcionOficial = document.getElementById('campoDescripcionOficial');
+const resultadoDescripcionOficial = document.getElementById('resultadoDescripcionOficial');
+
+async function cargarInformacionOficial() {
+  try {
+    const datos = await peticionAdmin('/api/admin/informacion-oficial');
+    campoDescripcionOficial.value = datos.descripcion || '';
+    pintarListaEnlacesOficiales('listaCuentasOficiales', datos.cuentasOficiales, 'cuenta_oficial');
+    pintarListaEnlacesOficiales('listaFuentesOficiales', datos.fuentesOficiales, 'fuente_oficial');
+  } catch (error) {
+    resultadoDescripcionOficial.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+function pintarListaEnlacesOficiales(idContenedor, enlaces) {
+  const contenedor = document.getElementById(idContenedor);
+  contenedor.innerHTML = '';
+
+  if (enlaces.length === 0) {
+    contenedor.innerHTML = '<p>Todavía no hay ningún enlace aquí.</p>';
+    return;
+  }
+
+  enlaces.forEach((enlace, indice) => {
+    const fila = document.createElement('div');
+    fila.classList.add('fila-notificacion');
+
+    const texto = document.createElement('span');
+    texto.textContent = `${enlace.etiqueta} — ${enlace.url}`;
+    texto.style.wordBreak = 'break-all';
+
+    const contenedorBotones = document.createElement('div');
+    contenedorBotones.style.display = 'flex';
+    contenedorBotones.style.gap = '6px';
+    contenedorBotones.style.flexShrink = '0';
+
+    const botonSubir = document.createElement('button');
+    botonSubir.type = 'button';
+    botonSubir.classList.add('boton-icono');
+    botonSubir.textContent = '↑';
+    botonSubir.title = 'Subir en la lista';
+    botonSubir.disabled = indice === 0;
+    botonSubir.addEventListener('click', () => moverEnlaceOficial(enlace.id, 'subir'));
+
+    const botonBajar = document.createElement('button');
+    botonBajar.type = 'button';
+    botonBajar.classList.add('boton-icono');
+    botonBajar.textContent = '↓';
+    botonBajar.title = 'Bajar en la lista';
+    botonBajar.disabled = indice === enlaces.length - 1;
+    botonBajar.addEventListener('click', () => moverEnlaceOficial(enlace.id, 'bajar'));
+
+    const botonEditar = document.createElement('button');
+    botonEditar.type = 'button';
+    botonEditar.classList.add('boton-secundario');
+    botonEditar.textContent = 'Editar';
+    botonEditar.addEventListener('click', () => editarEnlaceOficial(enlace));
+
+    const botonEliminar = document.createElement('button');
+    botonEliminar.type = 'button';
+    botonEliminar.classList.add('boton-peligro');
+    botonEliminar.textContent = 'Eliminar';
+    botonEliminar.addEventListener('click', () => eliminarEnlaceOficial(enlace));
+
+    contenedorBotones.append(botonSubir, botonBajar, botonEditar, botonEliminar);
+    fila.append(texto, contenedorBotones);
+    contenedor.appendChild(fila);
+  });
+}
+
+async function moverEnlaceOficial(id, direccion) {
+  try {
+    await peticionAdmin(`/api/admin/informacion-oficial/enlaces/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ mover: direccion })
+    });
+    await cargarInformacionOficial();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function editarEnlaceOficial(enlace) {
+  const valores = await abrirModalConCampos({
+    titulo: 'Editar enlace',
+    campos: [
+      { nombre: 'etiqueta', etiqueta: 'Nombre', tipo: 'text', valor: enlace.etiqueta },
+      { nombre: 'url', etiqueta: 'Enlace', tipo: 'text', valor: enlace.url }
+    ],
+    textoConfirmar: 'Guardar',
+    validar: (v) => (v.etiqueta && v.url ? null : 'Completa el nombre y el enlace.')
+  });
+  if (!valores) return;
+
+  try {
+    await peticionAdmin(`/api/admin/informacion-oficial/enlaces/${enlace.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ etiqueta: valores.etiqueta, url: valores.url })
+    });
+    await cargarInformacionOficial();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function eliminarEnlaceOficial(enlace) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar enlace',
+    mensaje: `¿Eliminar "${enlace.etiqueta}"? Esto no se puede deshacer.`,
+    textoConfirmar: 'Eliminar',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+
+  try {
+    await peticionAdmin(`/api/admin/informacion-oficial/enlaces/${enlace.id}`, { method: 'DELETE' });
+    await cargarInformacionOficial();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+formularioDescripcionOficial.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  resultadoDescripcionOficial.innerHTML = '<p class="mensaje-carga">Guardando…</p>';
+  try {
+    await peticionAdmin('/api/admin/informacion-oficial', {
+      method: 'PUT',
+      body: JSON.stringify({ descripcion: campoDescripcionOficial.value })
+    });
+    resultadoDescripcionOficial.innerHTML = '<p class="mensaje-exito">Guardado.</p>';
+  } catch (error) {
+    resultadoDescripcionOficial.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+});
+
+function conectarFormularioDeEnlace(idFormulario, idEtiqueta, idUrl, idResultado, categoria) {
+  document.getElementById(idFormulario).addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    const resultado = document.getElementById(idResultado);
+    const campoEtiqueta = document.getElementById(idEtiqueta);
+    const campoUrl = document.getElementById(idUrl);
+
+    resultado.innerHTML = '<p class="mensaje-carga">Guardando…</p>';
+    try {
+      await peticionAdmin('/api/admin/informacion-oficial/enlaces', {
+        method: 'POST',
+        body: JSON.stringify({ categoria, etiqueta: campoEtiqueta.value.trim(), url: campoUrl.value.trim() })
+      });
+      document.getElementById(idFormulario).reset();
+      resultado.innerHTML = '';
+      await cargarInformacionOficial();
+    } catch (error) {
+      resultado.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+    }
+  });
+}
+
+conectarFormularioDeEnlace(
+  'formularioCuentaOficial', 'campoEtiquetaCuenta', 'campoUrlCuenta', 'resultadoCuentaOficial', 'cuenta_oficial'
+);
+conectarFormularioDeEnlace(
+  'formularioFuenteOficial', 'campoEtiquetaFuente', 'campoUrlFuente', 'resultadoFuenteOficial', 'fuente_oficial'
+);
+
+cargarInformacionOficial();
+
+// ---------------------------------------------------------------------
 // Plantillas de documentos (Generador de Plantillas). Solo texto con
 // {{marcadores}} — nunca datos de clientes.
 // ---------------------------------------------------------------------

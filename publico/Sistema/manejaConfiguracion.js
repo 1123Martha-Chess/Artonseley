@@ -11,8 +11,9 @@
 //                                  se elige el modo de color de la plataforma
 //                                  (ver manejaPersonalizacion.js).
 //   3) Guía de Uso             -> navega a su propia página: guia-de-uso.html
-//   4) Términos y condiciones  -> navega a su propia página: terminos-y-condiciones.html
-//   5) Avisos de privacidad    -> navega a su propia página: avisos-de-privacidad.html
+//   4) Información oficial     -> navega a su propia página: informacion-oficial.html
+//   5) Términos y condiciones  -> navega a su propia página: terminos-y-condiciones.html
+//   6) Avisos de privacidad    -> navega a su propia página: avisos-de-privacidad.html
 //
 // Cada opción de página lleva a UNA página individual distinta, no
 // todas a la misma.
@@ -50,6 +51,7 @@ const OPCIONES = [
   // apunta a index.html (ver el reemplazo en inicializarConfiguracion).
   { texto: 'Mis cuadernos', pagina: 'editor.html' },
   { texto: 'Guía de Uso', pagina: 'guia-de-uso.html' },
+  { texto: 'Información oficial', pagina: 'informacion-oficial.html' },
   { texto: 'Términos y condiciones', pagina: 'terminos-y-condiciones.html' },
   { texto: 'Avisos de privacidad', pagina: 'avisos-de-privacidad.html' },
   // "accion: 'cerrarSesion'" es un tercer caso especial (además de

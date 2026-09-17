@@ -25,6 +25,7 @@ export const AREAS = [
   { id: 'calculadora', nombre: 'Calculadora', icono: '🧮', url: 'calculadora.html' },
   { id: 'plantillas', nombre: 'Plantillas', icono: '📝', url: 'plantillas.html' },
   { id: 'encuestas', nombre: 'Encuestas', icono: '📊', url: 'encuestas.html' },
+  { id: 'informacion-oficial', nombre: 'Información Oficial', icono: 'ℹ️', url: 'informacion-oficial.html' },
   { id: 'escritorio', nombre: 'Escritorio', icono: '🧩', url: 'escritorio.html' },
   { id: 'pestanas', nombre: 'Pestañas', icono: '🗂️', url: 'pestanas.html' }
 ];

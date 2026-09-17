@@ -145,6 +145,22 @@ body {
   font-weight: bold;
 }
 
+/* Estados de carga/error de páginas de este estilo que traen contenido
+   dinámico por fetch (ej. informacion-oficial.html) — mismas reglas que
+   .mensaje-carga / .mensaje-error en plataforma.css, repetidas aquí
+   porque esta hoja no se enlaza junto con esa. */
+.mensaje-carga {
+  color: var(--texto-2);
+  font-style: italic;
+  font-family: Arial, sans-serif;
+}
+
+.mensaje-error {
+  color: #d9534f;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
 .seccion-legal {
   margin-bottom: 26px;
 }
@@ -152,6 +168,18 @@ body {
 .seccion-legal h2 {
   font-size: 16px;
   margin: 0 0 8px 0;
+}
+
+/* Lista de enlaces (cuentas oficiales / fuentes oficiales) en
+   informacion-oficial.html. */
+.lista-enlaces-oficiales {
+  line-height: 1.8;
+  padding-left: 22px;
+  margin: 8px 0 0 0;
+}
+
+.lista-enlaces-oficiales a {
+  color: var(--color-primario);
 }
 
 /* Cada párrafo de contenido todavía sin redactar por un abogado se ve

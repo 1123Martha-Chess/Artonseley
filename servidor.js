@@ -117,6 +117,16 @@ import {
 import { configurarWebPush, barrerYEnviar } from './servidor/recordatoriosCalendario.js';
 import { obtenerIndicesEconomicos, guardarIndicesEconomicos } from './servidor/db/indicesEconomicos.js';
 import {
+  obtenerDescripcionOficial,
+  guardarDescripcionOficial,
+  listarEnlacesOficialesPorCategoria,
+  buscarEnlaceOficialPorId,
+  crearEnlaceOficial,
+  editarEnlaceOficial,
+  moverEnlaceOficial,
+  eliminarEnlaceOficial
+} from './servidor/db/informacionOficial.js';
+import {
   listarPlantillas,
   listarPlantillasParaAdmin,
   buscarPlantillaPorId,
@@ -499,6 +509,21 @@ app.post('/api/auth/solicitudes-registro', limitadorSolicitudesRegistro, jsonEst
   });
 
   respuesta.json({ ok: true });
+});
+
+// Contenido de la página pública "informacion-oficial.html". A propósito
+// SIN requiereSesionAPI: el objetivo de esta página es que cualquiera
+// (incluso alguien que todavía no tiene cuenta) pueda verificar las
+// cuentas y fuentes oficiales de Artonseley antes de crear una cuenta,
+// para no caer en cuentas falsas ni publicidad engañosa.
+app.get('/api/informacion-oficial', (peticion, respuesta) => {
+  const { descripcion } = obtenerDescripcionOficial();
+  const aPublico = (fila) => ({ id: fila.id, etiqueta: fila.etiqueta, url: fila.url });
+  respuesta.json({
+    descripcion,
+    cuentasOficiales: listarEnlacesOficialesPorCategoria('cuenta_oficial').map(aPublico),
+    fuentesOficiales: listarEnlacesOficialesPorCategoria('fuente_oficial').map(aPublico)
+  });
 });
 
 // Para que el frontend sepa si ya hay sesión (y el estado de la
@@ -1421,6 +1446,97 @@ app.put('/api/admin/indices-economicos', jsonEstandar, (peticion, respuesta) => 
 
   const indices = guardarIndicesEconomicos({ anio, salarioMinimoGeneral, salarioMinimoFronteraNorte, uma });
   respuesta.json({ ok: true, indices });
+});
+
+// ---------------------------------------------------------------------
+// Información oficial (panel de administración). Contenido de la página
+// pública "informacion-oficial.html": el texto de presentación y las dos
+// listas fijas de enlaces (cuentas oficiales / fuentes oficiales-DOF).
+// La lectura pública vive en GET /api/informacion-oficial, sin sesión.
+// ---------------------------------------------------------------------
+const LARGO_MAXIMO_DESCRIPCION_OFICIAL = 4000;
+const LARGO_MAXIMO_ETIQUETA_ENLACE = 120;
+const LARGO_MAXIMO_URL_ENLACE = 500;
+const CATEGORIAS_ENLACE_OFICIAL = ['cuenta_oficial', 'fuente_oficial'];
+// Solo esquemas que tiene sentido enlazar aquí (sitio/red social, correo,
+// teléfono/WhatsApp); bloquea a propósito "javascript:" y otros esquemas
+// que podrían usarse para inyectar código a través de un enlace guardado
+// desde el panel.
+const PATRON_URL_ENLACE_OFICIAL = /^(https:\/\/|http:\/\/|mailto:|tel:)\S+$/i;
+
+function validarEnlaceOficial({ etiqueta, url }) {
+  const etiquetaLimpia = String(etiqueta ?? '').trim();
+  const urlLimpia = String(url ?? '').trim();
+  const errores = [];
+  if (!etiquetaLimpia || etiquetaLimpia.length > LARGO_MAXIMO_ETIQUETA_ENLACE) {
+    errores.push(`El nombre es obligatorio (máximo ${LARGO_MAXIMO_ETIQUETA_ENLACE} caracteres).`);
+  }
+  if (!urlLimpia || urlLimpia.length > LARGO_MAXIMO_URL_ENLACE || !PATRON_URL_ENLACE_OFICIAL.test(urlLimpia)) {
+    errores.push('El enlace debe empezar con https://, http://, mailto: o tel: y no puede estar vacío.');
+  }
+  return { etiqueta: etiquetaLimpia, url: urlLimpia, errores };
+}
+
+app.get('/api/admin/informacion-oficial', (peticion, respuesta) => {
+  respuesta.json({
+    ...obtenerDescripcionOficial(),
+    cuentasOficiales: listarEnlacesOficialesPorCategoria('cuenta_oficial'),
+    fuentesOficiales: listarEnlacesOficialesPorCategoria('fuente_oficial')
+  });
+});
+
+app.put('/api/admin/informacion-oficial', jsonEstandar, (peticion, respuesta) => {
+  const descripcion = String(peticion.body?.descripcion ?? '');
+  if (descripcion.length > LARGO_MAXIMO_DESCRIPCION_OFICIAL) {
+    return respuesta.status(400).json({
+      error: `El texto es demasiado largo (máximo ${LARGO_MAXIMO_DESCRIPCION_OFICIAL} caracteres).`
+    });
+  }
+  respuesta.json({ ok: true, ...guardarDescripcionOficial(descripcion.trim()) });
+});
+
+app.post('/api/admin/informacion-oficial/enlaces', jsonEstandar, (peticion, respuesta) => {
+  const categoria = String(peticion.body?.categoria ?? '');
+  if (!CATEGORIAS_ENLACE_OFICIAL.includes(categoria)) {
+    return respuesta.status(400).json({ error: 'Categoría de enlace inválida.' });
+  }
+  const { etiqueta, url, errores } = validarEnlaceOficial(peticion.body ?? {});
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+  const enlace = crearEnlaceOficial({ categoria, etiqueta, url });
+  respuesta.json({ ok: true, enlace });
+});
+
+app.patch('/api/admin/informacion-oficial/enlaces/:id', jsonEstandar, (peticion, respuesta) => {
+  const existente = buscarEnlaceOficialPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Ese enlace ya no existe.' });
+  }
+
+  if (peticion.body?.mover) {
+    if (!['subir', 'bajar'].includes(peticion.body.mover)) {
+      return respuesta.status(400).json({ error: 'Movimiento inválido.' });
+    }
+    moverEnlaceOficial(existente.id, peticion.body.mover);
+    return respuesta.json({ ok: true });
+  }
+
+  const { etiqueta, url, errores } = validarEnlaceOficial(peticion.body ?? {});
+  if (errores.length > 0) {
+    return respuesta.status(400).json({ error: errores.join(' ') });
+  }
+  const enlace = editarEnlaceOficial(existente.id, { etiqueta, url });
+  respuesta.json({ ok: true, enlace });
+});
+
+app.delete('/api/admin/informacion-oficial/enlaces/:id', (peticion, respuesta) => {
+  const existente = buscarEnlaceOficialPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Ese enlace ya no existe.' });
+  }
+  eliminarEnlaceOficial(existente.id);
+  respuesta.json({ ok: true });
 });
 
 // ---------------------------------------------------------------------

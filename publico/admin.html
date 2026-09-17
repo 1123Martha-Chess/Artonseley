@@ -643,6 +643,47 @@
         </section>
 
         <section class="tarjeta">
+            <h2>Información oficial</h2>
+            <p class="ayuda">
+                Contenido de la página pública <strong>informacion-oficial.html</strong>: un texto de
+                presentación más las cuentas oficiales y las fuentes oficiales (DOF) de Artonseley.
+                Es pública (no pide sesión) a propósito, para que cualquiera pueda verificar que no
+                se trata de una cuenta falsa ni de publicidad engañosa antes de crear una cuenta.
+            </p>
+
+            <form id="formularioDescripcionOficial">
+                <label for="campoDescripcionOficial">Texto de presentación</label>
+                <textarea id="campoDescripcionOficial" rows="5" placeholder="Un párrafo por línea..."></textarea>
+                <button type="submit" class="boton-primario">Guardar texto</button>
+            </form>
+            <div id="resultadoDescripcionOficial"></div>
+
+            <h3>Cuentas oficiales</h3>
+            <p class="ayuda">Redes sociales, WhatsApp, correo oficial, etc.</p>
+            <div id="listaCuentasOficiales"><p class="mensaje-carga">Cargando…</p></div>
+            <form id="formularioCuentaOficial">
+                <label for="campoEtiquetaCuenta">Nombre</label>
+                <input type="text" id="campoEtiquetaCuenta" placeholder='ej. "Instagram oficial"' required>
+                <label for="campoUrlCuenta">Enlace (https://, mailto: o tel:)</label>
+                <input type="text" id="campoUrlCuenta" placeholder="https://..." required>
+                <button type="submit" class="boton-primario">Agregar cuenta</button>
+            </form>
+            <div id="resultadoCuentaOficial"></div>
+
+            <h3>Fuentes oficiales (DOF)</h3>
+            <p class="ayuda">Enlaces al Diario Oficial de la Federación u otra fuente oficial de las leyes.</p>
+            <div id="listaFuentesOficiales"><p class="mensaje-carga">Cargando…</p></div>
+            <form id="formularioFuenteOficial">
+                <label for="campoEtiquetaFuente">Nombre</label>
+                <input type="text" id="campoEtiquetaFuente" placeholder='ej. "DOF - Código Penal Federal"' required>
+                <label for="campoUrlFuente">Enlace (https://)</label>
+                <input type="text" id="campoUrlFuente" placeholder="https://..." required>
+                <button type="submit" class="boton-primario">Agregar fuente</button>
+            </form>
+            <div id="resultadoFuenteOficial"></div>
+        </section>
+
+        <section class="tarjeta">
             <h2>Música</h2>
             <p class="ayuda">
                 Canciones del apartado "Música". Sube el audio (obligatorio) y, si quieres, una

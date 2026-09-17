@@ -239,6 +239,34 @@ db.exec(`
   );
   INSERT OR IGNORE INTO indices_economicos (id) VALUES (1);
 
+  -- Contenido de la página pública "informacion-oficial.html": un
+  -- resumen de la plataforma más sus cuentas oficiales y sus fuentes
+  -- oficiales (DOF), pensado para que cualquiera pueda verificar que no
+  -- se trata de una cuenta falsa ni de publicidad engañosa ANTES de
+  -- crear una cuenta — por eso esta tabla y la de abajo se leen sin
+  -- exigir sesión (GET /api/informacion-oficial). Igual que
+  -- indices_economicos, es una tabla de una sola fila (id = 1) que el
+  -- administrador edita desde el panel.
+  CREATE TABLE IF NOT EXISTS informacion_oficial (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    descripcion TEXT NOT NULL DEFAULT '',
+    actualizado_en TEXT
+  );
+  INSERT OR IGNORE INTO informacion_oficial (id) VALUES (1);
+
+  -- Los enlaces (redes sociales, WhatsApp, correo oficial, publicaciones
+  -- del DOF...) que acompañan a "informacion_oficial". "categoria"
+  -- separa las dos secciones fijas de la página; "orden" es el que
+  -- decide el administrador con ↑ / ↓, igual que en "canciones".
+  CREATE TABLE IF NOT EXISTS informacion_oficial_enlaces (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoria TEXT NOT NULL CHECK (categoria IN ('cuenta_oficial', 'fuente_oficial')),
+    etiqueta TEXT NOT NULL,
+    url TEXT NOT NULL,
+    orden INTEGER NOT NULL DEFAULT 0,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
   -- Biblioteca de "machotes" del Generador de Plantillas y Documentos.
   -- Solo el texto de la plantilla (con marcadores {{clave}}) — NUNCA datos
   -- de ningún cliente/expediente: esos viven cifrados en el navegador del
