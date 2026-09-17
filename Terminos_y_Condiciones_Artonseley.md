@@ -1,6 +1,6 @@
 # TÉRMINOS Y CONDICIONES DE USO Y SERVICIO
 
-**Artonseley — Última actualización: 15 de septiembre de 2026**
+**Artonseley — Última actualización: 17 de septiembre de 2026**
 
 Los presentes Términos y Condiciones de Uso y Servicio (los "Términos") regulan el acceso y uso de Artonseley (la "Plataforma" o el "Servicio"), un sistema de consulta y búsqueda de información jurídica mexicana, operado por **Martha Leticia Gradilla Bermúdez** (el "Responsable"), disponible a través del sitio web, aplicaciones, sistemas y demás medios electrónicos —actuales o que en el futuro se pongan a disposición— mediante los cuales se preste el Servicio.
 
@@ -177,6 +177,8 @@ Por cada encuesta que el Usuario conteste, y una vez que su respuesta se vuelva 
 8.6 **Alcance respecto de Mis Cuadernos.** Sin perjuicio de lo señalado en la Cláusula 5, y en particular en sus Cláusulas 5.3, 5.7 y 5.8, la limitación de responsabilidad económica prevista en la Cláusula 8.4 aplica igualmente a cualquier reclamación relacionada con la función Mis Cuadernos, incluyendo la pérdida o inaccesibilidad del contenido, de la Frase de Recuperación o de un Respaldo .arton, por causas no imputables a dolo o mala fe del Responsable.
 
 8.7 **Alcance respecto de la Calculadora Jurídica, Plantillas y Calendario.** Lo señalado en las Cláusulas 8.1 a 8.4 aplica igualmente a la Calculadora Jurídica, las Plantillas y el Calendario, conforme a lo descrito en la Cláusula 5 Bis, así como a cualquier decisión que el Usuario adopte con base en los resultados o documentos que dichas herramientas generen.
+
+8.8 **Escenarios extraordinarios (con fines ilustrativos y de buen humor).** A mayor abundamiento de lo señalado en la Cláusula 8.5 —y sin sustituirla ni limitarla—, el Responsable deja constancia de que también tendrán el carácter de caso fortuito o fuerza mayor eventos tales como un brote zombi, el desembarco de una civilización extraterrestre, el despertar de una inteligencia artificial con planes propios, o cualquier otro acontecimiento que normalmente asociaríamos con una película de sobremesa de domingo. Ante escenarios de esta naturaleza —que el Responsable espera nunca tener que invocar—, se hará el mejor esfuerzo razonable por mantener la Plataforma en operación, sin que ello implique promesa alguna de que el proveedor de hospedaje señalado en la Sección V del Aviso de Privacidad resista mejor que los protagonistas de dichas películas. Para toda claridad: nada de lo dispuesto en esta Cláusula 8.8 exime al Responsable de lo señalado en la Cláusula 8.3, ni pretende limitar derecho irrenunciable alguno del Usuario reconocido por la Ley Federal de Protección al Consumidor —ni siquiera en el escenario, remoto pero aquí contemplado, de que el Usuario en cuestión sea, para entonces, un zombi.
 
 ## 9. Modificaciones a los Términos y al Servicio
 
