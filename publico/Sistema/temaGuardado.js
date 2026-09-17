@@ -30,8 +30,8 @@
       raiz.style.setProperty('--color-primario', '#8b0999');
       raiz.style.setProperty('--color-primario-suave', oscuro ? '#241026' : '#f6ebf7');
     } else if (color === 'verde') {
-      raiz.style.setProperty('--color-primario', '#4f7a1e');
-      raiz.style.setProperty('--color-primario-suave', oscuro ? '#1c2414' : '#eef5e0');
+      raiz.style.setProperty('--color-primario', '#178b32');
+      raiz.style.setProperty('--color-primario-suave', oscuro ? '#132a1b' : '#e5f5e9');
     } else if (oscuro) {
       // azul + oscuro: el tinte suave del bloque :root (claro) no aplica.
       raiz.style.setProperty('--color-primario-suave', '#1b2735');

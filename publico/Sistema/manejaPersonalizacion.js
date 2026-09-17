@@ -62,9 +62,9 @@ const COLORES = [
   {
     id: 'verde',
     nombre: 'Verde limón',
-    color: '#4f7a1e',
-    suaveClaro: '#eef5e0',
-    suaveOscuro: '#1c2414',
+    color: '#178b32',
+    suaveClaro: '#e5f5e9',
+    suaveOscuro: '#132a1b',
     logoIcono: 'imagenes/artonseley-pagina.png',
     logoLetras: 'imagenes/artonseley-letras.png',
     recolorLogo: true
