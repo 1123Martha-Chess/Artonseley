@@ -2076,6 +2076,181 @@ async function eliminarTablaHoja(tablaDia, elementoBloque) {
 }
 
 // ---------------------------------------------------------------------
+// Noticias Jurídicas. Título/fecha/cuerpo/enlace van como texto; las
+// fotos (1 a 8) se mandan con FormData porque el resto del panel manda
+// JSON y eso no sirve para archivos — mismo patrón que Canciones. Al
+// editar, las fotos son opcionales: si no se elige ninguna se conservan
+// las que ya tenía esa noticia; si se elige al menos una, reemplazan a
+// TODAS las anteriores (ver PUT /api/admin/noticias-juridicas/:id).
+// ---------------------------------------------------------------------
+const MAXIMO_IMAGENES_NOTICIA_JURIDICA = 8;
+
+const formularioNoticiaJuridica = document.getElementById('formularioNoticiaJuridica');
+const campoIdNoticiaJuridica = document.getElementById('campoIdNoticiaJuridica');
+const campoTituloNoticiaJuridica = document.getElementById('campoTituloNoticiaJuridica');
+const campoFechaNoticiaJuridica = document.getElementById('campoFechaNoticiaJuridica');
+const campoCuerpoNoticiaJuridica = document.getElementById('campoCuerpoNoticiaJuridica');
+const campoEnlaceNoticiaJuridica = document.getElementById('campoEnlaceNoticiaJuridica');
+const campoImagenesNoticiaJuridica = document.getElementById('archivoImagenesNoticiaJuridica');
+const ayudaImagenesNoticiaJuridica = document.getElementById('ayudaImagenesNoticiaJuridica');
+const botonGuardarNoticiaJuridica = document.getElementById('botonGuardarNoticiaJuridica');
+const botonCancelarNoticiaJuridica = document.getElementById('botonCancelarNoticiaJuridica');
+const resultadoNoticiaJuridica = document.getElementById('resultadoNoticiaJuridica');
+const contenedorNoticiasJuridicas = document.getElementById('listaNoticiasJuridicas');
+
+function limpiarFormularioNoticiaJuridica() {
+  formularioNoticiaJuridica.reset();
+  campoIdNoticiaJuridica.value = '';
+  campoImagenesNoticiaJuridica.required = true;
+  ayudaImagenesNoticiaJuridica.textContent = '';
+  botonGuardarNoticiaJuridica.textContent = 'Agregar noticia';
+  botonCancelarNoticiaJuridica.style.display = 'none';
+}
+
+botonCancelarNoticiaJuridica.addEventListener('click', limpiarFormularioNoticiaJuridica);
+
+async function cargarNoticiasJuridicas() {
+  try {
+    const { noticias } = await peticionAdmin('/api/admin/noticias-juridicas');
+    contenedorNoticiasJuridicas.innerHTML = '';
+
+    if (noticias.length === 0) {
+      contenedorNoticiasJuridicas.innerHTML = '<p>Todavía no hay ninguna noticia.</p>';
+      return;
+    }
+
+    noticias.forEach((noticia) => {
+      const fila = document.createElement('div');
+      fila.classList.add('fila-notificacion');
+
+      const bloque = document.createElement('div');
+      bloque.style.display = 'flex';
+      bloque.style.alignItems = 'center';
+      bloque.style.gap = '10px';
+
+      if (noticia.imagenes[0]) {
+        const miniatura = document.createElement('img');
+        miniatura.src = `/api/noticias-juridicas/imagen/${noticia.imagenes[0].id}`;
+        miniatura.alt = '';
+        miniatura.style.width = '40px';
+        miniatura.style.height = '40px';
+        miniatura.style.objectFit = 'cover';
+        miniatura.style.borderRadius = '6px';
+        bloque.appendChild(miniatura);
+      }
+
+      const texto = document.createElement('span');
+      const totalFotos = noticia.imagenes.length;
+      texto.textContent = `${noticia.titulo}  ·  ${noticia.fecha}  ·  ${totalFotos} foto${totalFotos === 1 ? '' : 's'}`;
+      bloque.appendChild(texto);
+
+      const contenedorBotones = document.createElement('div');
+      contenedorBotones.style.display = 'flex';
+      contenedorBotones.style.gap = '6px';
+
+      const botonEditar = document.createElement('button');
+      botonEditar.type = 'button';
+      botonEditar.classList.add('boton-secundario');
+      botonEditar.textContent = 'Editar';
+      botonEditar.addEventListener('click', () => editarNoticiaJuridica(noticia));
+
+      const botonEliminar = document.createElement('button');
+      botonEliminar.type = 'button';
+      botonEliminar.classList.add('boton-peligro');
+      botonEliminar.textContent = 'Eliminar';
+      botonEliminar.addEventListener('click', () => eliminarNoticiaJuridica(noticia));
+
+      contenedorBotones.append(botonEditar, botonEliminar);
+      fila.append(bloque, contenedorBotones);
+      contenedorNoticiasJuridicas.appendChild(fila);
+    });
+  } catch (error) {
+    contenedorNoticiasJuridicas.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+function editarNoticiaJuridica(noticia) {
+  campoIdNoticiaJuridica.value = String(noticia.id);
+  campoTituloNoticiaJuridica.value = noticia.titulo;
+  campoFechaNoticiaJuridica.value = noticia.fecha;
+  campoCuerpoNoticiaJuridica.value = noticia.cuerpo;
+  campoEnlaceNoticiaJuridica.value = noticia.enlace || '';
+  campoImagenesNoticiaJuridica.value = '';
+  campoImagenesNoticiaJuridica.required = false;
+  const totalFotos = noticia.imagenes.length;
+  ayudaImagenesNoticiaJuridica.textContent =
+    `Ya tiene ${totalFotos} foto${totalFotos === 1 ? '' : 's'}. Elige fotos nuevas solo si quieres reemplazarlas TODAS.`;
+  botonGuardarNoticiaJuridica.textContent = 'Guardar cambios';
+  botonCancelarNoticiaJuridica.style.display = '';
+  formularioNoticiaJuridica.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function eliminarNoticiaJuridica(noticia) {
+  const resultado = await abrirModal({
+    titulo: 'Eliminar noticia',
+    mensaje: `¿Eliminar "${noticia.titulo}"? Se borran también sus fotos. Esto no se puede deshacer.`,
+    textoConfirmar: 'Eliminar',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!resultado) return;
+
+  try {
+    await peticionAdmin(`/api/admin/noticias-juridicas/${noticia.id}`, { method: 'DELETE' });
+    if (campoIdNoticiaJuridica.value === String(noticia.id)) limpiarFormularioNoticiaJuridica();
+    await cargarNoticiasJuridicas();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+formularioNoticiaJuridica.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+
+  const id = campoIdNoticiaJuridica.value;
+  const archivos = campoImagenesNoticiaJuridica.files;
+
+  if (archivos.length > MAXIMO_IMAGENES_NOTICIA_JURIDICA) {
+    resultadoNoticiaJuridica.innerHTML = `<p class="mensaje-error">Puedes subir como máximo ${MAXIMO_IMAGENES_NOTICIA_JURIDICA} fotos.</p>`;
+    return;
+  }
+  if (!id && archivos.length === 0) {
+    resultadoNoticiaJuridica.innerHTML = '<p class="mensaje-error">Sube al menos 1 foto.</p>';
+    return;
+  }
+
+  const cuerpo = new FormData();
+  cuerpo.append('titulo', campoTituloNoticiaJuridica.value.trim());
+  cuerpo.append('fecha', campoFechaNoticiaJuridica.value);
+  cuerpo.append('cuerpo', campoCuerpoNoticiaJuridica.value.trim());
+  cuerpo.append('enlace', campoEnlaceNoticiaJuridica.value.trim());
+  for (const archivo of archivos) cuerpo.append('imagenes', archivo);
+
+  botonGuardarNoticiaJuridica.disabled = true;
+  resultadoNoticiaJuridica.innerHTML = '<p class="mensaje-carga">Guardando…</p>';
+
+  try {
+    const respuesta = await fetch(id ? `/api/admin/noticias-juridicas/${id}` : '/api/admin/noticias-juridicas', {
+      method: id ? 'PUT' : 'POST',
+      body: cuerpo
+    });
+    if (respuesta.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const datos = await respuesta.json().catch(() => ({}));
+    if (!respuesta.ok) throw new Error(datos.error || 'No se pudo guardar la noticia.');
+
+    resultadoNoticiaJuridica.innerHTML = `<p class="mensaje-exito">Noticia ${id ? 'actualizada' : 'agregada'}.</p>`;
+    limpiarFormularioNoticiaJuridica();
+    await cargarNoticiasJuridicas();
+  } catch (error) {
+    resultadoNoticiaJuridica.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  } finally {
+    botonGuardarNoticiaJuridica.disabled = false;
+  }
+});
+
+// ---------------------------------------------------------------------
 // Arranque: cargar las secciones en paralelo.
 // ---------------------------------------------------------------------
 cargarSectores();
@@ -2089,3 +2264,4 @@ cargarIndicesEconomicos();
 cargarPlantillasAdmin();
 cargarEncuestasAdmin();
 cargarHojaEncuestas();
+cargarNoticiasJuridicas();

@@ -344,6 +344,34 @@ db.exec(`
     creada_en TEXT NOT NULL DEFAULT (datetime('now')),
     elimina_en TEXT NOT NULL
   );
+
+  -- Noticias Jurídicas (burbuja "¿Qué pasó en el DOF la semana pasada?"):
+  -- resúmenes de novedades legales que redacta el administrador desde el
+  -- panel, en cuadros, para cualquier cuenta con sesión — sin pedir
+  -- licencia vigente, igual que Música/Calendario/Encuestas. No recopila
+  -- ningún dato del usuario: solo contenido que publica el administrador.
+  -- Se ordenan por "fecha" (la que el admin le pone a la noticia), no por
+  -- cuándo se cargó, para que la más reciente quede primero sin que el
+  -- admin tenga que reordenar nada a mano.
+  CREATE TABLE IF NOT EXISTS noticias_juridicas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo TEXT NOT NULL,
+    fecha TEXT NOT NULL,
+    cuerpo TEXT NOT NULL,
+    enlace TEXT,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+    actualizado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  -- Fotos de cada noticia (1 a 8 — ver servidor/noticiasJuridicasArchivos.js
+  -- para dónde viven los archivos en disco). El orden de aparición es el
+  -- mismo en que se subieron (id ASC), sin necesidad de una columna aparte.
+  CREATE TABLE IF NOT EXISTS noticias_juridicas_imagenes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    noticia_id INTEGER NOT NULL REFERENCES noticias_juridicas(id) ON DELETE CASCADE,
+    archivo TEXT NOT NULL,
+    mime TEXT NOT NULL
+  );
 `);
 
 // La tabla única "encuestas_hoja" (de la primera versión de este

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artonseley">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="imagenes/artonseley-favicon.png">
+    <title>Noticias Jurídicas - Artonseley</title>
+    <link rel="icon" type="image/png" href="imagenes/artonseley-favicon.png">
+    <script src="Sistema/temaGuardado.js"></script>
+    <link rel="stylesheet" href="tema.css">
+    <link rel="stylesheet" href="plataforma.css">
+    <style>
+        .ntj-noticia h3 { margin: 0 0 4px 0; }
+
+        .ntj-fecha {
+            display: inline-block;
+            font-family: Arial, sans-serif;
+            font-size: 12.5px;
+            color: var(--texto-2);
+            margin-bottom: 12px;
+        }
+
+        .ntj-imagenes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .ntj-imagenes a {
+            display: block;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+        }
+
+        .ntj-imagenes img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .ntj-cuerpo {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--texto);
+            white-space: pre-wrap;
+            margin: 0 0 14px 0;
+        }
+
+        .ntj-vacio { color: var(--texto-2); font-size: 14px; font-family: Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="pantalla">
+        <a href="index.html" class="volver">← Volver al inicio</a>
+        <h1>Noticias Jurídicas</h1>
+        <p class="pantalla-descripcion">
+            ¿Qué pasó en el DOF la semana pasada? Aquí encontrarás un resumen de las novedades
+            legales más relevantes, organizado en cuadros.
+        </p>
+
+        <div id="listaNoticias">
+            <p class="mensaje-carga">Cargando…</p>
+        </div>
+    </div>
+
+    <script type="module" src="Sistema/reproductorGlobal.js"></script>
+    <script type="module" src="Sistema/noticiasJuridicasPrincipal.js"></script>
+</body>
+</html>

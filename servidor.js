@@ -111,6 +111,22 @@ import {
   LIMITE_IMAGEN_BYTES
 } from './servidor/musicaArchivos.js';
 import {
+  listarNoticiasJuridicas,
+  buscarNoticiaJuridicaPorId,
+  buscarImagenDeNoticiaPorId,
+  crearNoticiaJuridica,
+  actualizarNoticiaJuridica,
+  reemplazarImagenesDeNoticia,
+  eliminarNoticiaJuridica
+} from './servidor/db/noticiasJuridicas.js';
+import {
+  subidaDeImagenesNoticia,
+  rutaArchivoNoticia,
+  borrarArchivoDeNoticia,
+  LIMITE_IMAGEN_NOTICIA_BYTES,
+  MAXIMO_IMAGENES_POR_NOTICIA
+} from './servidor/noticiasJuridicasArchivos.js';
+import {
   guardarSuscripcion,
   eliminarSuscripcionPorEndpoint
 } from './servidor/db/suscripcionesPush.js';
@@ -276,7 +292,7 @@ app.get(['/', '/index.html'], requiereSesionParaPagina, (peticion, respuesta) =>
 // propias, cada una con su enlace "← Volver al inicio". Todas piden
 // sesión igual que index.html (no rol admin).
 app.get(
-  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html', '/encuestas.html'],
+  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html', '/encuestas.html', '/noticias-juridicas.html'],
   requiereSesionParaPagina,
   (peticion, respuesta) => {
     respuesta.sendFile(path.join(__dirname, 'publico', path.basename(peticion.path)));
@@ -697,6 +713,45 @@ app.post('/api/encuestas/:id/respuestas', jsonEstandar, requiereSesionAPI, (peti
   }
 
   respuesta.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------
+// Noticias Jurídicas ("¿Qué pasó en el DOF la semana pasada?"): cuadros
+// que redacta el administrador desde el panel (título, fecha, cuerpo, un
+// enlace opcional y de 1 a 8 fotos). No se recopila ningún dato del
+// usuario — es contenido de solo lectura, igual de accesible que
+// Música/Calendario/Encuestas (sesión, sin exigir licencia vigente).
+// ---------------------------------------------------------------------
+function noticiaJuridicaAJSON(noticia) {
+  return {
+    id: noticia.id,
+    titulo: noticia.titulo,
+    fecha: noticia.fecha,
+    cuerpo: noticia.cuerpo,
+    enlace: noticia.enlace,
+    imagenes: noticia.imagenes.map((imagen) => ({ id: imagen.id }))
+  };
+}
+
+app.get('/api/noticias-juridicas', requiereSesionAPI, (peticion, respuesta) => {
+  respuesta.json({ noticias: listarNoticiasJuridicas().map(noticiaJuridicaAJSON) });
+});
+
+app.get('/api/noticias-juridicas/imagen/:id', requiereSesionAPI, (peticion, respuesta) => {
+  const imagen = buscarImagenDeNoticiaPorId(Number(peticion.params.id));
+  if (!imagen) {
+    return respuesta.status(404).json({ error: 'Esa imagen ya no existe.' });
+  }
+  const ruta = rutaArchivoNoticia(imagen.archivo);
+  if (!ruta) {
+    return respuesta.status(404).json({ error: 'Archivo no encontrado.' });
+  }
+  respuesta.type(imagen.mime);
+  respuesta.sendFile(ruta, (error) => {
+    if (error && !respuesta.headersSent) {
+      respuesta.status(404).json({ error: 'Archivo no encontrado.' });
+    }
+  });
 });
 
 const LARGO_MAXIMO_SUGERENCIA = 2000;
@@ -1879,6 +1934,148 @@ app.delete('/api/admin/canciones/:id', async (peticion, respuesta) => {
   }
   await borrarArchivoDeMusica(fila.archivo_audio);
   if (fila.archivo_imagen) await borrarArchivoDeMusica(fila.archivo_imagen);
+  respuesta.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------
+// Noticias Jurídicas (panel de administración). El admin crea/edita/borra
+// cada cuadro (título, fecha, cuerpo, enlace opcional, de 1 a 8 fotos).
+// Igual que canciones, las fotos van a disco (ver
+// servidor/noticiasJuridicasArchivos.js) y multer se envuelve para
+// traducir sus errores a un 400 en español.
+// ---------------------------------------------------------------------
+const LARGO_MAXIMO_TITULO_NOTICIA = 150;
+const LARGO_MAXIMO_CUERPO_NOTICIA = 5000;
+const LARGO_MAXIMO_ENLACE_NOTICIA = 500;
+const PATRON_FECHA_NOTICIA = /^\d{4}-\d{2}-\d{2}$/;
+const PATRON_ENLACE_NOTICIA = /^https?:\/\/\S+$/i;
+
+function validarNoticiaJuridica({ titulo, fecha, cuerpo, enlace }) {
+  const tituloLimpio = String(titulo ?? '').trim();
+  const fechaLimpia = String(fecha ?? '').trim();
+  const cuerpoLimpio = String(cuerpo ?? '').trim();
+  const enlaceLimpio = String(enlace ?? '').trim();
+  const errores = [];
+
+  if (!tituloLimpio || tituloLimpio.length > LARGO_MAXIMO_TITULO_NOTICIA) {
+    errores.push(`El título es obligatorio (máximo ${LARGO_MAXIMO_TITULO_NOTICIA} caracteres).`);
+  }
+  if (!PATRON_FECHA_NOTICIA.test(fechaLimpia) || Number.isNaN(new Date(fechaLimpia).getTime())) {
+    errores.push('La fecha no es válida.');
+  }
+  if (!cuerpoLimpio || cuerpoLimpio.length > LARGO_MAXIMO_CUERPO_NOTICIA) {
+    errores.push(`El cuerpo es obligatorio (máximo ${LARGO_MAXIMO_CUERPO_NOTICIA} caracteres).`);
+  }
+  if (enlaceLimpio && (enlaceLimpio.length > LARGO_MAXIMO_ENLACE_NOTICIA || !PATRON_ENLACE_NOTICIA.test(enlaceLimpio))) {
+    errores.push('El enlace debe empezar con http:// o https://.');
+  }
+
+  return { titulo: tituloLimpio, fecha: fechaLimpia, cuerpo: cuerpoLimpio, enlace: enlaceLimpio || null, errores };
+}
+
+function mensajeDeErrorDeSubidaDeNoticia(errorSubida) {
+  if (errorSubida.code === 'LIMIT_FILE_SIZE') {
+    return `Una de las fotos es demasiado grande (máximo ${LIMITE_IMAGEN_NOTICIA_BYTES / (1024 * 1024)} MB cada una).`;
+  }
+  if (errorSubida.code === 'LIMIT_FILE_COUNT' || errorSubida.code === 'LIMIT_UNEXPECTED_FILE') {
+    return `Puedes subir como máximo ${MAXIMO_IMAGENES_POR_NOTICIA} fotos.`;
+  }
+  return errorSubida.message || 'No se pudo subir alguna foto.';
+}
+
+app.get('/api/admin/noticias-juridicas', (peticion, respuesta) => {
+  respuesta.json({ noticias: listarNoticiasJuridicas().map(noticiaJuridicaAJSON) });
+});
+
+app.post('/api/admin/noticias-juridicas', (peticion, respuesta) => {
+  subidaDeImagenesNoticia()(peticion, respuesta, async (errorSubida) => {
+    const archivos = peticion.files || [];
+    const limpiarArchivos = async () => {
+      for (const archivo of archivos) await borrarArchivoDeNoticia(archivo.filename);
+    };
+
+    if (errorSubida) {
+      await limpiarArchivos();
+      return respuesta.status(400).json({ error: mensajeDeErrorDeSubidaDeNoticia(errorSubida) });
+    }
+
+    const { titulo, fecha, cuerpo, enlace, errores } = validarNoticiaJuridica(peticion.body ?? {});
+    if (archivos.length === 0) errores.push('Sube al menos 1 foto (hasta 8).');
+
+    if (errores.length > 0) {
+      await limpiarArchivos();
+      return respuesta.status(400).json({ error: errores.join(' ') });
+    }
+
+    try {
+      const noticia = crearNoticiaJuridica({
+        titulo,
+        fecha,
+        cuerpo,
+        enlace,
+        imagenes: archivos.map((archivo) => ({ archivo: archivo.filename, mime: archivo.mimetype }))
+      });
+      respuesta.json({ ok: true, noticia: noticiaJuridicaAJSON(noticia) });
+    } catch (error) {
+      console.error('Error en POST /api/admin/noticias-juridicas:', error);
+      await limpiarArchivos();
+      respuesta.status(500).json({ error: 'No se pudo guardar la noticia.' });
+    }
+  });
+});
+
+// Las fotos son opcionales aquí: si no se manda ninguna, se conservan las
+// que ya tenía la noticia; si se manda al menos una, reemplazan a TODAS
+// las anteriores (que se borran de disco).
+app.put('/api/admin/noticias-juridicas/:id', (peticion, respuesta) => {
+  const existente = buscarNoticiaJuridicaPorId(Number(peticion.params.id));
+  if (!existente) {
+    return respuesta.status(404).json({ error: 'Esa noticia ya no existe.' });
+  }
+
+  subidaDeImagenesNoticia()(peticion, respuesta, async (errorSubida) => {
+    const archivosNuevos = peticion.files || [];
+    const limpiarNuevos = async () => {
+      for (const archivo of archivosNuevos) await borrarArchivoDeNoticia(archivo.filename);
+    };
+
+    if (errorSubida) {
+      await limpiarNuevos();
+      return respuesta.status(400).json({ error: mensajeDeErrorDeSubidaDeNoticia(errorSubida) });
+    }
+
+    const { titulo, fecha, cuerpo, enlace, errores } = validarNoticiaJuridica(peticion.body ?? {});
+    if (errores.length > 0) {
+      await limpiarNuevos();
+      return respuesta.status(400).json({ error: errores.join(' ') });
+    }
+
+    try {
+      actualizarNoticiaJuridica(existente.id, { titulo, fecha, cuerpo, enlace });
+
+      if (archivosNuevos.length > 0) {
+        const viejas = reemplazarImagenesDeNoticia(
+          existente.id,
+          archivosNuevos.map((archivo) => ({ archivo: archivo.filename, mime: archivo.mimetype }))
+        );
+        for (const vieja of viejas) await borrarArchivoDeNoticia(vieja.archivo);
+      }
+
+      respuesta.json({ ok: true, noticia: noticiaJuridicaAJSON(buscarNoticiaJuridicaPorId(existente.id)) });
+    } catch (error) {
+      console.error('Error en PUT /api/admin/noticias-juridicas/:id:', error);
+      await limpiarNuevos();
+      respuesta.status(500).json({ error: 'No se pudo actualizar la noticia.' });
+    }
+  });
+});
+
+app.delete('/api/admin/noticias-juridicas/:id', async (peticion, respuesta) => {
+  const noticia = eliminarNoticiaJuridica(Number(peticion.params.id));
+  if (!noticia) {
+    return respuesta.status(404).json({ error: 'Esa noticia ya no existe.' });
+  }
+  for (const imagen of noticia.imagenes) await borrarArchivoDeNoticia(imagen.archivo);
   respuesta.json({ ok: true });
 });
 

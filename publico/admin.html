@@ -792,6 +792,42 @@
         </section>
 
         <section class="tarjeta">
+            <h2>Noticias Jurídicas</h2>
+            <p class="ayuda">
+                Cuadros para la burbuja "Noticias Jurídicas" (¿Qué pasó en el DOF la semana
+                pasada?). Cada cuadro lleva título, fecha, cuerpo, un enlace opcional (que abre la
+                página web en una pestaña nueva) y de <strong>1 a 8 fotos</strong>. Se muestran a
+                cualquier cuenta con sesión, más recientes primero según la fecha que le pongas —
+                no hace falta reordenarlos a mano. No se recopila ningún dato de quien las lee.
+            </p>
+            <div id="listaNoticiasJuridicas"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioNoticiaJuridica">
+                <input type="hidden" id="campoIdNoticiaJuridica" value="">
+
+                <label for="campoTituloNoticiaJuridica">Título</label>
+                <input type="text" id="campoTituloNoticiaJuridica" placeholder='Ej. "Reforma al Código Penal"' required>
+
+                <label for="campoFechaNoticiaJuridica">Fecha</label>
+                <input type="date" id="campoFechaNoticiaJuridica" required>
+
+                <label for="campoCuerpoNoticiaJuridica">Cuerpo</label>
+                <textarea id="campoCuerpoNoticiaJuridica" rows="6" placeholder="Resumen de la noticia."></textarea>
+
+                <label for="campoEnlaceNoticiaJuridica">Enlace (opcional, https://)</label>
+                <input type="text" id="campoEnlaceNoticiaJuridica" placeholder="https://...">
+
+                <label for="archivoImagenesNoticiaJuridica" id="etiquetaImagenesNoticiaJuridica">Fotos (1 a 8, máximo 4 MB cada una)</label>
+                <input type="file" id="archivoImagenesNoticiaJuridica" accept="image/*" multiple required>
+                <p class="ayuda" id="ayudaImagenesNoticiaJuridica" style="margin-top:6px;"></p>
+
+                <button type="submit" class="boton-primario" id="botonGuardarNoticiaJuridica">Agregar noticia</button>
+                <button type="button" class="boton-secundario" id="botonCancelarNoticiaJuridica" style="margin-left:8px; display:none;">Cancelar edición</button>
+            </form>
+            <div id="resultadoNoticiaJuridica"></div>
+        </section>
+
+        <section class="tarjeta">
             <h2>Notificaciones (panel 🔔 del buscador)</h2>
             <div id="listaNotificaciones"><p class="mensaje-carga">Cargando…</p></div>
 
