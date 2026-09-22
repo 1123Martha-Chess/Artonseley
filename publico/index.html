@@ -16,6 +16,20 @@
     <script src="Sistema/temaGuardado.js"></script>
     <link rel="stylesheet" href="tema.css">
     <link rel="stylesheet" href="plataforma.css">
+    <style>
+        /* Número de versión, solo en esta pantalla (no es un dato que
+           necesiten las demás páginas). Fijo en la esquina inferior
+           derecha, respetando el "safe area" del celular. */
+        .version-etiqueta {
+            position: fixed;
+            right: max(12px, env(safe-area-inset-right));
+            bottom: max(8px, env(safe-area-inset-bottom));
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: var(--texto-3);
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <!-- =========================================================
@@ -88,6 +102,8 @@
             </a>
         </nav>
     </main>
+
+    <span class="version-etiqueta">Versión 1.11</span>
 
     <script type="module" src="Sistema/reproductorGlobal.js"></script>
     <script type="module" src="Sistema/inicioPrincipal.js"></script>
