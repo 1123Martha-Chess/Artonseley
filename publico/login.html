@@ -122,6 +122,26 @@
         #mensajeLogin.error {
             color: #d9534f;
         }
+
+        /* Botón secundario (contorno) hacia el formulario público de
+           solicitud de cuenta. Es un <a>, no un <button>, para no heredar
+           el estilo relleno de arriba ni quedar dentro del formulario. */
+        .enlace-crear-cuenta {
+            display: block;
+            margin-top: 10px;
+            padding: 11px;
+            font-size: 13px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--color-primario);
+            border: 1px solid var(--color-primario);
+            border-radius: 6px;
+        }
+
+        .enlace-crear-cuenta:hover {
+            color: #fff;
+            background: var(--color-primario);
+        }
     </style>
 </head>
 <body>
@@ -140,6 +160,8 @@
         </form>
 
         <p id="mensajeLogin"></p>
+
+        <a class="enlace-crear-cuenta" href="crear-cuenta.html">¿No tienes una cuenta? Solicita una Aquí</a>
     </div>
 
     <script type="module" src="Sistema/manejaLogin.js"></script>
