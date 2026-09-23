@@ -717,10 +717,14 @@ app.post('/api/encuestas/:id/respuestas', jsonEstandar, requiereSesionAPI, (peti
 
 // ---------------------------------------------------------------------
 // Noticias Jurídicas ("¿Qué pasó en el DOF la semana pasada?"): cuadros
-// que redacta el administrador desde el panel (título, fecha, cuerpo, un
-// enlace opcional y de 1 a 8 fotos). No se recopila ningún dato del
-// usuario — es contenido de solo lectura, igual de accesible que
-// Música/Calendario/Encuestas (sesión, sin exigir licencia vigente).
+// que redacta el administrador desde el panel (título, fecha, cuerpo y de
+// 1 a 8 fotos). No se recopila ningún dato del usuario — es contenido de
+// solo lectura, igual de accesible que Música/Calendario/Encuestas
+// (sesión, sin exigir licencia vigente). Si el admin escribe una URL
+// dentro del cuerpo, el cliente la detecta y la pinta como enlace real
+// (ver Sistema/noticiasJuridicasPrincipal.js) — a propósito no hay un
+// campo de "enlace" aparte ni un botón genérico: así quien lee ve la
+// dirección real antes de tocarla.
 // ---------------------------------------------------------------------
 function noticiaJuridicaAJSON(noticia) {
   return {
@@ -728,7 +732,6 @@ function noticiaJuridicaAJSON(noticia) {
     titulo: noticia.titulo,
     fecha: noticia.fecha,
     cuerpo: noticia.cuerpo,
-    enlace: noticia.enlace,
     imagenes: noticia.imagenes.map((imagen) => ({ id: imagen.id }))
   };
 }
@@ -1939,22 +1942,22 @@ app.delete('/api/admin/canciones/:id', async (peticion, respuesta) => {
 
 // ---------------------------------------------------------------------
 // Noticias Jurídicas (panel de administración). El admin crea/edita/borra
-// cada cuadro (título, fecha, cuerpo, enlace opcional, de 1 a 8 fotos).
-// Igual que canciones, las fotos van a disco (ver
-// servidor/noticiasJuridicasArchivos.js) y multer se envuelve para
-// traducir sus errores a un 400 en español.
+// cada cuadro (título, fecha, cuerpo, de 1 a 8 fotos). Igual que
+// canciones, las fotos van a disco (ver servidor/noticiasJuridicasArchivos.js)
+// y multer se envuelve para traducir sus errores a un 400 en español. No
+// hay un campo de "enlace" aparte: si el admin escribe una URL dentro del
+// cuerpo, el cliente la detecta y la pinta como enlace real (ver
+// Sistema/noticiasJuridicasPrincipal.js) — para que quien lee vea la
+// dirección real antes de tocarla, en vez de confiar en un botón genérico.
 // ---------------------------------------------------------------------
 const LARGO_MAXIMO_TITULO_NOTICIA = 150;
 const LARGO_MAXIMO_CUERPO_NOTICIA = 5000;
-const LARGO_MAXIMO_ENLACE_NOTICIA = 500;
 const PATRON_FECHA_NOTICIA = /^\d{4}-\d{2}-\d{2}$/;
-const PATRON_ENLACE_NOTICIA = /^https?:\/\/\S+$/i;
 
-function validarNoticiaJuridica({ titulo, fecha, cuerpo, enlace }) {
+function validarNoticiaJuridica({ titulo, fecha, cuerpo }) {
   const tituloLimpio = String(titulo ?? '').trim();
   const fechaLimpia = String(fecha ?? '').trim();
   const cuerpoLimpio = String(cuerpo ?? '').trim();
-  const enlaceLimpio = String(enlace ?? '').trim();
   const errores = [];
 
   if (!tituloLimpio || tituloLimpio.length > LARGO_MAXIMO_TITULO_NOTICIA) {
@@ -1966,11 +1969,8 @@ function validarNoticiaJuridica({ titulo, fecha, cuerpo, enlace }) {
   if (!cuerpoLimpio || cuerpoLimpio.length > LARGO_MAXIMO_CUERPO_NOTICIA) {
     errores.push(`El cuerpo es obligatorio (máximo ${LARGO_MAXIMO_CUERPO_NOTICIA} caracteres).`);
   }
-  if (enlaceLimpio && (enlaceLimpio.length > LARGO_MAXIMO_ENLACE_NOTICIA || !PATRON_ENLACE_NOTICIA.test(enlaceLimpio))) {
-    errores.push('El enlace debe empezar con http:// o https://.');
-  }
 
-  return { titulo: tituloLimpio, fecha: fechaLimpia, cuerpo: cuerpoLimpio, enlace: enlaceLimpio || null, errores };
+  return { titulo: tituloLimpio, fecha: fechaLimpia, cuerpo: cuerpoLimpio, errores };
 }
 
 function mensajeDeErrorDeSubidaDeNoticia(errorSubida) {
@@ -1999,7 +1999,7 @@ app.post('/api/admin/noticias-juridicas', (peticion, respuesta) => {
       return respuesta.status(400).json({ error: mensajeDeErrorDeSubidaDeNoticia(errorSubida) });
     }
 
-    const { titulo, fecha, cuerpo, enlace, errores } = validarNoticiaJuridica(peticion.body ?? {});
+    const { titulo, fecha, cuerpo, errores } = validarNoticiaJuridica(peticion.body ?? {});
     if (archivos.length === 0) errores.push('Sube al menos 1 foto (hasta 8).');
 
     if (errores.length > 0) {
@@ -2012,7 +2012,6 @@ app.post('/api/admin/noticias-juridicas', (peticion, respuesta) => {
         titulo,
         fecha,
         cuerpo,
-        enlace,
         imagenes: archivos.map((archivo) => ({ archivo: archivo.filename, mime: archivo.mimetype }))
       });
       respuesta.json({ ok: true, noticia: noticiaJuridicaAJSON(noticia) });
@@ -2044,14 +2043,14 @@ app.put('/api/admin/noticias-juridicas/:id', (peticion, respuesta) => {
       return respuesta.status(400).json({ error: mensajeDeErrorDeSubidaDeNoticia(errorSubida) });
     }
 
-    const { titulo, fecha, cuerpo, enlace, errores } = validarNoticiaJuridica(peticion.body ?? {});
+    const { titulo, fecha, cuerpo, errores } = validarNoticiaJuridica(peticion.body ?? {});
     if (errores.length > 0) {
       await limpiarNuevos();
       return respuesta.status(400).json({ error: errores.join(' ') });
     }
 
     try {
-      actualizarNoticiaJuridica(existente.id, { titulo, fecha, cuerpo, enlace });
+      actualizarNoticiaJuridica(existente.id, { titulo, fecha, cuerpo });
 
       if (archivosNuevos.length > 0) {
         const viejas = reemplazarImagenesDeNoticia(

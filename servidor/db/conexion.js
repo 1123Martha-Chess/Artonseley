@@ -352,13 +352,16 @@ db.exec(`
   -- ningún dato del usuario: solo contenido que publica el administrador.
   -- Se ordenan por "fecha" (la que el admin le pone a la noticia), no por
   -- cuándo se cargó, para que la más reciente quede primero sin que el
-  -- admin tenga que reordenar nada a mano.
+  -- admin tenga que reordenar nada a mano. Un enlace que el admin escriba
+  -- dentro de "cuerpo" se detecta y se pinta como enlace real (ver
+  -- Sistema/noticiasJuridicasPrincipal.js) — no hay una columna aparte
+  -- para eso, a propósito: así quien lee ve la URL real antes de tocarla,
+  -- en vez de confiar en un botón genérico.
   CREATE TABLE IF NOT EXISTS noticias_juridicas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     titulo TEXT NOT NULL,
     fecha TEXT NOT NULL,
     cuerpo TEXT NOT NULL,
-    enlace TEXT,
     creado_en TEXT NOT NULL DEFAULT (datetime('now')),
     actualizado_en TEXT NOT NULL DEFAULT (datetime('now'))
   );

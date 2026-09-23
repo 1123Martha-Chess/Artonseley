@@ -27,26 +27,27 @@
             margin-bottom: 12px;
         }
 
+        /* Cada foto ocupa TODO el ancho del cuadro de la noticia (una
+           debajo de otra si hay varias), en vez de una cuadrícula de
+           miniaturas — se ve su proporción real, sin recortarla. */
         .ntj-imagenes {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             margin-bottom: 14px;
         }
 
         .ntj-imagenes a {
             display: block;
-            aspect-ratio: 1 / 1;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--borde);
         }
 
         .ntj-imagenes img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
             display: block;
+            width: 100%;
+            height: auto;
         }
 
         .ntj-cuerpo {
@@ -56,6 +57,22 @@
             color: var(--texto);
             white-space: pre-wrap;
             margin: 0 0 14px 0;
+        }
+
+        /* Enlaces detectados dentro del cuerpo de la noticia: se pintan de
+           azul (el color clásico de "esto es un enlace"), a propósito
+           INDEPENDIENTE del color de acento elegido en Personalización, y
+           mostrando la URL tal cual la escribió el administrador — así
+           quien lee sabe exactamente a dónde lo llevará antes de tocarlo,
+           en vez de confiar a ciegas en un botón genérico. */
+        .ntj-enlace-cuerpo {
+            color: #1a56db;
+            text-decoration: underline;
+            word-break: break-all;
+        }
+
+        :root[data-tema="oscuro"] .ntj-enlace-cuerpo {
+            color: #6ea8fe;
         }
 
         .ntj-vacio { color: var(--texto-2); font-size: 14px; font-family: Arial, sans-serif; }

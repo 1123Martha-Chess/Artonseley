@@ -4,8 +4,14 @@
 // semana pasada?"). El contenido sale de GET /api/noticias-juridicas
 // (tablas "noticias_juridicas" / "noticias_juridicas_imagenes"), que el
 // administrador gestiona desde admin.html — este archivo solo pinta los
-// cuadros: título, fecha, fotos, cuerpo y, si tiene, un enlace que abre
-// la página web en una pestaña nueva.
+// cuadros: título, fecha, fotos y el cuerpo.
+//
+// Si el administrador escribe una URL dentro del cuerpo, se detecta y se
+// convierte en un enlace azul y subrayado que lleva ahí mismo — a
+// propósito, en vez de un botón genérico ("Ver fuente"): así quien lee
+// puede ver la dirección real ANTES de tocarla, para no acostumbrar al
+// Usuario a confiar en botones que lo llevan a algún lado sin decirle
+// a dónde (ver crearCuerpoConEnlaces más abajo).
 // -------------------------------------------------------------------
 
 import { aplicarModoGuardado } from './manejaPersonalizacion.js';
@@ -96,20 +102,54 @@ function crearTarjetaNoticia(noticia) {
     tarjeta.appendChild(galeria);
   }
 
-  const cuerpo = document.createElement('p');
-  cuerpo.className = 'ntj-cuerpo';
-  cuerpo.textContent = noticia.cuerpo;
-  tarjeta.appendChild(cuerpo);
-
-  if (noticia.enlace) {
-    const boton = document.createElement('a');
-    boton.className = 'boton-plataforma';
-    boton.href = noticia.enlace;
-    boton.target = '_blank';
-    boton.rel = 'noopener';
-    boton.textContent = 'Ver fuente';
-    tarjeta.appendChild(boton);
-  }
+  tarjeta.appendChild(crearCuerpoConEnlaces(noticia.cuerpo));
 
   return tarjeta;
+}
+
+// Detecta URLs (http:// o https://) dentro del texto y arma el párrafo
+// mezclando texto normal con enlaces reales <a> — nunca innerHTML, para no
+// interpretar el cuerpo como HTML. Quita de la URL cualquier puntuación de
+// cierre pegada al final (paréntesis, punto, coma...) que probablemente
+// sea parte de la redacción y no de la dirección.
+const PATRON_URL_EN_CUERPO = /https?:\/\/[^\s<>"']+/g;
+
+function crearCuerpoConEnlaces(texto) {
+  const parrafo = document.createElement('p');
+  parrafo.className = 'ntj-cuerpo';
+
+  let ultimoIndice = 0;
+  let coincidencia;
+  PATRON_URL_EN_CUERPO.lastIndex = 0;
+
+  while ((coincidencia = PATRON_URL_EN_CUERPO.exec(texto)) !== null) {
+    if (coincidencia.index > ultimoIndice) {
+      parrafo.appendChild(document.createTextNode(texto.slice(ultimoIndice, coincidencia.index)));
+    }
+
+    let url = coincidencia[0];
+    let sobrante = '';
+    while (url && /[.,;:!?)\]'"]$/.test(url)) {
+      sobrante = url.slice(-1) + sobrante;
+      url = url.slice(0, -1);
+    }
+
+    const enlace = document.createElement('a');
+    enlace.className = 'ntj-enlace-cuerpo';
+    enlace.href = url;
+    enlace.target = '_blank';
+    enlace.rel = 'noopener';
+    enlace.textContent = url;
+    parrafo.appendChild(enlace);
+
+    if (sobrante) parrafo.appendChild(document.createTextNode(sobrante));
+
+    ultimoIndice = PATRON_URL_EN_CUERPO.lastIndex;
+  }
+
+  if (ultimoIndice < texto.length) {
+    parrafo.appendChild(document.createTextNode(texto.slice(ultimoIndice)));
+  }
+
+  return parrafo;
 }

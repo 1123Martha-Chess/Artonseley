@@ -36,11 +36,11 @@ export function buscarImagenDeNoticiaPorId(imagenId) {
 
 // imagenes: [{ archivo, mime }, ...], ya subidas a disco por
 // servidor/noticiasJuridicasArchivos.js.
-export function crearNoticiaJuridica({ titulo, fecha, cuerpo, enlace, imagenes }) {
+export function crearNoticiaJuridica({ titulo, fecha, cuerpo, imagenes }) {
   return ejecutarEnTransaccion(() => {
     const info = db
-      .prepare('INSERT INTO noticias_juridicas (titulo, fecha, cuerpo, enlace) VALUES (?, ?, ?, ?)')
-      .run(titulo, fecha, cuerpo, enlace || null);
+      .prepare('INSERT INTO noticias_juridicas (titulo, fecha, cuerpo) VALUES (?, ?, ?)')
+      .run(titulo, fecha, cuerpo);
     const noticiaId = info.lastInsertRowid;
 
     const insertarImagen = db.prepare(
@@ -54,14 +54,14 @@ export function crearNoticiaJuridica({ titulo, fecha, cuerpo, enlace, imagenes }
   });
 }
 
-// Solo actualiza el texto (título/fecha/cuerpo/enlace); las fotos se
-// reemplazan aparte con reemplazarImagenesDeNoticia (ver más abajo).
-export function actualizarNoticiaJuridica(id, { titulo, fecha, cuerpo, enlace }) {
+// Solo actualiza el texto (título/fecha/cuerpo); las fotos se reemplazan
+// aparte con reemplazarImagenesDeNoticia (ver más abajo).
+export function actualizarNoticiaJuridica(id, { titulo, fecha, cuerpo }) {
   db.prepare(
     `UPDATE noticias_juridicas
-     SET titulo = ?, fecha = ?, cuerpo = ?, enlace = ?, actualizado_en = datetime('now')
+     SET titulo = ?, fecha = ?, cuerpo = ?, actualizado_en = datetime('now')
      WHERE id = ?`
-  ).run(titulo, fecha, cuerpo, enlace || null, id);
+  ).run(titulo, fecha, cuerpo, id);
   return buscarNoticiaJuridicaPorId(id);
 }
 

@@ -2076,12 +2076,15 @@ async function eliminarTablaHoja(tablaDia, elementoBloque) {
 }
 
 // ---------------------------------------------------------------------
-// Noticias Jurídicas. Título/fecha/cuerpo/enlace van como texto; las
-// fotos (1 a 8) se mandan con FormData porque el resto del panel manda
-// JSON y eso no sirve para archivos — mismo patrón que Canciones. Al
-// editar, las fotos son opcionales: si no se elige ninguna se conservan
-// las que ya tenía esa noticia; si se elige al menos una, reemplazan a
-// TODAS las anteriores (ver PUT /api/admin/noticias-juridicas/:id).
+// Noticias Jurídicas. Título/fecha/cuerpo van como texto; las fotos (1 a
+// 8) se mandan con FormData porque el resto del panel manda JSON y eso no
+// sirve para archivos — mismo patrón que Canciones. Al editar, las fotos
+// son opcionales: si no se elige ninguna se conservan las que ya tenía
+// esa noticia; si se elige al menos una, reemplazan a TODAS las
+// anteriores (ver PUT /api/admin/noticias-juridicas/:id). No hay un campo
+// de "enlace" aparte: si el admin escribe una URL dentro del cuerpo, el
+// cliente la detecta sola y la pinta como enlace real (ver
+// Sistema/noticiasJuridicasPrincipal.js).
 // ---------------------------------------------------------------------
 const MAXIMO_IMAGENES_NOTICIA_JURIDICA = 8;
 
@@ -2090,7 +2093,6 @@ const campoIdNoticiaJuridica = document.getElementById('campoIdNoticiaJuridica')
 const campoTituloNoticiaJuridica = document.getElementById('campoTituloNoticiaJuridica');
 const campoFechaNoticiaJuridica = document.getElementById('campoFechaNoticiaJuridica');
 const campoCuerpoNoticiaJuridica = document.getElementById('campoCuerpoNoticiaJuridica');
-const campoEnlaceNoticiaJuridica = document.getElementById('campoEnlaceNoticiaJuridica');
 const campoImagenesNoticiaJuridica = document.getElementById('archivoImagenesNoticiaJuridica');
 const ayudaImagenesNoticiaJuridica = document.getElementById('ayudaImagenesNoticiaJuridica');
 const botonGuardarNoticiaJuridica = document.getElementById('botonGuardarNoticiaJuridica');
@@ -2174,7 +2176,6 @@ function editarNoticiaJuridica(noticia) {
   campoTituloNoticiaJuridica.value = noticia.titulo;
   campoFechaNoticiaJuridica.value = noticia.fecha;
   campoCuerpoNoticiaJuridica.value = noticia.cuerpo;
-  campoEnlaceNoticiaJuridica.value = noticia.enlace || '';
   campoImagenesNoticiaJuridica.value = '';
   campoImagenesNoticiaJuridica.required = false;
   const totalFotos = noticia.imagenes.length;
@@ -2222,7 +2223,6 @@ formularioNoticiaJuridica.addEventListener('submit', async (evento) => {
   cuerpo.append('titulo', campoTituloNoticiaJuridica.value.trim());
   cuerpo.append('fecha', campoFechaNoticiaJuridica.value);
   cuerpo.append('cuerpo', campoCuerpoNoticiaJuridica.value.trim());
-  cuerpo.append('enlace', campoEnlaceNoticiaJuridica.value.trim());
   for (const archivo of archivos) cuerpo.append('imagenes', archivo);
 
   botonGuardarNoticiaJuridica.disabled = true;
