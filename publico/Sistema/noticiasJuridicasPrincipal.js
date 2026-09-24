@@ -24,12 +24,9 @@ cargarNoticias();
 
 async function cargarNoticias() {
   try {
+    // Ruta pública: no hay 401 que manejar (se lee sin cuenta).
     const respuesta = await fetch('/api/noticias-juridicas');
 
-    if (respuesta.status === 401) {
-      window.location.href = 'login.html';
-      return;
-    }
     if (!respuesta.ok) {
       throw new Error(`El servidor respondió ${respuesta.status}`);
     }

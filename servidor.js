@@ -6,7 +6,7 @@
 //      búsqueda). index.html en particular solo se sirve a quien tenga
 //      una sesión válida (ver requiereSesionParaPagina más abajo);
 //      login.html, crear-cuenta.html, y las páginas informativas (guía,
-//      términos, avisos) son públicas.
+//      términos, avisos, noticias jurídicas) son públicas.
 //   2) Expone la API que usa el cliente para buscar, iniciar/cerrar
 //      sesión, y mandar sugerencias. Los datos de leyes y la lógica de
 //      búsqueda viven en servidor/ y NUNCA se mandan como archivos
@@ -292,7 +292,7 @@ app.get(['/', '/index.html'], requiereSesionParaPagina, (peticion, respuesta) =>
 // propias, cada una con su enlace "← Volver al inicio". Todas piden
 // sesión igual que index.html (no rol admin).
 app.get(
-  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html', '/encuestas.html', '/noticias-juridicas.html'],
+  ['/buscador.html', '/notificaciones.html', '/sugerencias.html', '/configuracion.html', '/escritorio.html', '/pestanas.html', '/calendario.html', '/musica.html', '/calculadora.html', '/plantillas.html', '/encuestas.html'],
   requiereSesionParaPagina,
   (peticion, respuesta) => {
     respuesta.sendFile(path.join(__dirname, 'publico', path.basename(peticion.path)));
@@ -736,11 +736,13 @@ function noticiaJuridicaAJSON(noticia) {
   };
 }
 
-app.get('/api/noticias-juridicas', requiereSesionAPI, (peticion, respuesta) => {
+// Pública a propósito (sin requiereSesionAPI), igual que su página
+// noticias-juridicas.html: cualquiera puede leer las noticias sin cuenta.
+app.get('/api/noticias-juridicas', (peticion, respuesta) => {
   respuesta.json({ noticias: listarNoticiasJuridicas().map(noticiaJuridicaAJSON) });
 });
 
-app.get('/api/noticias-juridicas/imagen/:id', requiereSesionAPI, (peticion, respuesta) => {
+app.get('/api/noticias-juridicas/imagen/:id', (peticion, respuesta) => {
   const imagen = buscarImagenDeNoticiaPorId(Number(peticion.params.id));
   if (!imagen) {
     return respuesta.status(404).json({ error: 'Esa imagen ya no existe.' });

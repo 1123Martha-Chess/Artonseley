@@ -2,8 +2,8 @@
 // -------------------------------------------------------------------
 // Usado por las "hojas de documento" que son públicas pero NO deben
 // bloquear su contenido cuando el dispositivo no tiene sesión:
-// terminos-y-condiciones.html, avisos-de-privacidad.html y
-// guia-de-uso.html.
+// terminos-y-condiciones.html, avisos-de-privacidad.html,
+// guia-de-uso.html y noticias-juridicas.html.
 //
 // Todas esas páginas traen un enlace ".volver" fijo a "Volver al
 // buscador". Esto lo ajusta una sola vez al montar la página, según si
