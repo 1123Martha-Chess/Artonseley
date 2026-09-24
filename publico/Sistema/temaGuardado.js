@@ -11,8 +11,9 @@
 // sin prisa, en Sistema/manejaPersonalizacion.js.
 //
 // Los valores de aquí DEBEN coincidir con COLORES/TEMAS de
-// manejaPersonalizacion.js (son 4 constantes, se toleró la duplicación a
-// cambio de no cargar el módulo entero de forma bloqueante).
+// manejaPersonalizacion.js (son 6 constantes —morado, verde y aero, cada
+// uno con su color y su suave—, se toleró la duplicación a cambio de no
+// cargar el módulo entero de forma bloqueante).
 //
 // También ajusta <meta name="theme-color"> para que la barra del sistema
 // (reloj/batería en la app instalada, tinte de la barra de direcciones en
@@ -23,7 +24,7 @@
 (function () {
   try {
     var raiz = document.documentElement;
-    var color = localStorage.getItem('modoPersonalizacion'); // 'azul' | 'morado' | 'verde'
+    var color = localStorage.getItem('modoPersonalizacion'); // 'azul' | 'morado' | 'verde' | 'aero'
     var oscuro = localStorage.getItem('temaPersonalizacion') === 'oscuro';
 
     if (color === 'morado') {
@@ -32,10 +33,17 @@
     } else if (color === 'verde') {
       raiz.style.setProperty('--color-primario', '#178b32');
       raiz.style.setProperty('--color-primario-suave', oscuro ? '#132a1b' : '#e5f5e9');
+    } else if (color === 'aero') {
+      raiz.style.setProperty('--color-primario', '#128299');
+      raiz.style.setProperty('--color-primario-suave', oscuro ? '#0f2c34' : '#e3f7fb');
     } else if (oscuro) {
       // azul + oscuro: el tinte suave del bloque :root (claro) no aplica.
       raiz.style.setProperty('--color-primario-suave', '#1b2735');
     }
+
+    // Activa (solo para "aero") --color-primario-degradado / --velo-vidrio
+    // de tema.css antes del primer pintado — ver manejaPersonalizacion.js.
+    if (color) raiz.setAttribute('data-color', color);
 
     if (oscuro) {
       raiz.setAttribute('data-tema', 'oscuro');

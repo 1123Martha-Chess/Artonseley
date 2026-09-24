@@ -3,9 +3,12 @@
 // "Personalización": dos ejes INDEPENDIENTES que el usuario elige en
 // Configuración y se guardan en este navegador (localStorage):
 //
-//   - COLOR de acento:  Azul (clásico)  /  Morado  /  Verde limón
+//   - COLOR de acento:  Azul (clásico)  /  Morado  /  Verde limón  /  Aero
 //        cambia --color-primario y --color-primario-suave, y tiñe el
-//        logo de la barra (ícono + nombre) al color elegido.
+//        logo de la barra (ícono + nombre) al color elegido. "Aero"
+//        además activa --color-primario-degradado / --velo-vidrio (ver
+//        tema.css) para el acabado glossy estilo Frutiger Aero en
+//        botones, barras y tarjetas — mismo layout, solo el acabado.
 //   - TEMA:             Claro  /  Oscuro
 //        pone <html data-tema="oscuro"> (o lo quita), lo que activa el
 //        bloque oscuro de tema.css, y ajusta color-scheme.
@@ -30,8 +33,15 @@
 //     logoIcono/logoLetras en los PNG azules y pon `recolorLogo: true`.
 //     Un <filter> SVG (feColorMatrix, ver asegurarFiltrosLogo) mapea el
 //     azul exacto del logo al color del modo dejando el blanco en blanco.
-//   Además, agrega esos mismos valores a Sistema/temaGuardado.js (las 4
+//   Además, agrega esos mismos valores a Sistema/temaGuardado.js (las
 //   constantes duplicadas) para que no haya parpadeo.
+//   - Acabado glossy (opcional, como "Aero"): en tema.css, agrega un
+//     bloque `:root[data-color="<id>"] { --color-primario-degradado: ...;
+//     --velo-vidrio: ...; }` (+ variante `[data-tema="oscuro"]`). No
+//     tocar nada más — .boton-plataforma y compañía ya leen
+//     var(--color-primario-degradado, var(--color-primario)), así que un
+//     color que NO define esa variable simplemente sigue plano, como
+//     hasta ahora.
 // -------------------------------------------------------------------
 
 import { alternarPanelLateral } from './manejaPanelesLaterales.js';
@@ -65,6 +75,16 @@ const COLORES = [
     color: '#178b32',
     suaveClaro: '#e5f5e9',
     suaveOscuro: '#132a1b',
+    logoIcono: 'imagenes/artonseley-pagina.png',
+    logoLetras: 'imagenes/artonseley-letras.png',
+    recolorLogo: true
+  },
+  {
+    id: 'aero',
+    nombre: 'Aero',
+    color: '#128299',
+    suaveClaro: '#e3f7fb',
+    suaveOscuro: '#0f2c34',
     logoIcono: 'imagenes/artonseley-pagina.png',
     logoLetras: 'imagenes/artonseley-letras.png',
     recolorLogo: true
@@ -132,6 +152,11 @@ function aplicar() {
     '--color-primario-suave',
     temaActual.id === 'oscuro' ? colorActual.suaveOscuro : colorActual.suaveClaro
   );
+  // Habilita (o no) --color-primario-degradado / --velo-vidrio de
+  // tema.css (solo tienen valor real bajo data-color="aero"; en los
+  // otros tres colores el atributo no coincide con ninguna regla y no
+  // cambia nada).
+  raiz.setAttribute('data-color', colorActual.id);
 
   // El tema claro/oscuro solo se aplica en páginas que enlazan tema.css
   // (las ya convertidas). En las demás (editor, escritorio, calendario,

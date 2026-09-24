@@ -70,6 +70,36 @@
 }
 
 /* ===================================================================
+   ACENTO "AERO" (Frutiger Aero) — degradado glossy opcional.
+
+   Azul/Morado/Verde NUNCA definen --color-primario-degradado ni
+   --velo-vidrio, así que en esos tres modos cualquier
+   var(--color-primario-degradado, var(--color-primario)) cae siempre en
+   el color plano de siempre (cero cambio visual) y var(--velo-vidrio,
+   none) cae en `none`. Solo cuando manejaPersonalizacion.js /
+   temaGuardado.js ponen <html data-color="aero"> (el 4º color del
+   selector de Personalización) estas dos variables toman un valor real
+   y los botones/barras de relleno sólido y las tarjetas planas
+   (.boton-plataforma, .boton-checkbox.activo, .burbuja-principal,
+   .burbuja, .tarjeta-login, .tarjeta-cuenta, los botones de las barras
+   de herramientas del editor, etc.) se ven glossy — MISMO layout, solo
+   cambia el acabado de color. Reusa la misma familia de aguamarina del
+   tileset de iconos que ya se hizo para la plataforma.
+   =================================================================== */
+:root[data-color="aero"] {
+  --color-primario-degradado: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.16) 16%, #3fb8c9 45%, #128299 78%, #0b5c6c 100%);
+  /* --superficie es blanca en modo claro: un brillo blanco-sobre-blanco
+     no se vería, así que el "vidrio" lleva un matiz aguamarina (el
+     acento en muy baja opacidad) además del destello blanco superior. */
+  --velo-vidrio: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(63,184,201,0.28) 4%, rgba(63,184,201,0.10) 30%, rgba(63,184,201,0) 65%);
+}
+
+:root[data-color="aero"][data-tema="oscuro"] {
+  --color-primario-degradado: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.06) 18%, #2fa0b8 46%, #0f6478 78%, #073640 100%);
+  --velo-vidrio: linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(63,184,201,0.22) 8%, rgba(63,184,201,0.07) 32%, rgba(63,184,201,0) 65%);
+}
+
+/* ===================================================================
    BASE PARA CELULAR / APP INSTALADA (PWA)
    Reglas mínimas que valen para TODAS las páginas (este archivo se
    enlaza en todas). Los ajustes de layout propios de cada pantalla

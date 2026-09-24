@@ -100,6 +100,7 @@ body {
   border-width: 3px;
   border-radius: 22px;
   background: var(--color-primario-suave);
+  background-image: var(--velo-vidrio, none);
   font-size: 22px;
   font-weight: bold;
 }
@@ -122,6 +123,7 @@ body {
   min-width: 210px;
   padding: 18px 26px;
   background: var(--superficie);
+  background-image: var(--velo-vidrio, none);
   border: 2px solid var(--color-primario);
   border-radius: 18px;
   box-shadow: 0 2px 8px var(--sombra);
@@ -239,7 +241,7 @@ body {
   font-family: Arial, sans-serif;
   font-size: 14px;
   color: #fff;
-  background: var(--color-primario);
+  background: var(--color-primario-degradado, var(--color-primario));
   border: 1px solid var(--color-primario);
   border-radius: 8px;
   cursor: pointer;
@@ -293,7 +295,7 @@ textarea.campo-texto {
 }
 
 .boton-checkbox.activo {
-  background: var(--color-primario);
+  background: var(--color-primario-degradado, var(--color-primario));
   color: #fff;
   border-color: var(--color-primario);
 }

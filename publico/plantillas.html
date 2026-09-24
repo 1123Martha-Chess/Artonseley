@@ -107,7 +107,7 @@
             cursor: pointer;
         }
         .plt-boton-plantilla:hover { background: var(--color-primario-suave); }
-        .plt-boton-plantilla.activa { background: var(--color-primario); color: #fff; border-color: var(--color-primario); }
+        .plt-boton-plantilla.activa { background: var(--color-primario-degradado, var(--color-primario)); color: #fff; border-color: var(--color-primario); }
 
         .plt-principal { flex: 1; min-width: 0; }
 
@@ -140,7 +140,7 @@
             border-radius: 8px;
             cursor: pointer;
         }
-        .plt-btn-primario { color: #fff; background: var(--color-primario); border: 1px solid var(--color-primario); }
+        .plt-btn-primario { color: #fff; background: var(--color-primario-degradado, var(--color-primario)); border: 1px solid var(--color-primario); }
         .plt-btn-secundario { color: var(--color-primario); background: var(--superficie); border: 1px solid var(--color-primario); }
         .plt-acciones button:disabled { opacity: 0.5; cursor: default; }
 
