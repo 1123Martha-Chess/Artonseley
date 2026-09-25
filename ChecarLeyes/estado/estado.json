@@ -1,0 +1,2582 @@
+{
+  "camaraLeyes": [
+    {
+      "nombre": "CONSTITUCIÓN Política de los Estados Unidos Mexicanos",
+      "publicacion": "1917-02-05",
+      "ultimaReforma": "2026-06-02",
+      "ultimaReformaTexto": "DOF 02/06/2026",
+      "avisos": "Nuevas reformas"
+    },
+    {
+      "nombre": "CÓDIGO Civil Federal",
+      "publicacion": "1928-05-26",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "CÓDIGO de Comercio",
+      "publicacion": "1889-10-07",
+      "ultimaReforma": "2026-02-18",
+      "ultimaReformaTexto": "DOF 18/02/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "CÓDIGO de Justicia Militar",
+      "publicacion": "1933-08-31",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "CÓDIGO Federal de Procedimientos Civiles",
+      "publicacion": "1943-02-24",
+      "ultimaReforma": "2025-06-17",
+      "ultimaReformaTexto": "Notificación 17/06/2025 Sentencia SCJN",
+      "avisos": "( Abrogado en un plazo que no exceda del 01/04/2027 )"
+    },
+    {
+      "nombre": "CÓDIGO Fiscal de la Federación",
+      "publicacion": "1981-12-31",
+      "ultimaReforma": "2026-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "CÓDIGO Militar de Procedimientos Penales",
+      "publicacion": "2016-05-16",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "CÓDIGO Nacional de Procedimientos Civiles y Familiares",
+      "publicacion": "2023-06-07",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "CÓDIGO Nacional de Procedimientos Penales",
+      "publicacion": "2014-03-05",
+      "ultimaReforma": "2025-11-28",
+      "ultimaReformaTexto": "DOF 28/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "CÓDIGO Penal Federal",
+      "publicacion": "1931-08-14",
+      "ultimaReforma": "2026-03-13",
+      "ultimaReformaTexto": "DOF 13/03/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "ESTATUTO de Gobierno del Distrito Federal",
+      "publicacion": "1994-07-26",
+      "ultimaReforma": "2014-06-27",
+      "ultimaReformaTexto": "DOF 27/06/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "IMPUESTO sobre Servicios Expresamente Declarados de Interés Público por Ley, en los que Intervengan Empresas Concesionarias de Bienes del Dominio Directo de la Nación (LEY que establece, reforma y adiciona las disposiciones relativas a diversos impuestos)",
+      "publicacion": "1968-12-31",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Aduanera",
+      "publicacion": "1995-12-15",
+      "ultimaReforma": "2025-12-27",
+      "ultimaReformaTexto": "DOF 27/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Agraria",
+      "publicacion": "1992-02-26",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Adquisiciones, Arrendamientos y Servicios del Sector Público",
+      "publicacion": "2025-04-16",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Aeropuertos",
+      "publicacion": "1995-12-22",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Aguas Nacionales",
+      "publicacion": "1992-12-01",
+      "ultimaReforma": "2025-12-11",
+      "ultimaReformaTexto": "DOF 11/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Ahorro y Crédito Popular",
+      "publicacion": "2001-06-04",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Amnistía",
+      "publicacion": "2020-04-22",
+      "ultimaReforma": "2024-06-14",
+      "ultimaReformaTexto": "DOF 14/06/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Amnistía",
+      "publicacion": "1994-01-22",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Amparo, Reglamentaria de los artículos 103 y 107 de la Constitución Política de los Estados Unidos Mexicanos",
+      "publicacion": "2013-04-02",
+      "ultimaReforma": "2025-10-16",
+      "ultimaReformaTexto": "DOF 16/10/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Ascensos de la Armada de México",
+      "publicacion": "2004-06-25",
+      "ultimaReforma": "2025-12-17",
+      "ultimaReformaTexto": "DOF 17/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Ascensos y Recompensas del Ejército, Fuerza Aérea y Guardia Nacional",
+      "publicacion": "2003-10-30",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": "(Antes \"Ley de Ascensos y Recompensas del Ejército y Fuerza Aérea Mexicanos\" )"
+    },
+    {
+      "nombre": "LEY de Asistencia Social",
+      "publicacion": "2004-09-02",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Asociaciones Público Privadas",
+      "publicacion": "2012-01-16",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Asociaciones Religiosas y Culto Público",
+      "publicacion": "1992-07-15",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Aviación Civil",
+      "publicacion": "1995-05-12",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Ayuda Alimentaria para los Trabajadores",
+      "publicacion": "2011-01-17",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Biocombustibles",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Bioseguridad de Organismos Genéticamente Modificados",
+      "publicacion": "2005-03-18",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Cámaras Empresariales y sus Confederaciones",
+      "publicacion": "2005-01-20",
+      "ultimaReforma": "2019-04-12",
+      "ultimaReformaTexto": "DOF 12/04/2019",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Caminos, Puentes y Autotransporte Federal",
+      "publicacion": "1993-12-22",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Capitalización del Procampo",
+      "publicacion": "2001-12-31",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Carrera Judicial del Poder Judicial de la Federación",
+      "publicacion": "2025-01-02",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Comercio Exterior",
+      "publicacion": "1993-07-27",
+      "ultimaReforma": "2026-05-01",
+      "ultimaReformaTexto": "DOF 01/05/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY de Concursos Mercantiles",
+      "publicacion": "2000-05-12",
+      "ultimaReforma": "2026-01-16",
+      "ultimaReformaTexto": "DOF 16/01/2026 Sentencia SCJN",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Contribución de Mejoras por Obras Públicas Federales de Infraestructura Hidráulica",
+      "publicacion": "1990-12-26",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Cooperación Internacional para el Desarrollo",
+      "publicacion": "2011-04-06",
+      "ultimaReforma": "2020-11-06",
+      "ultimaReformaTexto": "DOF 06/11/2020",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Coordinación Fiscal",
+      "publicacion": "1978-12-27",
+      "ultimaReforma": "2024-01-03",
+      "ultimaReformaTexto": "DOF 03/01/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Desarrollo Rural Sustentable",
+      "publicacion": "2001-12-07",
+      "ultimaReforma": "2024-06-07",
+      "ultimaReformaTexto": "DOF 07/06/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Desarrollo Sustentable de la Cafeticultura",
+      "publicacion": "2025-12-19",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": "Ley en vigor el 17/06/2026"
+    },
+    {
+      "nombre": "LEY de Desarrollo Sustentable de la Caña de Azúcar",
+      "publicacion": "2005-08-22",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Disciplina del Ejército, Fuerza Aérea y Guardia Nacional",
+      "publicacion": "1926-03-15",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": "(Antes \"Ley de Disciplina del Ejército y Fuerza Aérea Mexicanos\" )"
+    },
+    {
+      "nombre": "LEY de Disciplina Financiera de las Entidades Federativas y los Municipios",
+      "publicacion": "2016-04-27",
+      "ultimaReforma": "2022-05-10",
+      "ultimaReformaTexto": "DOF 10/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Disciplina para el Personal de la Armada de México",
+      "publicacion": "2002-12-13",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Educación Militar del Ejército, Fuerza Aérea y Guardia Nacional",
+      "publicacion": "2005-12-23",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": "(Antes \"Ley de Educación Militar del Ejército y Fuerza Aérea Mexicanos\" )"
+    },
+    {
+      "nombre": "LEY de Educación Naval",
+      "publicacion": "2019-03-12",
+      "ultimaReforma": "2023-03-24",
+      "ultimaReformaTexto": "DOF 24/03/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Energía para el Campo",
+      "publicacion": "2002-12-30",
+      "ultimaReforma": "2012-12-28",
+      "ultimaReformaTexto": "DOF 28/12/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Expropiación",
+      "publicacion": "1936-11-25",
+      "ultimaReforma": "2012-01-27",
+      "ultimaReformaTexto": "DOF 27/01/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Extradición Internacional",
+      "publicacion": "1975-12-29",
+      "ultimaReforma": "2021-05-20",
+      "ultimaReformaTexto": "DOF 20/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Firma Electrónica Avanzada",
+      "publicacion": "2012-01-11",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Fiscalización y Rendición de Cuentas de la Federación",
+      "publicacion": "2016-07-18",
+      "ultimaReforma": "2026-05-15",
+      "ultimaReformaTexto": "DOF 15/05/2026",
+      "avisos": "Nueva fe de erratas"
+    },
+    {
+      "nombre": "LEY de Fomento a la Confianza Ciudadana",
+      "publicacion": "2020-01-20",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Fomento a la Industria Vitivinícola",
+      "publicacion": "2018-05-23",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Fomento para la Lectura y el Libro",
+      "publicacion": "2008-07-24",
+      "ultimaReforma": "2023-11-29",
+      "ultimaReformaTexto": "DOF 29/11/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Fondos de Aseguramiento Agropecuario y Rural",
+      "publicacion": "2005-05-13",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Fondos de Inversión",
+      "publicacion": "2001-06-04",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": "(Antes \"Ley de Sociedades de Inversión\" )"
+    },
+    {
+      "nombre": "LEY de Geotermia",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Infraestructura de la Calidad",
+      "publicacion": "2020-07-01",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Ingresos de la Federación para el Ejercicio Fiscal de 2026",
+      "publicacion": "2025-11-07",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Ingresos sobre Hidrocarburos",
+      "publicacion": "2014-08-11",
+      "ultimaReforma": "2025-12-28",
+      "ultimaReformaTexto": "DOF 28/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Instituciones de Crédito",
+      "publicacion": "1990-07-18",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Instituciones de Seguros y de Fianzas",
+      "publicacion": "2013-04-04",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Inversión Extranjera",
+      "publicacion": "1993-12-27",
+      "ultimaReforma": "2024-05-27",
+      "ultimaReformaTexto": "DOF 27/05/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Agencia Nacional de Seguridad Industrial y de Protección al Medio Ambiente del Sector Hidrocarburos",
+      "publicacion": "2014-08-11",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Casa de Moneda de México",
+      "publicacion": "1986-01-20",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Comisión Nacional Bancaria y de Valores",
+      "publicacion": "1995-04-28",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Comisión Nacional de Energía",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "2025-12-26",
+      "ultimaReformaTexto": "DOF 26/12/2025 Sentencia SCJN",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Comisión Nacional de los Derechos Humanos",
+      "publicacion": "1992-06-29",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Economía Social y Solidaria",
+      "publicacion": "2012-05-23",
+      "ultimaReforma": "2025-04-16",
+      "ultimaReformaTexto": "DOF 16/04/2025",
+      "avisos": "(Antes \"Ley de la Economía Social y Solidaria, Reglamentaria del Párrafo Octavo del Artículo 25 de la Constitución Política de los Estados Unidos Mexicanos, en lo referente al sector social de la economía\" )"
+    },
+    {
+      "nombre": "LEY de la Empresa Pública del Estado, Comisión Federal de Electricidad",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Empresa Pública del Estado, Petróleos Mexicanos",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Fiscalía General de la República",
+      "publicacion": "2021-05-20",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Guardia Nacional",
+      "publicacion": "2025-07-16",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de la Policía Federal",
+      "publicacion": "2009-06-01",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de los Derechos de las Personas Adultas Mayores",
+      "publicacion": "2002-06-25",
+      "ultimaReforma": "2024-06-14",
+      "ultimaReformaTexto": "DOF 14/06/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de los Husos Horarios en los Estados Unidos Mexicanos",
+      "publicacion": "2022-10-28",
+      "ultimaReforma": "2022-11-29",
+      "ultimaReformaTexto": "DOF 29/11/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de los Impuestos Generales de Importación y de Exportación",
+      "publicacion": "2022-06-07",
+      "ultimaReforma": "2026-04-23",
+      "ultimaReformaTexto": "DOF 23/04/2026",
+      "avisos": "Nueva modificación"
+    },
+    {
+      "nombre": "LEY de los Institutos Nacionales de Salud",
+      "publicacion": "2000-05-26",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de los Sistemas de Ahorro para el Retiro",
+      "publicacion": "1996-05-23",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Migración",
+      "publicacion": "2011-05-25",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Minería",
+      "publicacion": "1992-06-26",
+      "ultimaReforma": "2023-05-08",
+      "ultimaReformaTexto": "DOF 08/05/2023",
+      "avisos": "(Antes \"Ley Minera\" )"
+    },
+    {
+      "nombre": "LEY de Nacionalidad",
+      "publicacion": "1998-01-23",
+      "ultimaReforma": "2012-04-23",
+      "ultimaReformaTexto": "DOF 23/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Navegación y Comercio Marítimos",
+      "publicacion": "2006-06-01",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Obras Públicas y Servicios Relacionados con las Mismas",
+      "publicacion": "2000-01-04",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Organizaciones Ganaderas",
+      "publicacion": "1999-01-06",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Planeación",
+      "publicacion": "1983-01-05",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Planeación y Transición Energética",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Premios, Estímulos y Recompensas Civiles",
+      "publicacion": "1975-12-31",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Productos Orgánicos",
+      "publicacion": "2006-02-07",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Protección al Ahorro Bancario",
+      "publicacion": "1999-01-19",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Protección al Comercio y la Inversión de Normas Extranjeras que Contravengan el Derecho Internacional",
+      "publicacion": "1996-10-23",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Protección del Espacio Aéreo Mexicano",
+      "publicacion": "2023-03-01",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Protección y Defensa al Usuario de Servicios Financieros",
+      "publicacion": "1999-01-18",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Puertos",
+      "publicacion": "1993-07-19",
+      "ultimaReforma": "2020-12-07",
+      "ultimaReformaTexto": "DOF 07/12/2020",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Recompensas de la Armada de México",
+      "publicacion": "1985-01-14",
+      "ultimaReforma": "2021-11-22",
+      "ultimaReformaTexto": "DOF 22/11/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Responsabilidad Civil por Daños Nucleares",
+      "publicacion": "1974-12-31",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Seguridad Interior",
+      "publicacion": "2017-12-21",
+      "ultimaReforma": "2019-05-30",
+      "ultimaReformaTexto": "DOF 30/05/2019 Sentencia SCJN",
+      "avisos": "( Declaratoria de Invalidez de la Ley DOF 30/05/2019 )"
+    },
+    {
+      "nombre": "LEY de Seguridad Nacional",
+      "publicacion": "2005-01-31",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Sistemas de Pagos",
+      "publicacion": "2002-12-12",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Sociedades de Responsabilidad Limitada de Interés Público",
+      "publicacion": "1934-08-31",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Sociedades de Solidaridad Social",
+      "publicacion": "1976-05-27",
+      "ultimaReforma": "2018-04-24",
+      "ultimaReformaTexto": "DOF 24/04/2018",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Tesorería de la Federación",
+      "publicacion": "2015-12-30",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Transparencia y de Fomento a la Competencia en el Crédito Garantizado",
+      "publicacion": "2002-12-30",
+      "ultimaReforma": "2014-01-10",
+      "ultimaReformaTexto": "DOF 10/01/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Uniones de Crédito",
+      "publicacion": "2008-08-20",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Vertimientos en las Zonas Marinas Mexicanas",
+      "publicacion": "2014-01-17",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Vías Generales de Comunicación",
+      "publicacion": "1940-02-19",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY de Vivienda",
+      "publicacion": "2006-06-27",
+      "ultimaReforma": "2026-04-29",
+      "ultimaReformaTexto": "DOF 29/04/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Banco de México",
+      "publicacion": "1993-12-23",
+      "ultimaReforma": "2014-01-10",
+      "ultimaReformaTexto": "DOF 10/01/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Diario Oficial de la Federación y Gacetas Gubernamentales",
+      "publicacion": "1986-12-24",
+      "ultimaReforma": "2019-06-10",
+      "ultimaReformaTexto": "DOF 10/06/2019",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Fondo Mexicano del Petróleo para la Estabilización y el Desarrollo",
+      "publicacion": "2014-08-11",
+      "ultimaReforma": "2025-03-18",
+      "ultimaReformaTexto": "DOF 18/03/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Impuesto al Valor Agregado",
+      "publicacion": "1978-12-29",
+      "ultimaReforma": "2021-11-12",
+      "ultimaReformaTexto": "DOF 12/11/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Impuesto Especial sobre Producción y Servicios",
+      "publicacion": "1980-12-30",
+      "ultimaReforma": "2025-12-22",
+      "ultimaReformaTexto": "DOF 22/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Impuesto sobre la Renta",
+      "publicacion": "2013-12-11",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Instituto de Seguridad Social para las Fuerzas Armadas Mexicanas",
+      "publicacion": "2003-07-09",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "Notificación 15/01/2026 Sentencia SCJN",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado",
+      "publicacion": "2007-03-31",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Instituto del Fondo Nacional de la Vivienda para los Trabajadores",
+      "publicacion": "1972-04-24",
+      "ultimaReforma": "2025-02-21",
+      "ultimaReformaTexto": "DOF 21/02/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Instituto del Fondo Nacional para el Consumo de los Trabajadores",
+      "publicacion": "2006-04-24",
+      "ultimaReforma": "2024-01-03",
+      "ultimaReformaTexto": "DOF 03/01/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Instituto Mexicano de la Juventud",
+      "publicacion": "1999-01-06",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Instituto Nacional de los Pueblos Indígenas",
+      "publicacion": "2018-12-04",
+      "ultimaReforma": "2023-12-29",
+      "ultimaReformaTexto": "DOF 29/12/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Mercado de Valores",
+      "publicacion": "2005-12-30",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Registro Público Vehicular",
+      "publicacion": "2004-09-01",
+      "ultimaReforma": "2021-05-20",
+      "ultimaReformaTexto": "DOF 20/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Sector Eléctrico",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Sector Hidrocarburos",
+      "publicacion": "2025-03-18",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Seguro Social",
+      "publicacion": "1995-12-21",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Servicio de Administración Tributaria",
+      "publicacion": "1995-12-15",
+      "ultimaReforma": "2018-12-04",
+      "ultimaReformaTexto": "DOF 04/12/2018",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Servicio Exterior Mexicano",
+      "publicacion": "1994-01-04",
+      "ultimaReforma": "2018-04-19",
+      "ultimaReformaTexto": "DOF 19/04/2018",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Servicio Militar",
+      "publicacion": "1940-09-11",
+      "ultimaReforma": "2022-05-18",
+      "ultimaReformaTexto": "DOF 18/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Servicio Postal Mexicano",
+      "publicacion": "1986-12-24",
+      "ultimaReforma": "2023-01-19",
+      "ultimaReformaTexto": "DOF 19/01/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Servicio Profesional de Carrera en la Administración Pública Federal",
+      "publicacion": "2003-04-10",
+      "ultimaReforma": "2006-01-09",
+      "ultimaReformaTexto": "DOF 09/01/2006",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Sistema Nacional de Información Estadística y Geográfica",
+      "publicacion": "2008-04-16",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Sistema Nacional de Investigación e Inteligencia en Materia de Seguridad Pública",
+      "publicacion": "2025-07-16",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY del Sistema Público de Radiodifusión del Estado Mexicano",
+      "publicacion": "2014-07-14",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY en Materia de Telecomunicaciones y Radiodifusión",
+      "publicacion": "2025-07-16",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal contra la Delincuencia Organizada",
+      "publicacion": "1996-11-07",
+      "ultimaReforma": "2025-11-28",
+      "ultimaReformaTexto": "DOF 28/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Armas de Fuego y Explosivos",
+      "publicacion": "1972-01-11",
+      "ultimaReforma": "2025-05-29",
+      "ultimaReformaTexto": "DOF 29/05/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Austeridad Republicana",
+      "publicacion": "2019-11-19",
+      "ultimaReforma": "2025-04-16",
+      "ultimaReformaTexto": "DOF 16/04/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Cine y el Audiovisual",
+      "publicacion": "2026-05-22",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": "Nueva Ley"
+    },
+    {
+      "nombre": "LEY Federal de Competencia Económica",
+      "publicacion": "2014-05-23",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Consulta Popular",
+      "publicacion": "2014-03-14",
+      "ultimaReforma": "2021-05-19",
+      "ultimaReformaTexto": "DOF 19/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Correduría Pública",
+      "publicacion": "1992-12-29",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Declaración Especial de Ausencia para Personas Desaparecidas",
+      "publicacion": "2018-06-22",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Defensoría Pública",
+      "publicacion": "1998-05-28",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Derechos",
+      "publicacion": "1981-12-31",
+      "ultimaReforma": "2025-12-28",
+      "ultimaReformaTexto": "DOF 28/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Deuda Pública",
+      "publicacion": "1976-12-31",
+      "ultimaReforma": "2018-01-30",
+      "ultimaReformaTexto": "DOF 30/01/2018",
+      "avisos": "(Antes \"Ley General de Deuda Pública\" )"
+    },
+    {
+      "nombre": "LEY Federal de Fomento a las Actividades Realizadas por Organizaciones de la Sociedad Civil",
+      "publicacion": "2004-02-09",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Juegos y Sorteos",
+      "publicacion": "1947-12-31",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de las Entidades Paraestatales",
+      "publicacion": "1986-05-14",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de los Derechos del Contribuyente",
+      "publicacion": "2005-06-23",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de los Trabajadores al Servicio del Estado, Reglamentaria del Apartado B) del Artículo 123 Constitucional",
+      "publicacion": "1963-12-28",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Presupuesto y Responsabilidad Hacendaria",
+      "publicacion": "2006-03-30",
+      "ultimaReforma": "2026-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY Federal de Procedimiento Administrativo",
+      "publicacion": "1994-08-04",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Procedimiento Contencioso Administrativo",
+      "publicacion": "2005-12-01",
+      "ultimaReforma": "2026-06-09",
+      "ultimaReformaTexto": "DOF 09/06/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY Federal de Producción, Certificación y Comercio de Semillas",
+      "publicacion": "2007-06-15",
+      "ultimaReforma": "2018-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2018",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Protección a la Propiedad Industrial",
+      "publicacion": "2020-07-01",
+      "ultimaReforma": "2026-04-03",
+      "ultimaReformaTexto": "DOF 03/04/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY Federal de Protección al Consumidor",
+      "publicacion": "1992-12-24",
+      "ultimaReforma": "2025-12-23",
+      "ultimaReformaTexto": "DOF 23/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Protección de Datos Personales en Posesión de los Particulares",
+      "publicacion": "2025-03-20",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "Ley Federal de Protección del Patrimonio Cultural de los Pueblos y Comunidades Indígenas y Afromexicanas",
+      "publicacion": "2022-01-17",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Remuneraciones de los Servidores Públicos",
+      "publicacion": "2021-05-19",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Responsabilidad Ambiental",
+      "publicacion": "2013-06-07",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Responsabilidad Patrimonial del Estado",
+      "publicacion": "2004-12-31",
+      "ultimaReforma": "2023-12-29",
+      "ultimaReformaTexto": "DOF 29/12/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Responsabilidades de los Servidores Públicos",
+      "publicacion": "1982-12-31",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Revocación de Mandato",
+      "publicacion": "2021-09-14",
+      "ultimaReforma": "2022-09-26",
+      "ultimaReformaTexto": "DOF 26/09/2022 Sentencia SCJN",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Sanidad Animal",
+      "publicacion": "2007-07-25",
+      "ultimaReforma": "2024-05-21",
+      "ultimaReformaTexto": "DOF 21/05/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Sanidad Vegetal",
+      "publicacion": "1994-01-05",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Seguridad Privada",
+      "publicacion": "2006-07-06",
+      "ultimaReforma": "2011-10-17",
+      "ultimaReformaTexto": "DOF 17/10/2011",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Variedades Vegetales",
+      "publicacion": "1996-10-25",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal de Zonas Económicas Especiales",
+      "publicacion": "2016-06-01",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal del Derecho de Autor",
+      "publicacion": "1996-12-24",
+      "ultimaReforma": "2026-05-14",
+      "ultimaReformaTexto": "DOF 14/05/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY Federal del Impuesto sobre Automóviles Nuevos",
+      "publicacion": "1996-12-30",
+      "ultimaReforma": "2025-12-28",
+      "ultimaReformaTexto": "DOF 28/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal del Mar",
+      "publicacion": "1986-01-08",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal del Trabajo",
+      "publicacion": "1970-04-01",
+      "ultimaReforma": "2026-05-14",
+      "ultimaReformaTexto": "DOF 14/05/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY Federal para el Control de Precursores Químicos, Productos Químicos Esenciales y Máquinas para Elaborar Cápsulas, Tabletas y/o Comprimidos",
+      "publicacion": "1997-12-26",
+      "ultimaReforma": "2023-05-03",
+      "ultimaReformaTexto": "DOF 03/05/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para el Control de Sustancias Químicas Susceptibles de Desvío para la Fabricación de Armas Químicas",
+      "publicacion": "2009-06-09",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para el Fomento de la Microindustria y la Actividad Artesanal",
+      "publicacion": "1988-01-26",
+      "ultimaReforma": "2023-03-27",
+      "ultimaReformaTexto": "DOF 27/03/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para el Fomento y Protección del Maíz Nativo",
+      "publicacion": "2020-04-13",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para la Administración y Enajenación de Bienes del Sector Público",
+      "publicacion": "2002-12-19",
+      "ultimaReforma": "2024-04-30",
+      "ultimaReformaTexto": "DOF 30/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para la Prevención e Identificación de Operaciones con Recursos de Procedencia Ilícita",
+      "publicacion": "2012-10-17",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para la Protección a Personas que Intervienen en el Procedimiento Penal",
+      "publicacion": "2012-06-08",
+      "ultimaReforma": "2021-05-20",
+      "ultimaReformaTexto": "DOF 20/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para Prevenir y Eliminar la Discriminación",
+      "publicacion": "2003-06-11",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal para Prevenir y Sancionar los Delitos Cometidos en Materia de Hidrocarburos",
+      "publicacion": "2016-01-12",
+      "ultimaReforma": "2021-11-12",
+      "ultimaReformaTexto": "DOF 12/11/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Federal sobre Monumentos y Zonas Arqueológicos, Artísticos e Históricos",
+      "publicacion": "1972-05-06",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Acceso de las Mujeres a una Vida Libre de Violencias",
+      "publicacion": "2007-02-01",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": "(Antes \"Ley General de Acceso de las Mujeres a una Vida Libre de Violencia\" )"
+    },
+    {
+      "nombre": "LEY General de Aguas",
+      "publicacion": "2025-12-11",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Archivos",
+      "publicacion": "2018-06-15",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Asentamientos Humanos, Ordenamiento Territorial y Desarrollo Urbano",
+      "publicacion": "2016-11-28",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Bibliotecas",
+      "publicacion": "2021-06-01",
+      "ultimaReforma": "2023-11-29",
+      "ultimaReformaTexto": "DOF 29/11/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Bienes Nacionales",
+      "publicacion": "2004-05-20",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Cambio Climático",
+      "publicacion": "2012-06-06",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Comunicación Social",
+      "publicacion": "2018-05-11",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Contabilidad Gubernamental",
+      "publicacion": "2008-12-31",
+      "ultimaReforma": "2026-05-14",
+      "ultimaReformaTexto": "DOF 14/05/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY General de Cultura Física y Deporte",
+      "publicacion": "2013-06-07",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Cultura y Derechos Culturales",
+      "publicacion": "2017-06-19",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Derechos Lingüísticos de los Pueblos Indígenas",
+      "publicacion": "2003-03-13",
+      "ultimaReforma": "2023-10-18",
+      "ultimaReformaTexto": "DOF 18/10/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Desarrollo Forestal Sustentable",
+      "publicacion": "2018-06-05",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Desarrollo Social",
+      "publicacion": "2004-01-20",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Economía Circular",
+      "publicacion": "2026-01-19",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Educación",
+      "publicacion": "2019-09-30",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Educación Superior",
+      "publicacion": "2021-04-20",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Instituciones y Procedimientos Electorales",
+      "publicacion": "2014-05-23",
+      "ultimaReforma": "2026-06-02",
+      "ultimaReformaTexto": "DOF 02/06/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY General de la Alimentación Adecuada y Sostenible",
+      "publicacion": "2024-04-17",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de los Derechos de Niñas, Niños y Adolescentes",
+      "publicacion": "2014-12-04",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de los Medios de Impugnación en Materia Electoral",
+      "publicacion": "2023-03-02",
+      "ultimaReforma": "2023-11-24",
+      "ultimaReformaTexto": "DOF 24/11/2023 Sentencia SCJN",
+      "avisos": "( Declaratoria de Invalidez de la Ley DOF 24/11/2023 )"
+    },
+    {
+      "nombre": "LEY General de Mecanismos Alternativos de Solución de Controversias",
+      "publicacion": "2024-01-26",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Movilidad y Seguridad Vial",
+      "publicacion": "2022-05-17",
+      "ultimaReforma": "2023-12-29",
+      "ultimaReformaTexto": "DOF 29/12/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Organizaciones y Actividades Auxiliares del Crédito",
+      "publicacion": "1985-01-14",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Partidos Políticos",
+      "publicacion": "2014-05-23",
+      "ultimaReforma": "2023-11-24",
+      "ultimaReformaTexto": "DOF 24/11/2023 Sentencia SCJN",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Pesca y Acuacultura Sustentables",
+      "publicacion": "2007-07-24",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Población",
+      "publicacion": "1974-01-07",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Prestación de Servicios para la Atención, Cuidado y Desarrollo Integral Infantil",
+      "publicacion": "2011-10-24",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Protección Civil",
+      "publicacion": "2012-06-06",
+      "ultimaReforma": "2023-12-21",
+      "ultimaReformaTexto": "DOF 21/12/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Protección de Datos Personales en Posesión de Sujetos Obligados",
+      "publicacion": "2025-03-20",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Responsabilidades Administrativas",
+      "publicacion": "2016-07-18",
+      "ultimaReforma": "2025-12-15",
+      "ultimaReformaTexto": "DOF 15/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Salud",
+      "publicacion": "1984-02-07",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Sociedades Cooperativas",
+      "publicacion": "1994-08-03",
+      "ultimaReforma": "2025-04-16",
+      "ultimaReformaTexto": "DOF 16/04/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Sociedades Mercantiles",
+      "publicacion": "1934-08-04",
+      "ultimaReforma": "2025-12-26",
+      "ultimaReformaTexto": "DOF 26/12/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Títulos y Operaciones de Crédito",
+      "publicacion": "1932-08-27",
+      "ultimaReforma": "2024-03-26",
+      "ultimaReformaTexto": "DOF 26/03/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Transparencia y Acceso a la Información Pública",
+      "publicacion": "2025-03-20",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Turismo",
+      "publicacion": "2009-06-17",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Víctimas",
+      "publicacion": "2013-01-09",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General de Vida Silvestre",
+      "publicacion": "2000-07-03",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General del Equilibrio Ecológico y la Protección al Ambiente",
+      "publicacion": "1988-01-28",
+      "ultimaReforma": "2026-01-19",
+      "ultimaReformaTexto": "DOF 19/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General del Sistema de Medios de Impugnación en Materia Electoral",
+      "publicacion": "1996-11-22",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": "( \"Recupera vigencia\" por Declaratoria de Invalidez DOF 24/11/2023 )"
+    },
+    {
+      "nombre": "LEY General del Sistema Nacional Anticorrupción",
+      "publicacion": "2016-07-18",
+      "ultimaReforma": "2021-05-20",
+      "ultimaReformaTexto": "DOF 20/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General del Sistema Nacional de Seguridad Pública",
+      "publicacion": "2025-07-16",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General del Sistema para la Carrera de las Maestras y los Maestros",
+      "publicacion": "2019-09-30",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General en Materia de Delitos Electorales",
+      "publicacion": "2014-05-23",
+      "ultimaReforma": "2021-05-20",
+      "ultimaReformaTexto": "DOF 20/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General en Materia de Desaparición Forzada de Personas, Desaparición Cometida por Particulares y del Sistema Nacional de Búsqueda de Personas",
+      "publicacion": "2017-11-17",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General en materia de Humanidades, Ciencias, Tecnologías e Innovación",
+      "publicacion": "2023-05-08",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para el Control del Tabaco",
+      "publicacion": "2008-05-30",
+      "ultimaReforma": "2022-02-17",
+      "ultimaReformaTexto": "DOF 17/02/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para la Atención y Protección a Personas con la Condición del Espectro Autista",
+      "publicacion": "2015-04-30",
+      "ultimaReforma": "2016-05-27",
+      "ultimaReformaTexto": "DOF 27/05/2016",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para la Detección Oportuna del Cáncer en la Infancia y la Adolescencia",
+      "publicacion": "2021-01-07",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para la Igualdad Sustantiva entre Mujeres y Hombres",
+      "publicacion": "2006-08-02",
+      "ultimaReforma": "2026-01-15",
+      "ultimaReformaTexto": "DOF 15/01/2026",
+      "avisos": "(Antes \"Ley General para la Igualdad entre Mujeres y Hombres\" )"
+    },
+    {
+      "nombre": "LEY General para la Inclusión de las Personas con Discapacidad",
+      "publicacion": "2011-05-30",
+      "ultimaReforma": "2024-06-14",
+      "ultimaReformaTexto": "DOF 14/06/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para la Prevención Social de la Violencia y la Delincuencia",
+      "publicacion": "2012-01-24",
+      "ultimaReforma": "2021-05-04",
+      "ultimaReformaTexto": "DOF 04/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para la Prevención y Gestión Integral de los Residuos",
+      "publicacion": "2003-10-08",
+      "ultimaReforma": "2026-01-19",
+      "ultimaReformaTexto": "DOF 19/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para Prevenir, Investigar y Sancionar la Tortura y Otros Tratos o Penas Crueles, Inhumanos o Degradantes",
+      "publicacion": "2017-06-26",
+      "ultimaReforma": "2022-04-28",
+      "ultimaReformaTexto": "DOF 28/04/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "Ley General para Prevenir, Investigar y Sancionar los Delitos en Materia de Extorsión, Reglamentaria de la fracción XXI del artículo 73 de la Constitución Política de los Estados Unidos Mexicanos",
+      "publicacion": "2025-11-28",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para Prevenir, Sancionar y Erradicar los Delitos en Materia de Trata de Personas y para la Protección y Asistencia a las Víctimas de estos Delitos",
+      "publicacion": "2012-06-14",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY General para Prevenir y Sancionar los Delitos en Materia de Secuestro, Reglamentaria de la fracción XXI del artículo 73 de la Constitución Política de los Estados Unidos Mexicanos",
+      "publicacion": "2010-11-30",
+      "ultimaReforma": "2021-05-20",
+      "ultimaReformaTexto": "DOF 20/05/2021",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Monetaria de los Estados Unidos Mexicanos",
+      "publicacion": "1931-07-27",
+      "ultimaReforma": "2026-01-19",
+      "ultimaReformaTexto": "DOF 19/01/2026",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional de Ejecución Penal",
+      "publicacion": "2016-06-16",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional de Extinción de Dominio",
+      "publicacion": "2019-08-09",
+      "ultimaReforma": "2025-11-28",
+      "ultimaReformaTexto": "DOF 28/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional de Mecanismos Alternativos de Solución de Controversias en Materia Penal",
+      "publicacion": "2014-12-29",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional del Registro de Detenciones",
+      "publicacion": "2019-05-27",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional del Sistema Integral de Justicia Penal para Adolescentes",
+      "publicacion": "2016-06-16",
+      "ultimaReforma": "2022-12-20",
+      "ultimaReformaTexto": "DOF 20/12/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional para Eliminar Trámites Burocráticos",
+      "publicacion": "2025-07-16",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Nacional sobre el Uso de la Fuerza",
+      "publicacion": "2019-05-27",
+      "ultimaReforma": "2024-01-24",
+      "ultimaReformaTexto": "DOF 24/01/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de la Administración Pública Federal",
+      "publicacion": "1976-12-29",
+      "ultimaReforma": "2026-05-07",
+      "ultimaReformaTexto": "DOF 07/05/2026",
+      "avisos": "Nueva reforma"
+    },
+    {
+      "nombre": "LEY Orgánica de la Armada de México",
+      "publicacion": "2025-11-07",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de la Procuraduría de la Defensa del Contribuyente",
+      "publicacion": "2006-09-04",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de la Procuraduría General de Justicia del Distrito Federal",
+      "publicacion": "2011-06-20",
+      "ultimaReforma": "2012-02-24",
+      "ultimaReformaTexto": "DOF 24/02/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de la Universidad Autónoma Agraria Antonio Narro",
+      "publicacion": "2006-04-26",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de la Universidad Autónoma Metropolitana",
+      "publicacion": "1973-12-17",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de la Universidad Nacional Autónoma de México",
+      "publicacion": "1945-01-06",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de los Tribunales Agrarios",
+      "publicacion": "1992-02-26",
+      "ultimaReforma": "1998-01-23",
+      "ultimaReformaTexto": "DOF 23/01/1998",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de Nacional Financiera",
+      "publicacion": "1986-12-26",
+      "ultimaReforma": "2014-01-10",
+      "ultimaReformaTexto": "DOF 10/01/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica de Sociedad Hipotecaria Federal",
+      "publicacion": "2001-10-11",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Banco del Bienestar",
+      "publicacion": "2001-06-01",
+      "ultimaReforma": "2019-07-19",
+      "ultimaReformaTexto": "DOF 19/07/2019",
+      "avisos": "(Antes \"Ley Orgánica del Banco del Ahorro Nacional y Servicios Financieros\" )"
+    },
+    {
+      "nombre": "LEY Orgánica del Banco Nacional de Comercio Exterior",
+      "publicacion": "1986-01-20",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Banco Nacional de Obras y Servicios Públicos",
+      "publicacion": "1986-01-20",
+      "ultimaReforma": "2024-04-01",
+      "ultimaReformaTexto": "DOF 01/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Banco Nacional del Ejército, Fuerza Aérea y Armada",
+      "publicacion": "1986-01-13",
+      "ultimaReforma": "2014-01-10",
+      "ultimaReformaTexto": "DOF 10/01/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Centro Federal de Conciliación y Registro Laboral",
+      "publicacion": "2020-01-06",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Congreso General de los Estados Unidos Mexicanos",
+      "publicacion": "1999-09-03",
+      "ultimaReforma": "2025-07-07",
+      "ultimaReformaTexto": "DOF 07/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Ejército y Fuerza Aérea Mexicanos",
+      "publicacion": "1986-12-26",
+      "ultimaReforma": "2025-07-16",
+      "ultimaReformaTexto": "DOF 16/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Instituto Nacional de Antropología e Historia",
+      "publicacion": "1939-02-03",
+      "ultimaReforma": "2015-12-17",
+      "ultimaReformaTexto": "DOF 17/12/2015",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Instituto Politécnico Nacional",
+      "publicacion": "1981-12-29",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Poder Judicial de la Federación",
+      "publicacion": "2024-12-20",
+      "ultimaReforma": "2025-11-28",
+      "ultimaReformaTexto": "DOF 28/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Seminario de Cultura Mexicana",
+      "publicacion": "1949-12-31",
+      "ultimaReforma": "2022-05-11",
+      "ultimaReformaTexto": "DOF 11/05/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Orgánica del Tribunal Federal de Justicia Administrativa",
+      "publicacion": "2016-07-18",
+      "ultimaReforma": "2025-10-16",
+      "ultimaReformaTexto": "DOF 16/10/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Conservar la Neutralidad del País",
+      "publicacion": "1939-11-10",
+      "ultimaReforma": "2018-06-21",
+      "ultimaReformaTexto": "DOF 21/06/2018",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Determinar el Valor de la Unidad de Medida y Actualización",
+      "publicacion": "2016-12-30",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para el Desarrollo de la Competitividad de la Micro, Pequeña y Mediana Empresa",
+      "publicacion": "2002-12-30",
+      "ultimaReforma": "2023-10-20",
+      "ultimaReformaTexto": "DOF 20/10/2023",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para el Diálogo, la Conciliación y la Paz Digna en Chiapas",
+      "publicacion": "1995-03-11",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para el Fomento de la Inversión en Infraestructura Estratégica para el Desarrollo con Bienestar",
+      "publicacion": "2026-04-09",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": "Nueva Ley"
+    },
+    {
+      "nombre": "LEY para el uso y protección de la denominación y del emblema de la Cruz Roja",
+      "publicacion": "2007-03-23",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Impulsar el Incremento Sostenido de la Productividad y la Competitividad de la Economía Nacional",
+      "publicacion": "2015-05-06",
+      "ultimaReforma": "2024-04-17",
+      "ultimaReformaTexto": "DOF 17/04/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para la Comprobación, Ajuste y Cómputo de Servicios de la Armada de México",
+      "publicacion": "2004-06-14",
+      "ultimaReforma": "2009-06-12",
+      "ultimaReformaTexto": "DOF 12/06/2009",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para la Comprobación, Ajuste y Cómputo de Servicios en el Ejército y Fuerza Aérea Mexicanos",
+      "publicacion": "2006-02-09",
+      "ultimaReforma": "2024-05-03",
+      "ultimaReformaTexto": "DOF 03/05/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para la Protección de Personas Defensoras de Derechos Humanos y Periodistas",
+      "publicacion": "2012-06-25",
+      "ultimaReforma": "2022-04-28",
+      "ultimaReformaTexto": "DOF 28/04/2022",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para la Transparencia, Prevención y Combate de Prácticas Indebidas en Materia de Contratación de Publicidad",
+      "publicacion": "2021-06-03",
+      "ultimaReforma": "2023-12-22",
+      "ultimaReformaTexto": "DOF 22/12/2023 Sentencia SCJN",
+      "avisos": "( Declaratoria de Invalidez de la Ley DOF 22/12/2023 )"
+    },
+    {
+      "nombre": "LEY para la Transparencia y Ordenamiento de los Servicios Financieros",
+      "publicacion": "2007-06-15",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Regular las Actividades de las Sociedades Cooperativas de Ahorro y Préstamo",
+      "publicacion": "2009-08-13",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Regular las Agrupaciones Financieras",
+      "publicacion": "2014-01-10",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Regular las Instituciones de Tecnología Financiera",
+      "publicacion": "2018-03-09",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY para Regular las Sociedades de Información Crediticia",
+      "publicacion": "2002-01-15",
+      "ultimaReforma": "2024-01-24",
+      "ultimaReformaTexto": "DOF 24/01/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que Aprueba la Adhesión de México al Convenio Constitutivo del Banco de Desarrollo del Caribe y su Ejecución",
+      "publicacion": "1982-01-05",
+      "ultimaReforma": "2014-12-29",
+      "ultimaReformaTexto": "DOF 29/12/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que Crea el Fondo de Garantía y Fomento para la Agricultura, Ganadería y Avicultura",
+      "publicacion": "1954-12-31",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que crea el Instituto Nacional de Bellas Artes y Literatura",
+      "publicacion": "1946-12-31",
+      "ultimaReforma": "2015-12-17",
+      "ultimaReformaTexto": "DOF 17/12/2015",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que crea la Agencia Espacial Mexicana",
+      "publicacion": "2010-07-30",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que crea la Universidad Autónoma Chapingo",
+      "publicacion": "1974-12-30",
+      "ultimaReforma": "1977-12-30",
+      "ultimaReformaTexto": "DOF 30/12/1977",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que Crea la Universidad del Ejército y Fuerza Aérea",
+      "publicacion": "1975-12-29",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que Declara Reservas Mineras Nacionales los Yacimientos de Uranio, Torio y las demás Substancias de las cuales se Obtengan Isótopos Hendibles que puedan Producir Energía Nuclear",
+      "publicacion": "1950-01-26",
+      "ultimaReforma": "1972-01-12",
+      "ultimaReformaTexto": "DOF 12/01/1972",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que Establece Bases para la Ejecución en México, por el Poder Ejecutivo Federal, del Convenio Constitutivo de la Asociación Internacional de Fomento",
+      "publicacion": "1960-12-31",
+      "ultimaReforma": "2025-06-06",
+      "ultimaReformaTexto": "DOF 06/06/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY que Establece Bases para la Ejecución en México, por el Poder Ejecutivo Federal, del Convenio Constitutivo del Banco Interamericano de Desarrollo",
+      "publicacion": "1959-12-19",
+      "ultimaReforma": "2014-12-29",
+      "ultimaReformaTexto": "DOF 29/12/2014",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria de la Fracción V del Artículo 76 de la Constitución General de la República",
+      "publicacion": "1978-12-29",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria de la fracción VI del artículo 76 de la Constitución Política de los Estados Unidos Mexicanos",
+      "publicacion": "2007-08-31",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria de la Fracción XIII Bis del Apartado B, del Artículo 123 de la Constitución Política de los Estados Unidos Mexicanos",
+      "publicacion": "1983-12-30",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria de la Fracción XVIII del Artículo 73 Constitucional, en lo que se Refiere a la Facultad del Congreso para Dictar Reglas para Determinar el Valor Relativo de la Moneda Extranjera",
+      "publicacion": "1982-12-27",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria de las Fracciones I y II del Artículo 105 de la Constitución Política de los Estados Unidos Mexicanos",
+      "publicacion": "1995-05-11",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria del Artículo 27 Constitucional en Materia Nuclear",
+      "publicacion": "1985-02-04",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria del Artículo 3o. de la Constitución Política de los Estados Unidos Mexicanos, en materia de Mejora Continua de la Educación",
+      "publicacion": "2019-09-30",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria del Artículo 5o. Constitucional, relativo al ejercicio de las profesiones en la Ciudad de México",
+      "publicacion": "1945-05-26",
+      "ultimaReforma": "2018-01-19",
+      "ultimaReformaTexto": "DOF 19/01/2018",
+      "avisos": "(Antes \"Ley Reglamentaria del Artículo 5o. Constitucional, relativo al ejercicio de las profesiones en el Distrito Federal\" )"
+    },
+    {
+      "nombre": "LEY Reglamentaria del artículo 6o., párrafo primero, de la Constitución Política de los Estados Unidos Mexicanos, en materia del Derecho de Réplica",
+      "publicacion": "2015-11-04",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Reglamentaria del Servicio Ferroviario",
+      "publicacion": "1995-05-12",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY sobre Cámaras Agrícolas, que en lo sucesivo se denominarán Asociaciones Agrícolas",
+      "publicacion": "1932-08-27",
+      "ultimaReforma": "2012-04-09",
+      "ultimaReformaTexto": "DOF 09/04/2012",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Sobre el Contrato de Seguro",
+      "publicacion": "1935-08-31",
+      "ultimaReforma": "2013-04-04",
+      "ultimaReformaTexto": "DOF 04/04/2013",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY sobre el Escudo, la Bandera y el Himno Nacionales",
+      "publicacion": "1984-02-08",
+      "ultimaReforma": "2025-07-21",
+      "ultimaReformaTexto": "DOF 21/07/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY Sobre la Aprobación de Tratados Internacionales en Materia Económica",
+      "publicacion": "2004-09-02",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY sobre la Celebración de Tratados",
+      "publicacion": "1992-01-02",
+      "ultimaReforma": "2025-11-14",
+      "ultimaReformaTexto": "DOF 14/11/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "LEY sobre Refugiados, Protección Complementaria y Asilo Político",
+      "publicacion": "2011-01-27",
+      "ultimaReforma": "2022-02-18",
+      "ultimaReformaTexto": "DOF 18/02/2022",
+      "avisos": "(Antes \"Ley sobre Refugiados y Protección Complementaria\" )"
+    },
+    {
+      "nombre": "ORDENANZA General de la Armada",
+      "publicacion": "1912-01-08",
+      "ultimaReforma": "2000-10-19",
+      "ultimaReformaTexto": "DOF 19/10/2000",
+      "avisos": "DOF 01 al 08/01/1912"
+    },
+    {
+      "nombre": "PRESUPUESTO de Egresos de la Federación para el Ejercicio Fiscal 2026",
+      "publicacion": "2025-11-21",
+      "ultimaReforma": "",
+      "ultimaReformaTexto": "Sin reforma",
+      "avisos": ""
+    },
+    {
+      "nombre": "REGLAMENTO de la Cámara de Diputados",
+      "publicacion": "2010-12-24",
+      "ultimaReforma": "2025-05-07",
+      "ultimaReformaTexto": "DOF 07/05/2025",
+      "avisos": ""
+    },
+    {
+      "nombre": "REGLAMENTO del Senado de la República",
+      "publicacion": "2010-06-04",
+      "ultimaReforma": "2024-12-06",
+      "ultimaReformaTexto": "DOF 06/12/2024",
+      "avisos": ""
+    },
+    {
+      "nombre": "REGLAMENTO para el Gobierno Interior del Congreso General de los Estados Unidos Mexicanos",
+      "publicacion": "1934-03-20",
+      "ultimaReforma": "2010-12-24",
+      "ultimaReformaTexto": "DOF 24/12/2010",
+      "avisos": ""
+    }
+  ],
+  "camaraActualizacionesVistas": [
+    "21/sep/2026|controversia constitucional 217/2025, sentencia.",
+    "11/sep/2026|accion de inconstitucionalidad 184/2024, sentencia.",
+    "10/sep/2026|controversia constitucional 245/2025, sentencia.",
+    "08/sep/2026|controversia constitucional 199/2025, sentencia.",
+    "07/sep/2026|accion de inconstitucionalidad 40/2025, sentencia.",
+    "01/sep/2026|accion de inconstitucionalidad 59/2025, sentencia.",
+    "28/ago/2026|accion de inconstitucionalidad 94/2025, sentencia.",
+    "25/ago/2026|accion de inconstitucionalidad 39/2025, sentencia.",
+    "24/ago/2026|controversia constitucional 284/2024, sentencia.",
+    "20/ago/2026|controversia constitucional 271/2025, sentencia.",
+    "19/ago/2026|accion de inconstitucionalidad 2/2026, sentencia.",
+    "18/ago/2026|accion de inconstitucionalidad 38/2025, sentencia.",
+    "11/ago/2026|accion de inconstitucionalidad 129/2025, sentencia.",
+    "07/ago/2026|accion de inconstitucionalidad 10/2025, sentencia.",
+    "04/ago/2026|accion de inconstitucionalidad 7/2026, sentencia.",
+    "03/ago/2026|accion de inconstitucionalidad 119/2022, sentencia.",
+    "31/jul/2026|accion de inconstitucionalidad 79/2025, sentencia.",
+    "30/jul/2026|controversia constitucional 374/2024, sentencia.",
+    "29/jul/2026|accion de inconstitucionalidad 81/2025 y su acumulada 88/2025, sentencia.",
+    "28/jul/2026|controversia constitucional 265/2025, sentencia.",
+    "27/jul/2026|accion de inconstitucionalidad 92/2025, sentencia.",
+    "24/jul/2026|accion de inconstitucionalidad 149/2024, sentencia.",
+    "23/jul/2026|accion de inconstitucionalidad 55/2025, sentencia.",
+    "22/jul/2026|declaratoria general de inconstitucionalidad 3/2025, sentencia. accion de inconstitucionalidad 68/2025, sentencia.",
+    "21/jul/2026|accion de inconstitucionalidad 5/2026, sentencia.",
+    "20/jul/2026|accion de inconstitucionalidad 10/2026, sentencia. accion de inconstitucionalidad 24/2026, sentencia.",
+    "17/jul/2026|controversia constitucional 124/2025, sentencia.",
+    "16/jul/2026|controversia constitucional 31/2025, sentencia. controversia constitucional 114/2025, sentencia.",
+    "15/jul/2026|accion de inconstitucionalidad 89/2025 y su acumulada 91/2025, sentencia. controversia constitucional 123/2025, sentencia.",
+    "14/jul/2026|declaratoria general de inconstitucionalidad 13/2025, sentencia. declaratoria general de inconstitucionalidad 15/2025, sentencia.",
+    "13/jul/2026|accion de inconstitucionalidad 145/2024, sentencia. controversia constitucional 67/2025, sentencia.",
+    "10/jul/2026|accion de inconstitucionalidad 169/2024, sentencia.",
+    "09/jul/2026|controversia constitucional 189/2022, sentencia.",
+    "08/jul/2026|accion de inconstitucionalidad 108/2025, sentencia.",
+    "07/jul/2026|accion de inconstitucionalidad 73/2024, sentencia.",
+    "06/jul/2026|controversia constitucional 95/2025, sentencia.",
+    "02/jul/2026|controversia constitucional 68/2025, sentencia.",
+    "30/jun/2026|accion de inconstitucionalidad 156/2024, sentencia.",
+    "29/jun/2026|controversia constitucional 216/2025, sentencia.",
+    "24/jun/2026|controversia constitucional 215/2025, sentencia.",
+    "23/jun/2026|controversia constitucional 173/2025, sentencia. accion de inconstitucionalidad 49/2025, votacion de la sentencia. controversia constitucional 115/2025, votacion de la sentencia.",
+    "22/jun/2026|controversia constitucional 42/2025, sentencia.",
+    "19/jun/2026|controversia constitucional 107/2025, sentencia.",
+    "18/jun/2026|controversia constitucional 52/2025, sentencia.",
+    "16/jun/2026|controversia constitucional 216/2024, sentencia.",
+    "15/jun/2026|accion de inconstitucionalidad 89/2024, sentencia.",
+    "11/jun/2026|controversia constitucional 113/2025, sentencia.",
+    "10/jun/2026|controversia constitucional 131/2025, sentencia.",
+    "09/jun/2026|l ey federal de procedimiento contencioso administrativo, se reforman los articulos 1o, parrafos primero y segundo; 2o; 3o, fracciones i, ii, incisos b) y c) y iii; 4o; 5o; 6o, parrafos tercero y cuarto; 7o, primer parrafo; 7o bis; 8o, fraccion i; 9o, fracciones i, iii y iv; 10, primer parrafo, fracciones ii, iii, iv y ultimo parrafo; 11; 12; 13, parrafos primero y segundo, fracciones ii y iii, cuarto, quinto y sexto parrafos; 14, fracciones i, iii, v en sus parrafos segundo y cuarto, vii y viii en sus parrafos segundo, tercero, cuarto, quinto y sexto; 15, primer parrafo, fracciones vi, vii, viii, ix, parrafos segundo, tercero, cuarto y quinto; 16, fracciones i, ii y iii, parrafo segundo; 17, parrafos segundo, tercero y cuarto; 18; 19, primer parrafo, segundo parrafo que pasa a ser sexto y tercer parrafo que pasa a ser septimo; 20, primer parrafo, fracciones ii, iii, v y vii; 21, primer parrafo, fracciones i, ii, iii, iv y ultimo parrafo; 22, tercer parrafo; 23; 24, parrafos primero y cuarto; 24 bis, inciso a) de la fraccion i y tercer parrafo; 25; 26; 27; 28, numerales 1 y 2 del segundo parrafo del inciso a) e incisos b) y d) de la fraccion ii, incisos b), c) y d) de la fraccion iii, fracciones iv y v; 28 bis, primer parrafo, fraccion ii y ultimo parrafo; 29, ultimo parrafo; 30, parrafos primero y tercero, cuarto parrafo que pasa a ser sexto parrafo; 31, ultimo parrafo; 32; 33, parrafos primero, tercero y cuarto; 34; 35; 36; 37; 38, fracciones i y ii; 39, cuarto parrafo; 40, primer parrafo; 41; 42; 43, fracciones i, ii, iii, iv, v, y parrafos segundo, tercero y cuarto; 44; 45; 46, fraccion i; 47, primer parrafo; 48, inciso b) de la fraccion i, primer y segundo parrafos del inciso a), incisos b), c) y d) de la fraccion ii; 49; 50, parrafos primero, segundo, cuarto, quinto y sexto; 50-a, primer parrafo; 51, fracciones i, ii, iii, segundo parrafo, incisos a), b), c), d) y e) y cuarto parrafo; 52, incisos a), b), c) y d) de la fraccion v y, parrafos tercero, cuarto y sexto; 53, ultimo parrafo; 55; 56; 57, parrafo primero, inciso b) en sus parrafos segundo, tercero y cuarto, y primer parrafo del inciso c); 58, en su fraccion i, y parrafo segundo, e incisos a), b), c) en su primer parrafo y d), fraccion ii en su primer parrafo, parrafos primero y tercero del inciso b), parrafo segundo del inciso c), incisos e) y f), fraccion iii, parrafos primero, tercero, quinto y sexto, fraccion iv, y ultimo parrafo; 58-b; 58-c; 58-g; 58-h; 58-j; 58-k, segundo parrafo; 58-l, primer parrafo; 58-m; 58-n, fracciones ii y iii; 58-o, segundo parrafo; 58-q, segundo parrafo; 58-r, parrafos segundo y tercero; 58-s, primer parrafo; 58-2, parrafos primero y cuarto; 58-3, fracciones iii y vi y segundo parrafo; 58-4, primer parrafo; 58-5; 58-6; 58-7, parrafos segundo y cuarto; 58-8, primer parrafo; 58-9; 58-10; 58-12; 58-13; 58-15; 58-16, primer parrafo; 58-17, parrafos tercero y quinto; 58-18, ultimo parrafo; 58-19, parrafos primero y tercero; 58-20; 58-21, primer parrafo; 58-22, 58-23; 58-25; 58-28, incisos a), b), c) y d) de la fraccion iv y segundo parrafo; 59; 60; 61; 62, parrafos primero y segundo; 63, primer parrafo, fracciones i en su primer parrafo, ii, iii en su primer parrafo, iv y parrafos tercero y cuarto; 64; 65; 66, parrafos primero y segundo; 67, fracciones i y ii, parrafos tercero y cuarto; 68; 72; 73, parrafos primero, segundo, tercero y quinto; 75; 77, primer parrafo; 78, parrafos segundo, tercero y cuarto y, 79, segundo parrafo; se adicionan los articulos 6o bis; 17 bis; un tercer parrafo al articulo 18; un segundo, tercer, cuarto y quinto parrafos al articulo 19, recorriendose en su orden los subsecuentes; 21 bis; un segundo parrafo y numerales 1 y 2 a la fraccion i del articulo 28; un cuarto y quinto parrafos al articulo 30; un quinto parrafo al articulo 39; un inciso e) a la fraccion ii del articulo 48; un quinto parrafo al articulo 49; un tercer parrafo al articulo 56, recorriendose en su orden el subsecuente; un segundo parrafo al articulo 58-1; la fraccion vi al articulo 58-2, y un parrafo segundo a las fracciones iii y v del articulo 63, respectivamente; y se deroga el inciso b), fraccion i del articulo 28. reformas constitucionales y legales aprobadas por el congreso de la union durante la lxvi legislatura, actualizadas al 9 de junio de 2026. reglamento de la ley de aeropuertos, se reforman los articulos 94, parrafos primero y tercero; 95, parrafo primero y su fraccion i, incisos a y b; 96; 96 bis, parrafo primero, fracciones i, iii, vii, parrafos primero, tercero y su inciso a, y cuarto, y parrafo segundo; 99, parrafo tercero y sus fracciones i, ii, inciso a, y iii; 100, parrafo primero y sus fracciones i, parrafos primero, inciso b, y segundo, y ii; 101, y 103, y se adicionan los articulos 94, los parrafos cuarto y quinto, y 95, parrafo segundo.",
+    "08/jun/2026|accion de inconstitucionalidad 53/2025, sentencia.",
+    "05/jun/2026|reglamento interior de la auditoria superior de la federacion, se expide. reglamento interior de la auditoria superior de la federacion, publicado en el diario oficial de la federacion el 1 de abril de 2026, se abroga. accion de inconstitucionalidad 157/2023, sentencia.",
+    "03/jun/2026|accion de inconstitucionalidad 59/2024 y su acumulada 61/2024, sentencia.",
+    "02/jun/2026|constitucion politica de los estados unidos mexicanos, se reforman los articulos 35, fraccion ix, parrafo segundo, numeral 3o.; 94, parrafos tercero, cuarto y quinto; 96, parrafo primero, fracciones i, ii, incisos b) y c), iii, parrafo primero, y iv, y parrafos segundo y tercero; 98, parrafos primero y tercero; 100, parrafos noveno y decimo; 116, parrafo segundo, fraccion iii, parrafo cuarto, y 122, apartado a, fraccion iv, parrafo primero, y se adicionan a los articulos 96, los parrafos noveno, decimo y decimo primero; 98, el parrafo cuarto, y 122, apartado a, fraccion iv, el parrafo segundo y, se recorren los subsecuentes en su orden. se reforman los transitorios segundo, parrafo cuarto; cuarto, parrafos primero, tercero y sexto, y octavo, parrafo segundo del “decreto por el que se reforman, adicionan y derogan diversas disposiciones de la constitucion politica de los estados unidos mexicanos, en materia de reforma del poder judicial”, publicado en el diario oficial de la federacion el 15 de septiembre de 2024. constitucion politica de los estados unidos mexicanos, se adiciona un inciso d) al parrafo tercero de la base vi del articulo 41. ley general de instituciones y procedimientos electorales, se reforma el articulo 42, numeral 2, y se adicionan el titulo segundo bis al libro cuarto, con los articulos 200 bis, 200 ter y 200 quater. reformas constitucionales por decreto en orden cronologico, actualizadas al 2 de junio de 2026. reformas constitucionales por articulo, actualizadas al 2 de junio de 2026. reformas constitucionales por periodo presidencial, actualizadas al 2 de junio de 2026. accion de inconstitucionalidad 90/2025, sentencia.",
+    "27/may/2026|controversia constitucional 114/2024, sentencia.",
+    "26/may/2026|accion de inconstitucionalidad 16/2025, sentencia.",
+    "25/may/2026|accion de inconstitucionalidad 20/2025, sentencia.",
+    "22/may/2026|ley federal de cine y el audiovisual, se expide nueva ley. ley federal de cinematografia, publicada en el diario oficial de la federacion el 29 de diciembre de 1992, se abroga. controversia constitucional 104/2025, sentencia.",
+    "21/may/2026|controversia constitucional 122/2025, sentencia.",
+    "20/may/2026|accion de inconstitucionalidad 48/2025, sentencia.",
+    "19/may/2026|controversia constitucional 29/2025, sentencia.",
+    "18/may/2026|accion de inconstitucionalidad 155/2024, sentencia.",
+    "15/may/2026|ley de fiscalizacion y rendicion de cuentas de la federacion, fe de erratas al articulo 65.",
+    "14/may/2026|ley de fiscalizacion y rendicion de cuentas de la federacion, se reforman los articulos 10, fraccion i; 17, parrafo segundo de la fraccion xi; 22; 40, fracciones iv, vi; 41; 59, primer parrafo; 61, primer parrafo; 62; 65; 67, primer parrafo; 71, primer parrafo, 87; 89, ultimo parrafo; 90; 91, primer parrafo; 92, primer parrafo; 94, segundo parrafo; 95; 100, primer parrafo; 102; 104, fraccion iii, se adicionan el articulo 12 bis; la fraccion xi bis al articulo 17; un segundo parrafo al articulo 41; un tercer, cuarto y quinto parrafos al articulo 47; un titulo cuarto bis que comprende el articulo 66 bis; y se deroga la fraccion xxiii del articulo 89. ley general de contabilidad gubernamental, se adiciona un parrafo segundo, recorriendose los subsecuentes, al articulo 67. ley federal del trabajo, se reforman los articulos 304; 307; 308, parrafo primero; 309; 310; y la denominacion del capitulo xi del titulo sexto; y se adiciona un articulo 305 bis. ley federal del derecho de autor, se reforman los articulos 10; 47, fraccion i; 73; 74; 75; 87; 102; 116; 118, fracciones v, vi y su segundo parrafo; 121; 163, fraccion ix; 189, primer parrafo; 217; 218; 231, fraccion ii; 232, fracciones i y ii; y la denominacion del capitulo ii del titulo xi; y se adicionan los articulos 9o. bis; 118, con una fraccion vii; 120, con un segundo parrafo; 173, con una fraccion v, recorriendose la actual en su orden, y 217 bis. accion de inconstitucionalidad 77/2025, sentencia.",
+    "12/may/2026|accion de inconstitucionalidad 66/2025, sentencia.",
+    "11/may/2026|accion de inconstitucionalidad 76/2024, sentencia.",
+    "08/may/2026|reglamento de la ley para el fomento de la inversion en infraestructura estrategica para el desarrollo con bienestar, se expide nuevo reglamento. accion de inconstitucionalidad 35/2025, sentencia.",
+    "07/may/2026|ley organica de la administracion publica federal, se adiciona una fraccion i sexies al articulo 36. accion de inconstitucionalidad 86/2024, sentencia.",
+    "06/may/2026|constitucion politica de los estados unidos mexicanos, se reforma el parrafo primero del inciso a) del parrafo primero de la fraccion xxi del articulo 73.",
+    "04/may/2026|controversia constitucional 36/2025, sentencia. declaratoria general de inconstitucionalidad 1/2025, sentencia.",
+    "01/may/2026|ley federal del trabajo, se reforman los articulos 59; 61; 66; 68; 69 y 71, segundo parrafo; se adicionan un segundo parrafo al articulo 58; y la fraccion xxxiv al articulo 132 y la fraccion iv bis al articulo 994; y se deroga el segundo parrafo del articulo 67. ley organica de la administracion publica federal, se reforma el articulo 40, fraccion i. ley de comercio exterior, se reforma el articulo 15, fracciones iv y vi. ley federal del trabajo, se adiciona el articulo 283 quater.",
+    "29/abr/2026|ley de vivienda, se reforman los articulos 1, parrafo primero; 2; 3, parrafo primero; 4, fracciones ix, xii y xiii; 5; 6, fracciones i y ii; 7, parrafo primero; 16, fracciones iv y viii; 19, fraccion i; 23, fraccion ix; 34, fraccion iv; 48, parrafo primero; 56, parrafo primero; 62, parrafo primero, y fracciones i y ii; 73; 77, parrafo primero; y 82, fracciones ii y iii; se adicionan las fracciones i a vii al articulo 2, y un segundo, tercer y cuarto parrafos al articulo 56.",
+    "28/abr/2026|reglamento de la ley federal de proteccion a la propiedad industrial, se expide nuevo reglamento. reglamento de la ley de la propiedad industrial, publicado en el diario oficial de la federacion el 23 de noviembre de 1994, se abroga. controversia constitucional 319/2024, sentencia.",
+    "27/abr/2026|accion de inconstitucionalidad 61/2025, sentencia.",
+    "24/abr/2026|accion de inconstitucionalidad 129/2024, sentencia.",
+    "23/abr/2026|constitucion politica de los estados unidos mexicanos, se reforman los articulos 115, fraccion i, parrafo primero, y 116, fraccion ii, parrafo segundo, y se adiciona al articulo 134, un parrafo cuarto, recorriendose los subsecuentes en su orden. ley de los impuestos generales de importacion y de exportacion, decreto por el que se modifican diversas fracciones arancelarias de la tarifa de la ley. accion de inconstitucionalidad 1/2024, sentencia.",
+    "22/abr/2026|accion de inconstitucionalidad 143/2023, sentencia. declaratoria general de inconstitucionalidad 3/2024, sentencia. declaratoria general de inconstitucionalidad 6/2025, sentencia.",
+    "21/abr/2026|accion de inconstitucionalidad 19/2025, sentencia.",
+    "20/abr/2026|controversia constitucional 120/2025, sentencia.",
+    "17/abr/2026|controversia constitucional 18/2025, sentencia.",
+    "16/abr/2026|accion de inconstitucionalidad 25/2025, sentencia.",
+    "14/abr/2026|accion de inconstitucionalidad 29/2025, sentencia.",
+    "13/abr/2026|accion de inconstitucionalidad 116/2025 y su acumulada 118/2025, sentencia.",
+    "10/abr/2026|constitucion politica de los estados unidos mexicanos, se reforman del parrafo segundo, las fracciones ii y iii, y se adicionan a la fraccion iv del mismo parrafo segundo, los parrafos segundo, tercero y cuarto del articulo 127. accion de inconstitucionalidad 47/2025, sentencia.",
+    "09/abr/2026|ley para el fomento de la inversion en infraestructura estrategica para el desarrollo con bienestar, se expide nueva ley. ley federal de presupuesto y responsabilidad hacendaria, se reforman los articulos 2, parrafo primero, fraccion xxiv bis; 16, parrafo tercero; 17, parrafos octavo y noveno; 21, parrafo primero, fraccion iii, inciso a), parrafo segundo; 32, parrafos primero, segundo, quinto, sexto y septimo; 50, parrafos primero, tercero, cuarto y sexto, y 108, parrafo primero; y se adicionan los articulos 2, parrafo primero, con una fraccion xxxix bis; 9 bis; 35 bis, y 54, con un parrafo quinto. codigo fiscal de la federacion, se reforma el articulo 141, parrafos primero y segundo. accion de inconstitucionalidad 82/2025 y sus acumuladas 83/2025, 85/2025, 86/2025 y 87/2025, sentencia.",
+    "06/abr/2026|controversia constitucional 41/2025, sentencia.",
+    "03/abr/2026|ley federal de proteccion a la propiedad industrial, se reforman los articulos 2, fraccion v; 4, fraccion vi; 5, fracciones ii, iii, viii, x, xi, xiv, xvii, xx, incisos a), c), d), e) y f), xxi, xxvii y xxviii; 7, parrafo primero, y sus fracciones ii, iii y iv, y parrafo segundo; 9; 10; 14, parrafo primero; 16; 17, parrafo primero; 20, parrafo primero; 24, parrafos primero y tercero; 25; 26; 27, parrafo primero y sus fracciones i, ii, iii, iv y v, y parrafo segundo; 30; 31, fracciones i y ii; 32, parrafo primero; 33, fracciones ii y iii; 34; 35; 36, parrafo primero; 37; 38, parrafo primero; 39, parrafo primero; 42, parrafos primero, segundo y tercero; 46; 47, fraccion viii, y parrafo segundo; 49, inciso d) de la fraccion i; 52; 56; 57, fracciones i, ii, vi, vii y viii; 60; 64; 67, fracciones ii y iii; 68, parrafo primero; 69, fracciones i y ii; 74, parrafo primero; 76; 79, parrafo primero; 82; 83; 84, fraccion iv; 85, parrafo segundo; 89; 90, parrafo primero y sus fracciones i, parrafo segundo de la fraccion ii, primer parrafo de la fraccion iv, y v, y parrafo segundo; 92; 94, fracciones i, ii y iv; 96, fracciones iii y vi; 98, fraccion ii; 99; 100, parrafos primero y segundo; 101, 102, parrafos primero y tercero; 103; 106, fraccion iii e inciso e) de la fraccion vi; 107; 108, parrafo primero; 109; 110, parrafo segundo; 111; 113, parrafo segundo; 114, parrafos primero y tercero; 117; parrafo segundo; 119, parrafo primero y la fraccion iii del segundo parrafo; 121; 122, parrafo segundo; 125, fraccion ii; 129, parrafo primero; 130, fraccion ii, y parrafo segundo; 132, fraccion ii; 133; 134, parrafo primero; 137; 138, parrafos segundo y tercero; 140; 141, fraccion i; 143; 144; 146, parrafo segundo; 148, parrafos primero y segundo; 149, parrafo primero; 150; 151; 153, parrafo tercero; 162, parrafo tercero; 163, fracciones i en su primer parrafo y ii; 165, parrafo primero; 167, parrafo primero; 169; 172, fraccion vii y actual, fraccion viii; 173, fraccion i y parrafo segundo de la fraccion x, parrafo segundo de la fraccion xi, xiv, incisos a y b, y parrafo segundo de la fraccion xvi, parrafo segundo de la fraccion xvii, xviii, xix, xxi y parrafo segundo de la fraccion xxii; 174, fraccion ii; 175, fracciones i y primer parrafo de la fraccion ii; 178, parrafo segundo; 181, fracciones v y x; 183, parrafo segundo; 186, fracciones ix y x; 188, 192, parrafo primero, y sus fracciones i, ii y iii; 194, fraccion i; 195, parrafos segundo y tercero; 196, parrafo segundo; 214, fracciones i, vi y viii; 217, parrafos primero y segundo; 221, parrafo primero; 223, parrafos primero y segundo; 225; 226, parrafos primero y tercero; 227, parrafo primero; 228, parrafo segundo de la fraccion i; 229; 230, parrafo segundo; 231, fraccion iv; 233, parrafos segundo y quinto; 234, parrafo primero; 235; 237, parrafos primero, segundo, cuarto y quinto; 239; 240, parrafo segundo; 241, fraccion i; 242; 243; 244; 245, parrafos primero, tercero y cuarto; 246, fracciones i, ii, iii, v, vi, vii, y parrafos segundo y tercero; 247; 248; 249; 250, parrafos primero y tercero; 251; 253; 254, parrafo primero; 258, parrafo segundo de la fraccion i y fracciones iii y v; 261; 262; 268, parrafo segundo; 274, fracciones i, ii y vi; 276, fraccion vi, y parrafo segundo; 278; 279, parrafos primero y tercero; 280, parrafos primero, segundo y cuarto; 281, fraccion i; 282, parrafo primero; 283; 286; 287; 290; 291; 292, parrafo primero y su fraccion i; 293, parrafo primero; 294, parrafo primero; 295; 300; 301, parrafo segundo; 302; 304; 307; 308; 309; 312, parrafo primero; 316, parrafo primero y su fraccion i; 318, parrafos segundo y tercero; 319, fraccion i; 320, parrafo primero; 321; 323; 324, fraccion i; 325; 326, parrafo primero; 330, fraccion i; 331, parrafo tercero y cuarto; 332; 333, parrafo segundo; 334, parrafos segundo y tercero; 335, parrafo primero y su fraccion ii; 336, parrafo primero, fraccion i, y parrafo segundo; 338; 339, parrafo primero y su fraccion i; 340; 342, parrafos primero y tercero; 343, parrafo primero y su fraccion i; 344, fracciones v y vii, y parrafos segundo, tercero y cuarto; 345, parrafo primero, fraccion i y parrafos segundo y tercero de la fraccion ii; 346, parrafo primero; 349, parrafo primero; 350; 353; 356, parrafo tercero; 357, parrafo primero; 359; 360, fracciones iii, v, vi, viii, ix y x; 361; 362, parrafo primero; 365, parrafos primero y tercero; 367, parrafo segundo de la fraccion iv; 368, fraccion i; 369; 372; 374; 375, parrafos segundo y tercero; 376; 377, parrafo segundo; 386, incisos a), b), c), y d) de la fraccion ii, v, vi, vii, viii, ix, x, xi, xii, xiii, xiv, xv, xx, xxv, xxviii y xxxii; 388, parrafo segundo; 392, fracciones ii y iii, y parrafo tercero; 394; 395; 396, parrafos primero y segundo; 397, parrafos primero, segundo y sus fracciones ii, iii y iv, y parrafo tercero; 398, parrafo primero; 402, parrafo segundo de la fraccion i, fracciones iii, iv, v y vi, parrafo primero de la fraccion vii, y parrafos primero y tercero de la fraccion viii; 404, parrafo primero; 406; 407, parrafos primero y segundo; 409, parrafo primero, y 410, parrafo primero; se adicionan el inciso g) a la fraccion xx, y las fracciones xxxii bis y xxxii ter al articulo 5; 40 bis; un parrafo quinto al articulo 42; un parrafo segundo al articulo 79; 105 bis; un parrafo tercero y se recorre en su orden el subsecuente al articulo 106; 111 bis; 113 bis; 136 bis; los parrafos segundo y tercero al articulo 139; las fracciones viii, ix, y x y se recorre en su orden el subsecuente al articulo 172; las fracciones i bis y xxiii al articulo 173; un parrafo segundo al articulo 209; un parrafo segundo al articulo 214; un parrafo segundo y se recorre en su orden el subsecuente al articulo 225; un parrafo tercero a la fraccion i, una fraccion ii, y se recorre en su orden el subsecuente al articulo 228; 229 bis; parrafos sexto y septimo al articulo 237; parrafo tercero al articulo 240; 257 bis; 257 ter; un parrafo tercero al articulo 301; el parrafo cuarto al articulo 318; un titulo quinto bis, el cual comprende los capitulos i, con su articulo 327 bis, ii, con su articulo 327 ter y iii, con su articulo 327 quater; un parrafo segundo al articulo 328; un inciso e) a la fraccion ii y un parrafo segundo, recorriendose en su orden el subsecuente al articulo 386; y se derogan el parrafo segundo al articulo 135; la fraccion viii del parrafo primero al articulo 154; la fraccion viii del parrafo primero al articulo 155; la fraccion vi del parrafo primero al articulo 156; la fraccion ii al parrafo primero del articulo 157; y 203.",
+    "02/abr/2026|reglamento de la ley de ascensos de la armada de mexico, se reforman los articulos 5, fracciones i, iii, iv, vi, viii, xi, xii, xiii bis, xiv, xvi, xvii, xvii bis y xviii; 14; 18, primer parrafo, fracciones i, ii y iii; 19, fracciones i, ii, iii y segundo parrafo; 20; 21; 23, fracciones i, iv y la v se recorre en su orden para ser vi; se modifica la denominacion de la seccion tercera, del capitulo unico, del titulo tercero; 26, primer parrafo y fraccion ii; 27, fraccion vi, y se recorre la fraccion vii para pasar a ser la faccion viii; 29, fraccion ii; se modifica la denominacion del capitulo i, del titulo cuarto; 30; 31, primer parrafo; 32, primer parrafo; 33; 34; 35; 36; 37, primer parrafo; 43 bis, primer parrafo y fraccion i; se modifica la denominacion del capitulo ii, del titulo cuarto; 54; 55; 57, primer parrafo; 61, parrafos segundo, tercero, cuarto y quinto; 63, primer parrafo; 68, 69; 70; 77; 78; 81; 82; 85; 86; 88; 89; 90; 94; 96; 97; 102; 104, primer parrafo; 106, segundo parrafo; 106 bis; 108; 109, primer y segundo parrafo; 110, primer parrafo; 111, primer y segundo parrafo; 113, primer parrafo; 114, primer parrafo y tabla; 115, primer parrafo; 116; 118, primer parrafo; 119, primer parrafo y tabla; 120, fraccion i; 124; 125; 126; 128; 130; 132, primer parrafo y fracciones i, ii, iii, vi, x, xii y xiii; 134; y 135, y se adicionan al articulo 5, las fracciones i bis y i ter, el 16 bis; al 23, la fraccion v; al 27 la fraccion vii; al 110, un segundo parrafo; al 114, un segundo parrafo; al 115, un segundo parrafo, y al 119, un segundo parrafo, y se derogan de los articulos 63, la tabla; 110, las tablas y parrafos segundo y tercero; 111, las tablas y parrafo segundo; y del 115, la tabla.",
+    "01/abr/2026|reglamento interior de la auditoria superior de la federacion, se expide nuevo reglamento. reglamento interior de la auditoria superior de la federacion, publicado en el diario oficial de la federacion el 20 de enero de 2017, se abroga. controversia constitucional 34/2025, sentencia.",
+    "31/mar/2026|accion de inconstitucionalidad 12/2025, sentencia.",
+    "30/mar/2026|accion de inconstitucionalidad 179/2024, sentencia.",
+    "27/mar/2026|reglamento de la ley de adquisiciones, arrendamientos y servicios del sector publico, se reforma el articulo 45. reglamento de la ley federal para la prevencion e identificacion de operaciones con recursos de procedencia ilicita, se reforman los articulos 1, segundo parrafo; 2, primer parrafo, fraccion ii, y las fracciones iii, iv y v se recorren en su numeracion para ser las fracciones vi, vii y viii; 3, fracciones i, iii, iv, v; 4, fracciones i, ii, iii, iv, v, vii y viii; 5, primer y segundo parrafo; 6, primer parrafo; 7, primer parrafo; 8; 9; 10; 12; 13; 14; 15; 16, segundo parrafo, fraccion ii, asi como los parrafos tercero, septimo y octavo; 17, tercer parrafo; 19; 20, primer parrafo; 22, primer parrafo, fracciones i, primer parrafo y ii, primer parrafo; 23; 24; 25; 26; 27; 29; 33; 34; 35, segundo parrafo, fraccion iv y v; 37; 38, segundo parrafo; 39, primer parrafo; 41, primer parrafo, fracciones i y ii; 42, fracciones i y ii; 45; 46; 49; 50, primer parrafo, fraccion i; 51; 52; 53, primer parrafo; 54; 55; 56 y 58; se adicionan en los articulos 2, las fracciones iii, iv y v; al 3, las fracciones iii bis, iv bis, vi y vii; al articulo 4, las fracciones iii, segundo parrafo, ix, x y xi; al 6, el tercer parrafo; al 7, el segundo y tercer parrafo; 7 bis; 10 bis; 12 bis; 21 bis; 31 bis; 33 bis; al articulo 41, la fraccion iii; el capitulo sexto bis “de las personas politicamente expuestas” con los articulos 45 bis, 45 ter, 45 quater y 45 quinquies, y 55 bis; se derogan en los articulos 2, la fraccion i; 17, el primer y segundo parrafo; 22, de la fraccion i, el segundo parrafo y fraccion ii, segundo parrafo. accion de inconstitucionalidad 56/2025, sentencia.",
+    "26/mar/2026|controversia constitucional 105/2025, sentencia.",
+    "25/mar/2026|accion de inconstitucionalidad 194/2024, sentencia.",
+    "24/mar/2026|controversia constitucional 533/2023, sentencia.",
+    "23/mar/2026|controversia constitucional 316/2023, sentencia.",
+    "20/mar/2026|reglamento de la ley de educacion militar del ejercito y fuerza aerea mexicanos, se reforman los articulos 1; 2; 3, parrafo primero y su fraccion iv; 6; 7; 9; 11; 12; 13; 14; 15, parrafo primero y sus fracciones i y ii; 16; 17; 18, parrafo primero; 19, parrafo primero; 20; 21; 23, parrafo primero y su fraccion x; 24; 25; 26, parrafo primero; 29; 30, parrafo primero; 31; 33, fracciones i, ii, iii y iv; 34; 35; 36; 37, parrafo primero y sus fracciones vi, xii y xiii; 38; 39, parrafo primero; 40; 41, parrafo primero; 44; 45; 46, fracciones ii, iii, y iv; 47; 51; 51 bis, parrafo segundo; 54, fraccion iii; 55; 58; 60; 63, parrafo segundo; 65; 66; 67; 68; 70; 72; 74; 75, parrafo primero y sus fracciones i y ii; 77; 79; 82; 89, fraccion iii; 95, parrafos primero y segundo; 96; 98, parrafo primero y su fraccion ii; 101, parrafos primero, segundo y tercero; 103; 104; 106; 107; 108; 109, parrafos segundo y tercero; 110; 111; 114, parrafo primero; 115; 116; 117, fracciones i y iii; 124; 125; 129; 130; 134; 135; 136, parrafo primero y sus fracciones i y ii; 137; 138; 139; 140, parrafo primero, fracciones ii, v bis, parrafo primero, inciso b), parrafo segundo, numeral 1, y parrafo segundo, viii, x, xi, xvi, inciso b), numeral 3, y xvii, y parrafo segundo; 140 bis; 141; 143 bis, parrafo primero; 143 ter, parrafo primero y su fraccion v; 156; 161; 164, parrafo primero; 167; 171 y 173, asi como la denominacion del reglamento; se adicionan los articulos 37, fracciones xiv, xv, xvi y xvii, y 152, parrafo segundo, y se derogan los articulos 3, fracciones i, ii y vi, y 132. reglamento de la ley del instituto de seguridad social para las fuerzas armadas mexicanas, se reforman los articulos 2; 3; 4; 5; 6; 7; 8; 9, parrafo segundo; 10; 11; 12; 13; 14; 15; 17; 18; 19; 20; 21; 24, parrafo primero y sus fracciones ii, incisos a, parrafo primero y su numeral 4, b, parrafo primero, c, parrafo primero, y iii, inciso c; 25, parrafo primero; 26, parrafos primero, fracciones i y ii, segundo y tercero; 27; 28; 30; 31; 32, parrafo primero, fracciones ii, iii y iv; 33, parrafo primero y sus fracciones ii y iii; 34; 36; 37; 38; 40; 41, parrafo primero, fraccion i, parrafo primero y sus incisos a, b y c; 42; 43; 44; 45; 46; 47; 48; 49, parrafo segundo; 51; 52, parrafo segundo; 53, parrafo primero; 54; 55; 56, parrafos primero y segundo; 57; 58; 59; 60; 61; 62, parrafo segundo; 63; 64, parrafos segundo y tercero; 66; 68; 69, parrafos segundo y tercero; 70; 73; 75, segundo parrafo; 77; 79, parrafo segundo; 80; 83, parrafo segundo; 84, parrafos segundo y tercero; 86; 88, fraccion ii; 89, fraccion i; 90; 93, parrafos primero y segundo, y 94. reglamento de la ley de ascensos y recompensas del ejercito y fuerza aerea mexicanos, se reforman los articulos 1; 2; 4; 5; 7, fracciones i, ii, iii y iv; 8, fracciones ii, incisos a, b y c, y iii; 11; 12; 13; 14, parrafo primero y sus fracciones ii, iii, v y vi; 16; 18, fracciones i, ii, iii y iv; 19; 23, parrafo primero, fracciones i, ii, parrafo primero, y iv; 24; 25, parrafo primero y sus fracciones i, segundo parrafo y su inciso c, y ii, parrafo segundo y sus incisos a, parrafo primero, y b, parrafos segundo y tercero; 27, parrafo primero y su fraccion ii; 28, fraccion ii; 29; 30; 31; 32; 33; 34, fracciones i y ii; 35; 36, fraccion i, parrafo primero; 37; 40; 42, fracciones vi y ix; 43, parrafo primero, fracciones i, parrafos primero y segundo, ii, iii, iv y vi; 44, parrafo primero y su fraccion ii; 45; 47; 48; 49; 53; 54; 55; 56; 57; 58; 59; 60; 63, parrafo primero y su fraccion ii; 64; 65; 66; 67; 69, parrafo segundo; 70; 71; 72; 74; 75; 76; 79; 81; 82; 83; 84; 85; 86, fracciones ii, iii, iv, viii, ix, x y xi; 87; 88; 91; 92, parrafo primero, fraccion i, incisos a, subincisos a, b y c, b, parrafo segundo, c, subincisos b y c, parrafo segundo, y d, parrafo segundo, y ii, incisos a, parrafo segundo, b, subinciso a, c, parrafo segundo, d parrafo segundo, y e, parrafo segundo, y ultimo parrafo; 93, parrafo primero, fracciones i, incisos a, parrafo segundo, b, parrafo segundo, d, parrafo segundo y sus subincisos d y e, y parrafo tercero, y e, parrafo segundo, y ii, parrafo primero, inciso a, parrafo segundo, b, parrafos segundo y tercero, d, parrafo primero, subincisos a y b, y parrafo segundo; 94, fracciones i, iii, incisos a, b, subinciso d, f, subinciso f, y g, subinciso d, iv, inciso k, parrafo primero y sus subincisos a, numerales 2 y 3, y b, numerales 1 y 4, v y vi; 95, parrafo primero y su fraccion i; 96, fracciones ii y iv; 97, parrafo primero; 98; 99; 100, 101, parrafo primero; 102, parrafo primero y su fraccion iv; 103; 104, parrafo primero; 105; 107; 109; 110, fracciones ii, inciso b, iii y iv; 111, fracciones i y iii; 112, parrafo primero y sus fracciones i, iii y iv, y parrafo segundo; 113; 114; 115; 116, fracciones i, iv y v; 117; 118; 119, parrafos primero, fracciones i, ii y iv, y segundo; 120; 121, parrafo primero y sus fracciones i, iv y ix, y segundo parrafo; 122, parrafos primero y segundo; 123, parrafo primero y sus fracciones i, inciso b, ii, inciso c, iii, inciso d, y iv, inciso c; 127, fraccion ii; 128, parrafo primero; 132, parrafo primero; 133; 134, fraccion i; 135; 136, fracciones i, ii, iii y iv; 137; 138, parrafo primero y su fraccion i; 139; 140; 142; 144; 145; 148 y 149, asi como las denominaciones del reglamento y de las secciones tercera y octava del capitulo iv del titulo segundo; se adicionan los articulos 61 bis; 94, fraccion iv, inciso j; 116 bis; 116 ter y 116 quater, y se deroga el articulo 62 y 94, fraccion iv, inciso k. controversia constitucional 55/2025, sentencia.",
+    "19/mar/2026|accion de inconstitucionalidad 14/2025, sentencia.",
+    "18/mar/2026|accion de inconstitucionalidad 9/2025, sentencia.",
+    "17/mar/2026|accion de inconstitucionalidad 41/2025, sentencia.",
+    "13/mar/2026|codigo penal federal, se reforman los articulos 260 y 266 bis, primer parrafo. controversia constitucional 59/2025, sentencia.",
+    "11/mar/2026|accion de inconstitucionalidad 183/2024, sentencia.",
+    "04/mar/2026|controversia constitucional 126/2025, sentencia.",
+    "03/mar/2026|constitucion politica de los estados unidos mexicanos, se reforman las fracciones iv y xi del apartado a, del articulo 123. compilacion leyfed, version para descarga, actualizada al 3 de marzo de 2026. controversia constitucional 127/2025, sentencia.",
+    "02/mar/2026|controversia constitucional 118/2025, sentencia.",
+    "27/feb/2026|manual que regula las remuneraciones para las y los diputados federales, personal de mando y homologos de la camara de diputados, de la unidad de evaluacion y control de la comision de vigilancia de la auditoria superior de la federacion y del canal de television del congreso general de los estados unidos mexicanos, para el ejercicio fiscal 2026, se expide. controversia constitucional 99/2025, sentencia.",
+    "26/feb/2026|controversia constitucional 115/2025, sentencia.",
+    "25/feb/2026|accion de inconstitucionalidad 49/2025, sentencia.",
+    "24/feb/2026|accion de inconstitucionalidad 11/2025, sentencia.",
+    "23/feb/2026|reglamento de la ley aduanera, se reforman los articulos 1, fraccion ii; 3, primer parrafo; 6; la denominacion del capitulo iii “prestacion de servicios de procesamiento electronico de datos” del titulo primero “generalidades\", para quedar como capitulo iii “prestacion de servicios de procesamiento electronico de datos y prevalidacion electronica”; 7, fraccion ix; 11, primer, segundo y quinto parrafos; 13; 15, primer y segundo parrafos; 18, primer parrafo, fracciones i y iv y ultimo parrafo; 20; 29, primer parrafo; 30, primer parrafo; 33, primer parrafo y fraccion ii; 34; 38, primer parrafo; 39, primer y ultimo parrafos; 44, fraccion iii; 47, primer parrafo; 48; 53, fracciones i, v, primer parrafo y vi, primer parrafo e inciso g); 54, ultimo parrafo; 55, segundo parrafo; 58, fraccion iii; 60; 61, segundo parrafo; 62, primer parrafo; 63, fraccion i y segundo y ultimo parrafos; 65, segundo parrafo; 66; 67; 68, primer parrafo y fracciones iii y iv; 69, primer parrafo y fracciones i y ii; 70; 72, fraccion iii; 73, tercer y ultimo parrafos; 74; 75, primer parrafo y fracciones i y iv; 79; 80; 81, fracciones i, vii, viii y ix; 83; 84, fraccion v; 86; 88, fraccion ii; 110, primer parrafo y fraccion ii, incisos c) y d); 128; 138, cuarto parrafo y fraccion vi; 141; 150, tercer y ultimo parrafos; 157; 160; 161, primer parrafo y fraccion ii; 162, primer parrafo; 163, primer parrafo; 164, segundo parrafo; 166, primer parrafo; 169, primer parrafo; 177, segundo y quinto parrafos; 179, segundo y tercer parrafos; 182, ultimo parrafo; 185, ultimo parrafo; 186; 187, segundo parrafo; 188, primer parrafo y fraccion iii; 190; 198, fraccion ii; 202, primer parrafo; 204, primer parrafo; 205; 207; 208, primer parrafo; 209; 210, primer parrafo y fracciones i, segundo parrafo, y ii, primer y segundo parrafos; 211; la denominacion del titulo septimo “agentes aduanales y representantes legales” para quedar como titulo septimo “agentes aduanales, agencias aduanales y representantes legales”; 212; 213; 214, primer parrafo; 220; 224; 226; 228; 229, primer parrafo y fraccion ii; 235; 236, primer parrafo, fraccion iv, incisos c) y e) y ultimo parrafo; 237; 238, primer parrafo y fraccion ii; 239; 240; 241, primer y ultimo parrafos; 242; 245; 246; 247 y 248; se adicionan los articulos 1 con las fracciones iii, iv y v, pasando la actual iii a ser vi; 6-a; 6-b; 7-a; 11, con un septimo parrafo; 13-a; 17-a; 33, con un segundo parrafo; 38, con un segundo parrafo; 38-a; 38-b; 38-c; 42, con un segundo parrafo; 54-a; 64-a; 65, con un cuarto parrafo; 76-a; 76-b; 81, con la fraccion x; 81-a; 134-a; 137, con un tercer parrafo; 141-a; 164, con un tercer parrafo; 165-a; 169, con un segundo parrafo; 178-a; 179, con un tercer parrafo, recorriendose el subsecuente en su orden; 189-a; 190-a; un capitulo v denominado “del consejo aduanero” al titulo sexto “atribuciones de las autoridades fiscales”; con los articulos 211-a; 211-b; 211-c; 214, con un segundo parrafo, recorriendose el subsecuente en su orden; un capitulo ii denominado “agencias aduanales” al titulo septimo “agentes aduanales, agencias aduanales y representantes legales”, pasando el actual capitulo ii denominado “representante legal” a ser capitulo iii; con los articulos 235-a; 235-b; 235-c; 235-d; 235-e; 235-f; 235-g; 235-h; 235-i; 235-j; 235-k; y se derogan los articulos 62, ultimo parrafo; 78; 177, tercer y cuarto parrafos; 181; 200; 201; 216; 217; 219; 222; 230, y 231. manual que regula las remuneraciones de los servidores publicos de la auditoria superior de la federacion para el ejercicio 2026, se expide. accion de inconstitucionalidad 6/2025, sentencia.",
+    "20/feb/2026|controversia constitucional 109/2025, sentencia.",
+    "19/feb/2026|accion de inconstitucionalidad 186/2024, sentencia.",
+    "18/feb/2026|codigo de comercio, acuerdo por el que se actualizan los montos correspondientes a los articulos 1067 bis, fraccion ii; 1253 fraccion vi; 1339; 1340 y 1390 bis 33. accion de inconstitucionalidad 117/2024, sentencia.",
+    "17/feb/2026|controversia constitucional 56/2025, sentencia.",
+    "16/feb/2026|accion de inconstitucionalidad 19/2024, sentencia.",
+    "13/feb/2026|accion de inconstitucionalidad 157/2024, sentencia.",
+    "12/feb/2026|accion de inconstitucionalidad 186/2023, sentencia.",
+    "11/feb/2026|controversia constitucional 293/2024, sentencia.",
+    "10/feb/2026|reglamento de la ley de proteccion del espacio aereo mexicano, se expide nuevo reglamento. accion de inconstitucionalidad 147/2024, sentencia.",
+    "09/feb/2026|controversia constitucional 116/2025, sentencia.",
+    "06/feb/2026|accion de inconstitucionalidad 181/2024, sentencia.",
+    "05/feb/2026|controversia constitucional 108/2025, sentencia.",
+    "04/feb/2026|accion de inconstitucionalidad 5/2025, sentencia.",
+    "03/feb/2026|accion de inconstitucionalidad 141/2024, sentencia.",
+    "29/ene/2026|controversia constitucional 48/2025, sentencia.",
+    "28/ene/2026|controversia constitucional 102/2025, sentencia.",
+    "27/ene/2026|accion de inconstitucionalidad 188/2024, sentencia.",
+    "26/ene/2026|controversia constitucional 30/2025, sentencia.",
+    "23/ene/2026|accion de inconstitucionalidad 54/2024, sentencia.",
+    "22/ene/2026|accion de inconstitucionalidad 9/2024, sentencia.",
+    "19/ene/2026|ley monetaria de los estados unidos mexicanos, se reforma el articulo tercero del “decreto por el que reforman y adicionan diversas disposiciones de la ley monetaria de los estados unidos mexicanos y se senalan las caracteristicas de las monedas de cinco, diez, veinte y cincuenta centavos y de uno, dos, cinco y diez pesos”, publicado en el diario oficial de la federacion el 22 de junio de 1992. ley monetaria de los estados unidos mexicanos, se reforma el articulo segundo del “decreto que reforma el inciso b) del articulo 2 ° de la ley monetaria de los estados unidos mexicanos y se senalan las caracteristicas de la moneda de veinte pesos”, publicado en el diario oficial de la federacion el 8 de diciembre de 1992. ley general de economia circular, se expide nueva ley. ley general del equilibrio ecologico y la proteccion al ambiente, se reforman los articulos 3o., fraccion xxxii; 15, fraccion vii y 39, primer parrafo, y se adicionan la fraccion iii bis al articulo 22 bis, el capitulo ii bis “aprovechamiento sustentable en las actividades economicas” al titulo tercero, y los articulos 107 bis 1 y 107 bis 2. ley general para la prevencion y gestion integral de los residuos, se reforman los articulos 2, fraccion xii; 5, fracciones ii, xxiv y xliii; 35, fraccion i; 95; y 106, fraccion ii, y se adiciona un parrafo tercero, recorriendose en su orden el ultimo parrafo, al articulo 25.",
+    "16/ene/2026|ley de concursos mercantiles, sentencia en la declaratoria general de inconstitucionalidad 7/2024, por la que se declara la inconstitucionalidad del articulo 338, publicado en el diario oficial de la federacion el 12 de mayo del 2000, y notificados los puntos resolutivos previamente a la camara de diputados para los efectos legales el lunes 10 de noviembre de 2025. controversia constitucional 65/2025, sentencia. declaratoria general de inconstitucionalidad 7/2024, sentencia.",
+    "15/ene/2026|ley general para la igualdad entre mujeres y hombres, se reforman la denominacion de la ley general para la igualdad entre mujeres y hombres, los articulos 1; 2; 4; 5, fracciones viii y actual ix; 7; 8; 9, primer parrafo y fracciones i, iii, iv y v; 12, fracciones i, ii, iii, iv y vii; la denominacion del capitulo tercero del titulo ii; 14; 15, primer parrafo y fracciones i, i bis y ii; la denominacion del capitulo cuarto del titulo ii; 16, primer parrafo; la denominacion del capitulo primero del titulo iii; 17, primer parrafo y, segundo parrafo, fracciones vii, xi, xiii y xiv; la denominacion del capitulo segundo del titulo iii; 18; 21; la denominacion del capitulo tercero del titulo iii; 23; 24; 25, en su parrafo y fracciones i y iii; 26, fracciones i y iv; 27; la denominacion del capitulo cuarto del titulo iii; 29; 30; la denominacion del capitulo primero del titulo iv; 32; 38, fraccion vii y ultimo parrafo; 41; 42, fraccion vi; 44; la denominacion del capitulo primero del titulo v; 46 y 48, parrafo primero y fracciones i, ii, iii y iv; y se adicionan una fraccion x al articulo 5; las fracciones xv, xvi y xvii al articulo 17 y los articulos 24 bis; 24 ter y 24 quater. ley general de acceso de las mujeres a una vida libre de violencia, se reforman la denominacion de la ley general de acceso de las mujeres a una vida libre de violencia; los articulos 2, primer parrafo; 3; 5, fracciones i, ii, iii, iv, v, ix y xx; 6, en su parrafo; la denominacion del titulo ii; 8, primer parrafo, fracciones i y v; 14, en su parrafo, fracciones i, iii y iv; 20; 23, parrafo segundo, apartado d; 24 bis, fraccion iii; 24 quater, primer parrafo e incisos a) y e) del segundo parrafo; 24 sexies; 25, primer y segundo parrafos; 25 bis, primer parrafo; 31, primer parrafo; 34 ter, fracciones xiv y xviii; 34 duodecies; la denominacion del capitulo i del titulo iii; 36; 37; la denominacion del capitulo ii del titulo iii; 38, fracciones ii, iii, viii y x; la denominacion del capitulo iii del titulo iii; 41, fraccion i, ii y x; la denominacion de la seccion segunda del titulo iii; 42; la denominacion de la seccion decima del capitulo iii del titulo iii; 48; 49, fraccion xxv; 59 bis, fraccion x, y 59 septies, fraccion viii; se adicionan la fraccion xxi al articulo 5; la fraccion v al articulo 14; un segundo parrafo al articulo 40; y se derogan la seccion segunda bis del capitulo iii del titulo iii y el articulo 42 bis. codigo nacional de procedimientos civiles y familiares, se reforman los articulos 5, segundo y tercer parrafos; 7, fraccion xiv; 40, segundo parrafo; 89, fraccion xv; 150, primer parrafo; 271, quinto parrafo; 553; 570; 573, ultimo parrafo y 576, y se adiciona un segundo parrafo al articulo 3 y un segundo parrafo al articulo 572. ley federal de los trabajadores al servicio del estado, reglamentaria del apartado b) del articulo 123 constitucional, se adicionan los parrafos tercero y cuarto y, se recorren en su orden los actuales, al articulo 32. ley general de desarrollo social, se reforman los articulos 1, fraccion i; 3, fraccion vii; 6; 9; 10, fraccion i; 11, fracciones i y ii; 49, fraccion i, y 50 fraccion i; y se adiciona la fraccion vi al articulo 11 y un segundo parrafo al articulo 19. ley general de salud, se reforman los articulos 6o., fraccion xii; 7o., actual fraccion xv; 35, primer parrafo; 36, cuarto parrafo; 70, segundo parrafo; 73, primer parrafo; y se adicionan un segundo parrafo al articulo 2o. y una fraccion xv al articulo 7o. ley general de educacion, se reforman los articulos 7, fraccion ii; 8 segundo parrafo; 9, primer parrafo y fraccion i; 12, fraccion iv; 13, fracciones iii y iv; 14, fraccion i; 30, fracciones ix y xxi; 73, primer parrafo y 74, primer parrafo, las fracciones vii, viii y el ultimo parrafo y se adiciona una fraccion v al articulo 13. ley del seguro social, se reforman los articulos 2; 3; 202; 286 j, fraccion iv y 303, primer parrafo; y se adiciona un septimo parrafo al articulo 111 a. ley de migracion, se reforman los articulos 2, parrafo decimo quinto; 20, actual fraccion xii; 30, en su parrafo y fracciones i, ii y iii; 67; 71, parrafo primero; 73, parrafo primero; 75; 108; 110; 113, parrafo primero, y se adicionan un parrafo decimo sexto, y se recorren en su orden los subsecuentes para quedar como decimo septimo y decimo octavo, al articulo 2; una fraccion xii al articulo 20; un parrafo tercero al articulo 70 y la fraccion iii al articulo 120. ley general de los derechos de ninas, ninos y adolescentes, se reforman los articulos 1, fraccion iii; 2, fracciones i y iii; 3, primer parrafo; 12; 13, segundo parrafo; 83, primer parrafo; 90 y 114, segundo parrafo y se adicionan una fraccion iv al articulo 2; un parrafo tercero al articulo 10. ley del instituto de seguridad y servicios sociales de los trabajadores del estado, se reforman los articulos 10, tercer parrafo; 29, tercer parrafo y 208, fraccion ii y se adiciona un segundo parrafo al articulo 39. ley de planeacion, se reforman los articulos 2o., fraccion vii; 8o., primer y segundo parrafos; 9o., primer parrafo; 26 bis, fraccion v y 37, primer parrafo. ley de vivienda, se reforman los articulos 3, primer parrafo; 6, fracciones i, viii y xii; 7, segundo parrafo; 17, primer parrafo; 19, fraccion vii; 34, fraccion ii y 47, segundo parrafo y se adiciona un cuarto parrafo al articulo 1. ley federal del trabajo, se reforman los articulos 2o., primer parrafo; 3o., primer parrafo y 56 y, se adiciona un segundo y tercer parrafos al articulo 16. ley federal del derecho de autor, se reforma el articulo 209, fraccion iv; y se adiciona un tercer parrafo al articulo 2o.; un tercer parrafo al articulo 13; un tercer parrafo al articulo 77; un tercer parrafo al articulo 162 y un tercer parrafo al articulo 218. ley federal de proteccion a la propiedad industrial, se reforman las fracciones xvi, incisos d) y e) de la fraccion xx, las fracciones xxi y xxxii, del articulo 5; y se adiciona un segundo parrafo a la fraccion i del articulo 2 y un inciso f) a la fraccion xx del articulo 5. ley general de cultura y derechos culturales, se reforman los articulos 5; 7, fraccion vi; 13; 19, fracciones viii y ix; y se adicionan las fracciones x y xi al articulo 19. ley del instituto nacional de las mujeres, publicada en el diario oficial de la federacion el 12 de enero de 2001, se abroga. ley general de salud, se reforman los articulos 3o., actual fraccion xxviii; 6o., fraccion xii; 7o., fracciones viii bis, actual x, que pasa a ser ix bis, xiv bis y actual xv; 10, parrafo primero y actual parrafo segundo; 13, apartado b, fracciones v, vi y actual vii; 17 bis, parrafos primero y segundo, fracciones ii, vi, x y xi; 18, parrafo primero; 19, parrafo primero; 32, parrafo segundo; 41 bis; 51 bis 3; 77 bis 5, inciso a), fraccion vi, e inciso b), fracciones v y vi; 77 bis 8; 77 bis 9, parrafo segundo; 77 bis 10, fraccion iii; 77 bis 17; 77 bis 29, parrafo primero, fraccion ii, y parrafo cuarto; 77 bis 30, parrafos cuarto y quinto; 77 bis 35, parrafo tercero, fraccion xii; 98; 104, primer parrafo; 105; 194, parrafos primero y segundo, fraccion i; 222, parrafo segundo; 234; 245, fracciones i, parrafo segundo, ii y iv; 259, parrafo primero; 313, fracciones iii y v; 314, fracciones xiv bis, xvii, xxv, xxvii y xxviii; 316, parrafos primero, segundo, quinto, sexto y septimo; 316 bis 1; 319; 321 bis; 322, parrafo quinto; 323, fraccion ii; 327, parrafo primero; 332, parrafo segundo; la denominacion del capitulo iii bis del titulo decimo cuarto; 341, parrafo primero, inciso a), fraccion iv, y parrafo segundo; 341 bis, parrafo primero; 342 bis 1, parrafo primero; 342 bis 3, parrafo primero y fraccion iii; 371; 375, fraccion vi; 376; 396, fraccion i; 414 bis, parrafo primero, incisos a) y b), y 431; se adicionan los articulos 3o., con las fracciones iii bis, xxviii y xxix; 6o., con la fraccion xiii; 7o., con las fracciones ii ter, x, xiv ter, xv y xvi, recorriendose en su orden la subsecuente; 9 bis; 10, con los parrafos segundo, pasando el actual a ser parrafo tercero y ultimo; 13, apartado a, con la fraccion iii bis, y apartado b, con la fraccion vii, recorriendose en su orden la subsecuente; 17 bis, parrafo segundo, con las fracciones xii bis, xii ter, xii quater y xii quinquies; 35 bis; el capitulo iv bis al titulo tercero, que comprende los articulos 60 bis, 60 ter, 60 quater, 60 quinquies y 60 sexies; el capitulo iv ter al titulo tercero, que comprende los articulos 60 septies, 60 octies, 60 nonies, 60 decies; el capitulo vi bis al titulo tercero, que comprende los articulos 71 bis, 71 ter, 71 quater, 71 quinquies, 71 sexies, 71 septies y 71 octies; 77 bis 10, con la fraccion iv bis; 222, parrafo tercero; 245, fraccion iii, los parrafos quincuagesimo sexto, recorriendose los subsecuentes en su orden, y ultimo; 262 bis; el capitulo xii ter al titulo decimo segundo, que comprende los articulos 282 ter, 282 quater y 282 quinquies; 314, con las fracciones xi bis, xxix, xxx, xxxi y xxxii; 340 bis; 340 ter; 340 quater; 341, con un parrafo tercero; 342 bis 1, con los parrafos sexto y septimo; 342 bis 4; 414 bis, parrafo primero, con un inciso c), y 456 bis, y se derogan los articulos 7o., fraccion ii, el parrafo tercero; 108; 245, fraccion iii, parrafo cuadragesimo quinto, y 314, fraccion iv. se deroga el transitorio decimo sexto del decreto por el que se reforma y adiciona la ley general de salud publicado en el diario oficial de la federacion el 15 de mayo de 2003. ley del instituto de seguridad social para las fuerzas armadas mexicanas, engrose de la sentencia en la declaratoria general de inconstitucionalidad 1/2021, por la que se declara la inconstitucionalidad del articulo 160, notificada a la camara de diputados para los efectos legales el jueves 15 de enero de 2026. reglamento de la ley general de salud en materia de proteccion social en salud, publicado en el diario oficial de la federacion el 5 de abril de 2004, se abroga. accion de inconstitucionalidad 15/2025, sentencia.",
+    "13/ene/2026|controversia constitucional 57/2025, sentencia.",
+    "12/ene/2026|accion de inconstitucionalidad 189/2024, sentencia.",
+    "08/ene/2026|accion de inconstitucionalidad 127/2024, sentencia.",
+    "05/ene/2026|accion de inconstitucionalidad 17/2025, sentencia.",
+    "02/ene/2026|accion de inconstitucionalidad 203/2023, sentencia."
+  ],
+  "dofUltimoDia": "2026-09-24",
+  "dofCodigosVistos": [
+    "5797457",
+    "5797458",
+    "5797459",
+    "5797461",
+    "5797462",
+    "5797463",
+    "5797557",
+    "5797558",
+    "5797560",
+    "5797561",
+    "5797563",
+    "5797565",
+    "5797567",
+    "5797568",
+    "5797570",
+    "5797572",
+    "5797573",
+    "5797575",
+    "5797576",
+    "5797578",
+    "5797580",
+    "5797583",
+    "5797584",
+    "5797585",
+    "5797697",
+    "5797698",
+    "5797700",
+    "5797701",
+    "5797703",
+    "5797705",
+    "5797707",
+    "5797708",
+    "5797710",
+    "5797711",
+    "5797712",
+    "5797713",
+    "5797715",
+    "5797716",
+    "5797717",
+    "5797719",
+    "5797721",
+    "5797722",
+    "5797724",
+    "5797726",
+    "5797727",
+    "5797728",
+    "5797731",
+    "5797732",
+    "5797797",
+    "5797799",
+    "5797800",
+    "5797801",
+    "5797803",
+    "5797805",
+    "5797806",
+    "5797807",
+    "5797809",
+    "5797811",
+    "5797812",
+    "5797814",
+    "5797815",
+    "5797816",
+    "5797818",
+    "5797819",
+    "5797820",
+    "5797821",
+    "5797823",
+    "5797824",
+    "5797826",
+    "5797829",
+    "5797830",
+    "5797831",
+    "5798037",
+    "5798038",
+    "5798039",
+    "5798041",
+    "5798043",
+    "5798057",
+    "5798058",
+    "5798059",
+    "5798061",
+    "5798063",
+    "5798065",
+    "5798067",
+    "5798069",
+    "5798070",
+    "5798071",
+    "5798073",
+    "5798074",
+    "5798076",
+    "5798077",
+    "5798079",
+    "5798081",
+    "5798083",
+    "5798085",
+    "5798086",
+    "5798087",
+    "5798117",
+    "5798119",
+    "5798121",
+    "5798123",
+    "5798124",
+    "5798126",
+    "5798127",
+    "5798128",
+    "5798130",
+    "5798132",
+    "5798134",
+    "5798136",
+    "5798139",
+    "5798140",
+    "5798141",
+    "5798257",
+    "5798259",
+    "5798261",
+    "5798263",
+    "5798265",
+    "5798266",
+    "5798268",
+    "5798270",
+    "5798271",
+    "5798273",
+    "5798275",
+    "5798277",
+    "5798279",
+    "5798280",
+    "5798281",
+    "5798284",
+    "5798357",
+    "5798359",
+    "5798361",
+    "5798363",
+    "5798365",
+    "5798367",
+    "5798369",
+    "5798370",
+    "5798372",
+    "5798373",
+    "5798375",
+    "5798377",
+    "5798378",
+    "5798379",
+    "5798380",
+    "5798382",
+    "5798385",
+    "5798737",
+    "5798738",
+    "5798739",
+    "5798797",
+    "5798799",
+    "5798800",
+    "5798801",
+    "5798803",
+    "5798805",
+    "5798807",
+    "5798809",
+    "5798810",
+    "5798812",
+    "5798813",
+    "5798815",
+    "5798817",
+    "5798818",
+    "5798819",
+    "5798821",
+    "5798824",
+    "5798897",
+    "5798898",
+    "5798900",
+    "5798902",
+    "5798904",
+    "5798906",
+    "5798907",
+    "5798909",
+    "5798911",
+    "5798912",
+    "5798913",
+    "5798916",
+    "5798917",
+    "5798918",
+    "5799117",
+    "5799118",
+    "5799119",
+    "5799237",
+    "5799239",
+    "5799241",
+    "5799243",
+    "5799245",
+    "5799247",
+    "5799249",
+    "5799252",
+    "5799253",
+    "5799254",
+    "5799357",
+    "5799358",
+    "5799360",
+    "5799361",
+    "5799362",
+    "5799364",
+    "5799366",
+    "5799367",
+    "5799369",
+    "5799371",
+    "5799373",
+    "5799376",
+    "5799377",
+    "5799378",
+    "5799437",
+    "5799438",
+    "5799440",
+    "5799442",
+    "5799444",
+    "5799445",
+    "5799447",
+    "5799449",
+    "5799451",
+    "5799453",
+    "5799455",
+    "5799456",
+    "5799457",
+    "5799459",
+    "5799461",
+    "5799464",
+    "5799465",
+    "5799466"
+  ]
+}

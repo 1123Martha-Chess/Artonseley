@@ -23,7 +23,7 @@ export function buscarUsuarioPorId(id) {
 export function listarUsuarios() {
   return db.prepare(`
     SELECT id, email, rol, licencia_vence_en, licencia_vitalicia, activo, suspendido_hasta, eliminado_en,
-           limite_sesiones, creado_en
+           limite_sesiones, plan, despacho_id, despacho_puesto, encuestas_canjeadas, creado_en
     FROM usuarios
     ORDER BY creado_en DESC
   `).all();

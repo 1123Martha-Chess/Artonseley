@@ -1,0 +1,10 @@
+{
+  "name": "checar-leyes",
+  "private": true,
+  "description": "Revisión diaria de leyes vigentes (Cámara de Diputados + DOF) para Artonseley",
+  "type": "commonjs",
+  "scripts": {
+    "checar": "node checarLeyes.js",
+    "excel": "node generarExcel.js"
+  }
+}

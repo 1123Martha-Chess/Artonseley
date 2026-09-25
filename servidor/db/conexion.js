@@ -464,3 +464,37 @@ const yaTieneLicenciaVitalicia = columnasDeUsuarios.some(columna => columna.name
 if (!yaTieneLicenciaVitalicia) {
   db.exec('ALTER TABLE usuarios ADD COLUMN licencia_vitalicia INTEGER NOT NULL DEFAULT 0');
 }
+
+// Plan y modalidad de cada cuenta (ver servidor/db/despachos.js y la
+// Cláusula 3.3 Bis de los Términos). Cada plan (Fundadores, Co-Fundadores,
+// Mensual) tiene dos modalidades: "Abogad@" (una persona) y "Despacho"
+// (5 usuarios). Una cuenta con despacho_id NULL es Abogad@ y su plan vive
+// en usuarios.plan; una cuenta con despacho_id pertenece a ese Despacho y
+// su plan es el del Despacho (despachos.plan). despacho_puesto es su
+// número dentro del Despacho (#1 a #5). encuestas_canjeadas cuenta las
+// respuestas definitivas que ya se usaron para un beneficio (Cláusula
+// 6.1), para que no se canjeen dos veces.
+const columnasNuevasDePlan = [
+  ['plan', 'ALTER TABLE usuarios ADD COLUMN plan TEXT'],
+  ['despacho_id', 'ALTER TABLE usuarios ADD COLUMN despacho_id INTEGER'],
+  ['despacho_puesto', 'ALTER TABLE usuarios ADD COLUMN despacho_puesto INTEGER'],
+  ['encuestas_canjeadas', 'ALTER TABLE usuarios ADD COLUMN encuestas_canjeadas INTEGER NOT NULL DEFAULT 0']
+];
+for (const [columna, sentencia] of columnasNuevasDePlan) {
+  if (!columnasDeUsuarios.some(c => c.name === columna)) db.exec(sentencia);
+}
+
+// Un "Despacho" agrupa las cuentas de un plan de 5 usuarios. "tipo" es
+// la modalidad elegida al contratar (Cláusula 2.2), que no puede
+// alternarse después: 'compartida' = una sola Cuenta para hasta 10
+// sesiones; 'independientes' = hasta 5 Cuentas propias.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS despachos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    tipo TEXT NOT NULL CHECK (tipo IN ('compartida', 'independientes')),
+    plan TEXT,
+    encuestas_canjeadas INTEGER NOT NULL DEFAULT 0,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+`);

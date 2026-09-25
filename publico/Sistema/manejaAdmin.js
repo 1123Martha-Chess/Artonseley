@@ -737,7 +737,7 @@ function pintarBotonAccion(texto, clase, alHacerClick) {
 
 function celdaLicencia(u) {
   const celda = document.createElement('td');
-  celda.textContent = u.licenciaVitalicia ? 'Vitalicia (Plan Fundador)' : new Date(u.licenciaVenceEn).toLocaleDateString('es-MX');
+  celda.textContent = u.licenciaVitalicia ? 'Sin vencimiento (Fundadores)' : new Date(u.licenciaVenceEn).toLocaleDateString('es-MX');
   const etiqueta = document.createElement('span');
   etiqueta.classList.add('etiqueta-estado', u.licenciaVigente ? 'etiqueta-activa' : 'etiqueta-vencida');
   etiqueta.textContent = u.licenciaVigente ? 'Vigente' : 'Vencida';
@@ -760,6 +760,97 @@ function celdaSesiones(u) {
     celda.appendChild(etiqueta);
   }
   return celda;
+}
+
+// Plan de la cuenta: "Mensual - Despacho" con su detalle ("García ·
+// cuenta #2 de 5"), o "Mensual - Abogad@" con sus encuestas definitivas
+// sin canjear y, si le alcanza, el botón para registrar el beneficio de
+// $39 (Cláusula 6.1). Los Despachos registran el suyo desde su burbuja.
+function celdaPlan(u) {
+  const celda = document.createElement('td');
+  const nombre = document.createElement('strong');
+  nombre.textContent = u.plan.nombreCompleto;
+  celda.appendChild(nombre);
+
+  const detalle = document.createElement('div');
+  detalle.classList.add('detalle-plan');
+  if (u.plan.detalle) {
+    detalle.textContent = u.plan.detalle;
+  } else if (u.plan.encuestas) {
+    detalle.textContent = `Encuestas sin canjear: ${u.plan.encuestas.disponibles}`;
+  }
+  celda.appendChild(detalle);
+
+  if (u.plan.encuestas?.beneficiosDisponibles > 0) {
+    const boton = pintarBotonAccion('Registrar beneficio ($39)', 'boton-secundario', () => registrarBeneficioCuenta(u));
+    boton.style.marginTop = '6px';
+    celda.appendChild(boton);
+  }
+  return celda;
+}
+
+async function registrarBeneficioCuenta(usuario) {
+  const confirmado = await abrirModalConCampos({
+    titulo: 'Registrar beneficio de encuesta',
+    mensaje: `Marca como usada 1 encuesta definitiva de "${usuario.email}": su siguiente mes del Plan Mensual - Abogad@ cuesta $39 MXN. Hazlo al momento de cobrarle ese mes, para que no se aplique dos veces.`,
+    campos: [],
+    textoConfirmar: 'Registrar beneficio'
+  });
+  if (!confirmado) return;
+  try {
+    await peticionAdmin(`/api/admin/usuarios/${usuario.id}/beneficio`, { method: 'POST' });
+    mostrarAviso('Beneficio registrado.', 'exito');
+    await cargarCuentas();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+// Un solo selector con todas las opciones: cada plan como Abogad@, o
+// entrar a un Despacho ya creado (toma su plan y el primer número libre).
+async function cambiarPlanCuenta(usuario) {
+  let despachos = [];
+  try {
+    ({ despachos } = await peticionAdmin('/api/admin/despachos'));
+  } catch (error) {
+    mostrarAviso(error.message);
+    return;
+  }
+
+  const opciones = [
+    { valor: 'abogado:', texto: 'Sin plan asignado' },
+    { valor: 'abogado:fundadores', texto: 'Fundadores - Abogad@' },
+    { valor: 'abogado:cofundadores', texto: 'Co-Fundadores - Abogad@' },
+    { valor: 'abogado:mensual', texto: 'Mensual - Abogad@' },
+    { valor: 'abogado:prueba', texto: 'Prueba gratuita - Abogad@' },
+    ...despachos.map(d => ({
+      valor: `despacho:${d.id}`,
+      texto: `Despacho "${d.nombre}" — ${d.planTexto ?? 'sin plan'}, ${d.tipoTexto.toLowerCase()} (${d.miembros.length}/${d.maximoCuentas})`
+    }))
+  ];
+  const valorActual = usuario.plan.modalidad === 'despacho'
+    ? `despacho:${usuario.plan.despachoId}`
+    : `abogado:${usuario.plan.plan ?? ''}`;
+
+  const valores = await abrirModalConCampos({
+    titulo: 'Cambiar plan',
+    mensaje: `Plan actual de "${usuario.email}": ${usuario.plan.nombreCompleto}${usuario.plan.detalle ? ` (${usuario.plan.detalle})` : ''}. Para un Despacho nuevo, créalo primero en la burbuja "Despachos". Esto no cambia la fecha de la licencia — para eso está "Renovar licencia".`,
+    campos: [{ nombre: 'opcion', etiqueta: 'Plan y modalidad', tipo: 'select', opciones, valor: valorActual }],
+    textoConfirmar: 'Guardar plan'
+  });
+  if (!valores) return;
+
+  const [modalidad, dato] = valores.opcion.split(':');
+  try {
+    const datos = await peticionAdmin(`/api/admin/usuarios/${usuario.id}/plan`, {
+      method: 'POST',
+      body: JSON.stringify(modalidad === 'despacho' ? { despachoId: Number(dato) } : { plan: dato || null })
+    });
+    mostrarAviso(`"${usuario.email}" ahora es ${datos.usuario.plan.nombreCompleto}${datos.usuario.plan.detalle ? ` (${datos.usuario.plan.detalle})` : ''}.`, 'exito');
+    await Promise.all([cargarCuentas(), cargarDespachos()]);
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
 }
 
 function pintarTabla(contenedor, columnas, filas) {
@@ -786,7 +877,7 @@ async function cargarCuentas() {
 
     pintarTabla(
       contenedorActivas,
-      ['Correo', 'Rol', 'Registrado', 'Licencia vence', 'Sesiones'],
+      ['Correo', 'Plan', 'Rol', 'Registrado', 'Licencia vence', 'Sesiones'],
       activos.map(u => {
         const fila = document.createElement('tr');
         const celdaCorreo = document.createElement('td');
@@ -802,6 +893,7 @@ async function cargarCuentas() {
         contenedorBotones.style.flexWrap = 'wrap';
         contenedorBotones.style.gap = '6px';
         contenedorBotones.append(
+          pintarBotonAccion('Cambiar plan', 'boton-secundario', () => cambiarPlanCuenta(u)),
           pintarBotonAccion('Renovar licencia', 'boton-secundario', () => renovarLicencia(u)),
           pintarBotonAccion('Cambiar contraseña', 'boton-secundario', () => cambiarContrasenaCuenta(u)),
           pintarBotonAccion('Cambiar límite', 'boton-secundario', () => cambiarLimiteSesiones(u)),
@@ -811,7 +903,7 @@ async function cargarCuentas() {
         );
         celdaAcciones.appendChild(contenedorBotones);
 
-        fila.append(celdaCorreo, celdaRol, celdaRegistrado, celdaLicencia(u), celdaSesiones(u), celdaAcciones);
+        fila.append(celdaCorreo, celdaPlan(u), celdaRol, celdaRegistrado, celdaLicencia(u), celdaSesiones(u), celdaAcciones);
         return fila;
       })
     );
@@ -882,7 +974,7 @@ async function cargarCuentas() {
 
 async function renovarLicencia(usuario) {
   const licenciaActualTexto = usuario.licenciaVitalicia
-    ? 'es vitalicia (Plan Fundador)'
+    ? 'no tiene fecha de vencimiento (Fundadores)'
     : `vence el ${new Date(usuario.licenciaVenceEn).toLocaleDateString('es-MX')}`;
 
   const valores = await abrirModalConCampos({
@@ -907,7 +999,7 @@ async function renovarLicencia(usuario) {
       body: JSON.stringify({ vigencia: valores.vigencia })
     });
     mostrarAviso(
-      `Licencia de "${usuario.email}" actualizada: ahora ${datos.licenciaVitalicia ? 'es vitalicia (Plan Fundador)' : `vence el ${new Date(datos.licenciaVenceEn).toLocaleDateString('es-MX')}`}.`,
+      `Licencia de "${usuario.email}" actualizada: ahora ${datos.licenciaVitalicia ? 'no tiene fecha de vencimiento (Fundadores)' : `vence el ${new Date(datos.licenciaVenceEn).toLocaleDateString('es-MX')}`}.`,
       'exito'
     );
     await cargarCuentas();
@@ -1196,13 +1288,193 @@ document.getElementById('formularioCrearUsuario').addEventListener('submit', asy
         email: document.getElementById('campoNuevoEmail').value.trim(),
         contrasena: document.getElementById('campoNuevaContrasena').value,
         rol: document.getElementById('campoNuevoRol').value,
-        vigencia: campoVigencia.value.trim()
+        vigencia: campoVigencia.value.trim(),
+        plan: document.getElementById('campoNuevoPlan').value
       })
     });
-    resultado.innerHTML = `<p class="mensaje-exito">Cuenta creada: ${datos.usuario.email} (${datos.usuario.rol}). Ya puede iniciar sesión.</p>`;
+    resultado.innerHTML = `<p class="mensaje-exito">Cuenta creada: ${datos.usuario.email} (${datos.usuario.rol}, ${datos.usuario.plan.nombreCompleto}). Ya puede iniciar sesión.</p>`;
     document.getElementById('formularioCrearUsuario').reset();
     campoVigencia.value = '24';
     await cargarCuentas();
+  } catch (error) {
+    resultado.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+});
+
+// ---------------------------------------------------------------------
+// Despachos (planes de 5 usuarios): una tarjeta por Despacho con sus
+// cuentas numeradas (#1 a #5), su plan y el avance de encuestas hacia el
+// beneficio de $179 (10 encuestas si es Cuenta única compartida, 20
+// sumando todas sus cuentas si son independientes). Ver
+// servidor/db/despachos.js.
+// ---------------------------------------------------------------------
+
+const OPCIONES_PLAN_DESPACHO = [
+  { valor: 'mensual', texto: 'Mensual - Despacho' },
+  { valor: 'cofundadores', texto: 'Co-Fundadores - Despacho' },
+  { valor: 'fundadores', texto: 'Fundadores - Despacho' },
+  { valor: 'prueba', texto: 'Prueba gratuita - Despacho' },
+  { valor: '', texto: 'Sin plan asignado' }
+];
+
+async function cargarDespachos() {
+  const contenedor = document.getElementById('listaDespachos');
+  try {
+    const { despachos } = await peticionAdmin('/api/admin/despachos');
+    contenedor.innerHTML = '';
+    if (despachos.length === 0) {
+      contenedor.innerHTML = '<p>Todavía no hay ningún Despacho.</p>';
+      return;
+    }
+    const lista = document.createElement('div');
+    lista.classList.add('lista-despachos');
+    despachos.forEach(d => lista.appendChild(crearTarjetaDespacho(d)));
+    contenedor.appendChild(lista);
+  } catch (error) {
+    contenedor.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+function crearTarjetaDespacho(d) {
+  const tarjeta = document.createElement('div');
+  tarjeta.classList.add('tarjeta-despacho');
+
+  const titulo = document.createElement('h3');
+  titulo.textContent = d.nombre;
+
+  const plan = document.createElement('div');
+  plan.classList.add('plan-despacho');
+  plan.textContent = d.planTexto ? `${d.planTexto} - Despacho` : 'Sin plan asignado';
+
+  const tipo = document.createElement('div');
+  tipo.classList.add('detalle-plan');
+  tipo.textContent = d.tipoTexto;
+
+  // Cuentas numeradas, con los números libres a la vista.
+  const cuentas = document.createElement('ol');
+  for (let n = 1; n <= d.maximoCuentas; n++) {
+    const miembro = d.miembros.find(m => m.puesto === n);
+    const item = document.createElement('li');
+    const numero = document.createElement('span');
+    numero.classList.add('numero-cuenta');
+    numero.textContent = d.tipo === 'compartida' ? '●' : `#${n}`;
+    item.appendChild(numero);
+    if (miembro) {
+      item.append(miembro.email);
+    } else {
+      item.classList.add('libre');
+      item.append('libre');
+    }
+    cuentas.appendChild(item);
+  }
+
+  // Avance hacia el siguiente beneficio.
+  const { disponibles, porBeneficio, beneficiosDisponibles, contestadas, canjeadas } = d.encuestas;
+  const encuestas = document.createElement('div');
+  encuestas.classList.add('detalle-plan');
+  encuestas.textContent = beneficiosDisponibles > 0
+    ? `Encuestas: ${disponibles} sin canjear — le alcanza para ${beneficiosDisponibles} mes(es) a $${d.precioBeneficio}.`
+    : `Encuestas: ${disponibles} de ${porBeneficio} para un mes a $${d.precioBeneficio}.`;
+  encuestas.title = `${contestadas} definitivas en total, ${canjeadas} ya canjeadas.`;
+  const barra = document.createElement('div');
+  barra.classList.add('barra-encuestas');
+  const relleno = document.createElement('span');
+  relleno.style.width = `${Math.min(100, (disponibles / porBeneficio) * 100)}%`;
+  barra.appendChild(relleno);
+
+  const botones = document.createElement('div');
+  botones.classList.add('botones-despacho');
+  const botonBeneficio = pintarBotonAccion(`Registrar beneficio ($${d.precioBeneficio})`, 'boton-secundario', () => registrarBeneficioDespacho(d));
+  botonBeneficio.disabled = beneficiosDisponibles < 1;
+  if (botonBeneficio.disabled) botonBeneficio.style.opacity = '0.5';
+  botones.append(
+    botonBeneficio,
+    pintarBotonAccion('Editar', 'boton-secundario', () => editarDespacho(d)),
+    pintarBotonAccion('Eliminar', 'boton-peligro', () => eliminarDespachoAdmin(d))
+  );
+
+  tarjeta.append(titulo, plan, tipo, cuentas, encuestas, barra, botones);
+  return tarjeta;
+}
+
+async function editarDespacho(d) {
+  const valores = await abrirModalConCampos({
+    titulo: 'Editar Despacho',
+    mensaje: `La modalidad (${d.tipoTexto.toLowerCase()}) no se puede cambiar: la eligió al contratar (Cláusula 2.2).`,
+    campos: [
+      { nombre: 'nombre', etiqueta: 'Nombre', tipo: 'text', valor: d.nombre },
+      { nombre: 'plan', etiqueta: 'Plan', tipo: 'select', opciones: OPCIONES_PLAN_DESPACHO, valor: d.plan ?? '' }
+    ],
+    textoConfirmar: 'Guardar',
+    validar: valores => (valores.nombre ? null : 'Escribe el nombre del Despacho.')
+  });
+  if (!valores) return;
+  try {
+    await peticionAdmin(`/api/admin/despachos/${d.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ nombre: valores.nombre, plan: valores.plan || null })
+    });
+    mostrarAviso('Despacho actualizado.', 'exito');
+    await Promise.all([cargarDespachos(), cargarCuentas()]);
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function eliminarDespachoAdmin(d) {
+  const confirmado = await abrirModalConCampos({
+    titulo: 'Eliminar Despacho',
+    mensaje: `¿Eliminar el Despacho "${d.nombre}"? Sus ${d.miembros.length} cuenta(s) NO se borran: pasan a ser Abogad@ con el mismo plan. Su conteo de encuestas canjeadas se pierde.`,
+    campos: [],
+    textoConfirmar: 'Eliminar Despacho',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!confirmado) return;
+  try {
+    await peticionAdmin(`/api/admin/despachos/${d.id}`, { method: 'DELETE' });
+    mostrarAviso('Despacho eliminado.', 'exito');
+    await Promise.all([cargarDespachos(), cargarCuentas()]);
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function registrarBeneficioDespacho(d) {
+  const confirmado = await abrirModalConCampos({
+    titulo: 'Registrar beneficio de encuestas',
+    mensaje: `Marca como usadas ${d.encuestas.porBeneficio} encuestas definitivas de "${d.nombre}": su siguiente mes del Plan Mensual - Despacho cuesta $${d.precioBeneficio} MXN. Hazlo al momento de cobrarle ese mes, para que no se aplique dos veces.`,
+    campos: [],
+    textoConfirmar: 'Registrar beneficio'
+  });
+  if (!confirmado) return;
+  try {
+    await peticionAdmin(`/api/admin/despachos/${d.id}/beneficio`, { method: 'POST' });
+    mostrarAviso('Beneficio registrado.', 'exito');
+    await cargarDespachos();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+document.getElementById('formularioDespacho').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  const resultado = document.getElementById('resultadoDespacho');
+  try {
+    const { despacho } = await peticionAdmin('/api/admin/despachos', {
+      method: 'POST',
+      body: JSON.stringify({
+        nombre: document.getElementById('campoNombreDespacho').value.trim(),
+        tipo: document.getElementById('campoTipoDespacho').value,
+        plan: document.getElementById('campoPlanDespacho').value || null
+      })
+    });
+    resultado.innerHTML = '';
+    const exito = document.createElement('p');
+    exito.classList.add('mensaje-exito');
+    exito.textContent = `Despacho "${despacho.nombre}" creado. Ahora mete sus cuentas con "Cambiar plan" en "Usuarios y licencias".`;
+    resultado.appendChild(exito);
+    evento.target.reset();
+    await cargarDespachos();
   } catch (error) {
     resultado.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
   }
@@ -2264,6 +2536,7 @@ cargarListaDocumentos();
 cargarSolicitudesRegistro();
 cargarSugerencias();
 cargarCuentas();
+cargarDespachos();
 cargarNotificaciones();
 cargarCanciones();
 cargarIndicesEconomicos();

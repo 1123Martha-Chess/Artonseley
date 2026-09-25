@@ -50,6 +50,8 @@ export function renderizarMarkdownLegal(markdown) {
   const bloques = [];
 
   let enLista = false;
+  // Sub-lista abierta (ítems con sangría de 2+ espacios bajo otro ítem).
+  let enSubLista = false;
   let parrafo = [];
 
   function cerrarParrafo() {
@@ -58,7 +60,15 @@ export function renderizarMarkdownLegal(markdown) {
       parrafo = [];
     }
   }
+  function cerrarSubLista() {
+    if (enSubLista) {
+      bloques.push('</ul></li>');
+      enSubLista = false;
+    }
+  }
+
   function cerrarLista() {
+    cerrarSubLista();
     if (enLista) {
       bloques.push('</ul>');
       enLista = false;
@@ -132,10 +142,22 @@ export function renderizarMarkdownLegal(markdown) {
       continue;
     }
 
-    // Ítem de lista (- ... o * ...).
+    // Ítem de lista (- ... o * ...). Con sangría de 2 o más espacios, y
+    // justo debajo de otro ítem, va en una sub-lista dentro de ese ítem
+    // (se le quita su "</li>" para abrirle el <ul> adentro).
     const item = limpia.match(/^[-*]\s+(.*)$/);
     if (item) {
       cerrarParrafo();
+      if (/^\s{2,}/.test(lineas[i]) && enLista) {
+        if (!enSubLista) {
+          bloques[bloques.length - 1] = bloques[bloques.length - 1].replace(/<\/li>$/, '');
+          bloques.push('<ul>');
+          enSubLista = true;
+        }
+        bloques.push(`<li>${aplicarInline(item[1].trim())}</li>`);
+        continue;
+      }
+      cerrarSubLista();
       if (!enLista) {
         bloques.push('<ul>');
         enLista = true;

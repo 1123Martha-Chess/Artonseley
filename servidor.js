@@ -176,6 +176,20 @@ import {
 } from './servidor/db/hojaEncuestasDiaria.js';
 import { barrerYArchivar as barrerYArchivarEncuestas } from './servidor/encuestas/barridoRespuestas.js';
 import {
+  PLANES,
+  TIPOS_DESPACHO,
+  planValido,
+  planDeUsuarioAJSON,
+  asignarPlanAUsuario,
+  registrarBeneficioDeUsuario,
+  listarDespachos,
+  buscarDespacho,
+  crearDespacho,
+  actualizarDespacho,
+  eliminarDespacho,
+  registrarBeneficioDeDespacho
+} from './servidor/db/despachos.js';
+import {
   limitadorLogin,
   limitadorSugerencias,
   limitadorGeneralAPI,
@@ -968,7 +982,10 @@ function usuarioAJSON(usuario) {
     // limiteSesionesEfectivo ya resuelve ese null para pintarlo directo.
     sesionesActivas: contarSesionesActivasDeUsuario(usuario.id),
     limiteSesiones: usuario.limite_sesiones,
-    limiteSesionesEfectivo: usuario.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO
+    limiteSesionesEfectivo: usuario.limite_sesiones ?? LIMITE_SESIONES_POR_DEFECTO,
+    // Plan y modalidad ("Mensual - Abogad@", "Fundadores - Despacho"...),
+    // ver servidor/db/despachos.js.
+    plan: planDeUsuarioAJSON(usuario)
   };
 }
 
@@ -1159,6 +1176,99 @@ app.post('/api/admin/usuarios/:id/cerrar-sesiones', (peticion, respuesta) => {
 });
 
 // ---------------------------------------------------------------------
+// Planes y Despachos (ver servidor/db/despachos.js). Cada cuenta es
+// "Abogad@" (con su propio plan) o parte de un "Despacho" (plan de 5
+// usuarios, con su número de cuenta #1 a #5). También lleva la cuenta de
+// las encuestas definitivas que ya se canjearon por el beneficio de la
+// Cláusula 6.1, para que el admin no lo aplique dos veces.
+// ---------------------------------------------------------------------
+
+app.get('/api/admin/planes', (peticion, respuesta) => {
+  respuesta.json({ planes: PLANES, tiposDespacho: TIPOS_DESPACHO });
+});
+
+// { plan, despachoId }: con despachoId la cuenta entra a ese Despacho
+// (y toma su plan); sin él queda como Abogad@ con `plan` (null = sin plan).
+app.post('/api/admin/usuarios/:id/plan', jsonEstandar, (peticion, respuesta) => {
+  const usuario = buscarUsuarioPorId(Number(peticion.params.id));
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+  const plan = peticion.body?.plan || null;
+  const despachoId = Number(peticion.body?.despachoId) || null;
+  if (!planValido(plan)) {
+    return respuesta.status(400).json({ error: 'Ese plan no existe.' });
+  }
+  const error = asignarPlanAUsuario(usuario, { plan, despachoId });
+  if (error) {
+    return respuesta.status(400).json({ error });
+  }
+  respuesta.json({ ok: true, usuario: usuarioAJSON(buscarUsuarioPorId(usuario.id)) });
+});
+
+app.post('/api/admin/usuarios/:id/beneficio', (peticion, respuesta) => {
+  const usuario = buscarUsuarioPorId(Number(peticion.params.id));
+  if (!usuario) {
+    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
+  }
+  const error = registrarBeneficioDeUsuario(usuario);
+  if (error) {
+    return respuesta.status(400).json({ error });
+  }
+  respuesta.json({ ok: true, usuario: usuarioAJSON(buscarUsuarioPorId(usuario.id)) });
+});
+
+function validarDatosDespacho(cuerpo, { conTipo }) {
+  const nombre = String(cuerpo?.nombre ?? '').trim();
+  const plan = cuerpo?.plan || null;
+  if (!nombre || nombre.length > 120) return { error: 'Escribe el nombre del Despacho (máximo 120 caracteres).' };
+  if (!planValido(plan)) return { error: 'Ese plan no existe.' };
+  if (conTipo && !Object.hasOwn(TIPOS_DESPACHO, cuerpo?.tipo)) {
+    return { error: 'Elige si es Cuenta única compartida o Cuentas independientes.' };
+  }
+  return { nombre, plan, tipo: cuerpo?.tipo };
+}
+
+app.get('/api/admin/despachos', (peticion, respuesta) => {
+  respuesta.json({ despachos: listarDespachos() });
+});
+
+app.post('/api/admin/despachos', jsonEstandar, (peticion, respuesta) => {
+  const datos = validarDatosDespacho(peticion.body, { conTipo: true });
+  if (datos.error) {
+    return respuesta.status(400).json({ error: datos.error });
+  }
+  respuesta.json({ ok: true, despacho: crearDespacho(datos) });
+});
+
+// Solo nombre y plan: la modalidad (compartida / independientes) no se
+// puede alternar después de contratar (Cláusula 2.2).
+app.patch('/api/admin/despachos/:id', jsonEstandar, (peticion, respuesta) => {
+  const id = Number(peticion.params.id);
+  if (!buscarDespacho(id)) {
+    return respuesta.status(404).json({ error: 'Ese Despacho no existe.' });
+  }
+  const datos = validarDatosDespacho(peticion.body, { conTipo: false });
+  if (datos.error) {
+    return respuesta.status(400).json({ error: datos.error });
+  }
+  respuesta.json({ ok: true, despacho: actualizarDespacho(id, datos) });
+});
+
+app.delete('/api/admin/despachos/:id', (peticion, respuesta) => {
+  eliminarDespacho(Number(peticion.params.id));
+  respuesta.json({ ok: true });
+});
+
+app.post('/api/admin/despachos/:id/beneficio', (peticion, respuesta) => {
+  const error = registrarBeneficioDeDespacho(Number(peticion.params.id));
+  if (error) {
+    return respuesta.status(400).json({ error });
+  }
+  respuesta.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------
 // Alta y renovación de cuentas DESDE EL PANEL (antes solo se podía con
 // "npm run crear-usuario" / "npm run actualizar-licencia" en la terminal
 // del servidor). Con decenas o cientos de usuarios eso es inviable, así
@@ -1170,7 +1280,11 @@ app.post('/api/admin/usuarios/:id/cerrar-sesiones', (peticion, respuesta) => {
 // o un segundo administrador). La persona podrá iniciar sesión de
 // inmediato con el correo y la contraseña que ponga el admin.
 app.post('/api/admin/usuarios', jsonEstandar, (peticion, respuesta) => {
-  const { email, contrasena, rol = 'abogado', vigencia } = peticion.body ?? {};
+  const { email, contrasena, rol = 'abogado', vigencia, plan = null } = peticion.body ?? {};
+  const planLimpio = plan || null;
+  if (!planValido(planLimpio)) {
+    return respuesta.status(400).json({ error: 'Ese plan no existe.' });
+  }
 
   const emailLimpio = String(email ?? '').trim().toLowerCase();
   if (!emailLimpio || emailLimpio.length > 254 || !PATRON_EMAIL.test(emailLimpio)) {
@@ -1202,8 +1316,9 @@ app.post('/api/admin/usuarios', jsonEstandar, (peticion, respuesta) => {
     licenciaVenceEn,
     licenciaVitalicia
   });
+  if (planLimpio) asignarPlanAUsuario(usuario, { plan: planLimpio, despachoId: null });
 
-  respuesta.json({ ok: true, usuario: usuarioAJSON(usuario) });
+  respuesta.json({ ok: true, usuario: usuarioAJSON(buscarUsuarioPorId(usuario.id)) });
 });
 
 // Renovar (o corregir) la fecha de vencimiento de licencia de una cuenta

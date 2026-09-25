@@ -537,6 +537,82 @@
             flex-wrap: wrap;
         }
 
+        .detalle-plan {
+            font-size: 11.5px;
+            color: var(--texto-2);
+            margin-top: 2px;
+        }
+
+        /* Burbuja "Despachos": una tarjeta por Despacho con sus cuentas
+           numeradas y el avance de encuestas hacia el beneficio. */
+        .lista-despachos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .tarjeta-despacho {
+            border: 1px solid var(--borde-2);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .tarjeta-despacho h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .tarjeta-despacho .plan-despacho {
+            color: var(--color-primario);
+            font-weight: bold;
+        }
+
+        .tarjeta-despacho ol {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .tarjeta-despacho li {
+            padding: 3px 0;
+            border-bottom: 1px dashed var(--linea);
+            overflow-wrap: anywhere;
+        }
+
+        .tarjeta-despacho li .numero-cuenta {
+            display: inline-block;
+            min-width: 28px;
+            font-weight: bold;
+            color: var(--color-primario);
+        }
+
+        .tarjeta-despacho li.libre { color: var(--texto-2); font-style: italic; }
+
+        .barra-encuestas {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--superficie-2);
+            overflow: hidden;
+        }
+
+        .barra-encuestas > span {
+            display: block;
+            height: 100%;
+            background: var(--color-primario-degradado, var(--color-primario));
+        }
+
+        .botones-despacho {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: auto;
+        }
+
         .fila-pregunta-encuesta {
             border: 1px solid var(--borde-2);
             border-radius: 6px;
@@ -666,6 +742,16 @@
                     <option value="admin">Administrador</option>
                 </select>
 
+                <label for="campoNuevoPlan">Plan (modalidad Abogad@)</label>
+                <select id="campoNuevoPlan">
+                    <option value="">— Sin plan asignado —</option>
+                    <option value="fundadores">Fundadores - Abogad@</option>
+                    <option value="cofundadores">Co-Fundadores - Abogad@</option>
+                    <option value="mensual">Mensual - Abogad@</option>
+                    <option value="prueba">Prueba gratuita - Abogad@</option>
+                </select>
+                <p class="ayuda" style="margin:6px 0 0 0;">Para una cuenta de Despacho, créala aquí y luego usa "Cambiar plan" en "Usuarios y licencias", o agrégala desde la burbuja "Despachos".</p>
+
                 <label for="campoNuevaVigencia">Vigencia de la licencia</label>
                 <input type="text" id="campoNuevaVigencia" placeholder='Meses (ej. 24), fecha AAAA-MM-DD, o "vitalicia" (Plan Fundador)' value="24">
 
@@ -699,6 +785,51 @@
                 dos acciones cierra de inmediato TODAS las sesiones activas de esa cuenta.
             </p>
             <div id="listaUsuariosActivos"><p class="mensaje-carga">Cargando…</p></div>
+        </section>
+
+        <section class="tarjeta" data-icono="🏢">
+            <h2>Despachos (planes de 5 usuarios)</h2>
+            <p class="ayuda">
+                Cada plan tiene dos modalidades: <strong>Abogad@</strong> (una persona) y
+                <strong>Despacho</strong> (5 usuarios), así que una cuenta se ve como
+                "Mensual - Abogad@" o "Fundadores - Despacho". Crea aquí el Despacho con la modalidad
+                que eligió al contratar (no se puede cambiar después, Cláusula 2.2) y luego mete sus
+                cuentas con "Cambiar plan" en "Usuarios y licencias": cada una recibe su número
+                (#1 a #5). La <strong>Cuenta única compartida</strong> sube sola a 10 sesiones
+                simultáneas.
+            </p>
+            <p class="ayuda">
+                <strong>Beneficio por encuestas</strong> (Cláusula 6.1): el Despacho paga
+                <strong>$179</strong> en lugar de $199 por su siguiente mes del Plan Mensual cuando
+                junta <strong>10</strong> encuestas definitivas (Cuenta única compartida) o
+                <strong>20</strong> sumando todas sus cuentas (Cuentas independientes). Pulsa
+                "Registrar beneficio" al cobrarle ese mes: descuenta esas encuestas para que no se
+                usen dos veces.
+            </p>
+            <div id="listaDespachos"><p class="mensaje-carga">Cargando…</p></div>
+
+            <form id="formularioDespacho">
+                <label for="campoNombreDespacho">Nombre del Despacho</label>
+                <input type="text" id="campoNombreDespacho" placeholder='Ej. "García y Asociados"' required>
+
+                <label for="campoTipoDespacho">Modalidad elegida al contratar</label>
+                <select id="campoTipoDespacho">
+                    <option value="independientes">Cuentas independientes (hasta 5 cuentas propias)</option>
+                    <option value="compartida">Cuenta única compartida (1 cuenta, hasta 10 sesiones)</option>
+                </select>
+
+                <label for="campoPlanDespacho">Plan</label>
+                <select id="campoPlanDespacho">
+                    <option value="mensual">Mensual - Despacho</option>
+                    <option value="cofundadores">Co-Fundadores - Despacho</option>
+                    <option value="fundadores">Fundadores - Despacho</option>
+                    <option value="prueba">Prueba gratuita - Despacho</option>
+                    <option value="">— Sin plan asignado —</option>
+                </select>
+
+                <button type="submit" class="boton-primario">Crear Despacho</button>
+            </form>
+            <div id="resultadoDespacho"></div>
         </section>
 
         <section class="tarjeta" data-icono="⏸️">
