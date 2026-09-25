@@ -32,13 +32,7 @@
             /* El color de acento (--color-primario) y el resto de los
                tokens de color viven en tema.css; aquí solo van las
                medidas de layout propias del editor. */
-            /* Ancho del sidebar izquierdo (buscador + resultados) y de la
-               columna de Notas a la derecha del editor — el mismo valor en
-               los dos para que, junto con "Documentos seleccionados"
-               arriba, las columnas del header y las del contenido queden
-               alineadas verticalmente (ver el PDF de referencia: el botón
-               de arriba y la columna de abajo miden lo mismo). */
-            --ancho-lateral: 300px;
+            /* Ancho de la columna de Notas a la derecha del editor. */
             --ancho-notas: 300px;
 
             /* Medidas de una hoja carta (Letter) normal a 96dpi — igual
@@ -75,9 +69,7 @@
         }
 
         /* =========================================================
-           BARRA SUPERIOR: "Documentos seleccionados" ocupa el mismo
-           ancho que el sidebar de abajo (--ancho-lateral); el resto de
-           la barra (logo + espacio + iconos) ocupa lo que queda.
+           BARRA SUPERIOR: logo + aviso de caché + iconos.
            ========================================================= */
         /* Más compacta a propósito (menos alto/relleno que antes): la
            barra superior es "chrome" de la interfaz, no contenido — que
@@ -96,53 +88,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             position: relative;
             z-index: 1001;
-        }
-
-        .celda-doc-seleccionados {
-            flex: 0 0 var(--ancho-lateral);
-            position: relative;
-            min-width: 0;
-        }
-
-        .boton-doc-seleccionados {
-            width: 100%;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #fff;
-            background: var(--color-primario-degradado, var(--color-primario));
-            border: 1px solid var(--borde-2);
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .boton-doc-seleccionados:hover {
-            filter: brightness(0.9);
-        }
-
-        .panel-doc-seleccionados {
-            display: none;
-            position: absolute;
-            top: 110%;
-            left: 0;
-            width: max(var(--ancho-lateral), 320px);
-            max-width: 90vw;
-            max-height: 70vh;
-            overflow-y: auto;
-            background: var(--superficie);
-            border: 1px solid var(--borde-2);
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
-            padding: 12px;
-            z-index: 1002;
-        }
-
-        .panel-doc-seleccionados.panel-abierto {
-            display: block;
         }
 
         .celda-resto-superior {
@@ -176,9 +121,7 @@
 
         /* El aviso de "cuidado al borrar la caché" vive AQUÍ, en el
            espacio entre el logo y los iconos de la derecha (antes vacío)
-           — cubriendo todo ese ancho, como se pidió. No hay buscador
-           aquí arriba: el buscador vive en su propio espacio, en el
-           sidebar izquierdo. Mientras la bóveda no está desbloqueada
+           — cubriendo todo ese ancho, como se pidió. Mientras la bóveda no está desbloqueada
            (queda "hidden"), este hueco simplemente no ocupa espacio —no
            hace falta un espaciador aparte porque, hasta entonces, toda
            esta barra queda tapada por la pantalla de la bóveda de
@@ -317,9 +260,9 @@
         }
 
         /* =========================================================
-           FILA DE CONTENIDO: sidebar de búsqueda (izquierda, ancho fijo
-           igual que "Documentos seleccionados" arriba) + área principal
-           (derecha, lo que queda) — igual que en el PDF de referencia.
+           FILA DE CONTENIDO: solo el área principal (Cuadernos/Editor).
+           El buscador de leyes que vivía a la izquierda se quitó: con
+           Escritorio/Pestañas se abre el Buscador al lado.
            ========================================================= */
         .fila-contenido {
             flex: 1 1 auto;
@@ -328,199 +271,7 @@
         }
 
         /* =========================================================
-           Sidebar izquierdo: buscador arriba + resultados abajo. Es su
-           PROPIO espacio, siempre visible (no se esconde ni se
-           superpone a nada) — así se pidió explícitamente.
-           ========================================================= */
-        .barra-lateral-busqueda {
-            flex: 0 0 var(--ancho-lateral);
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            background: var(--superficie);
-            border-right: 2px solid var(--borde-2);
-        }
-
-        .buscador-lateral {
-            flex: 0 0 auto;
-            padding: 14px;
-            border-bottom: 1px solid var(--borde);
-        }
-
-        .buscador-lateral input {
-            width: 100%;
-            padding: 9px 12px;
-            font-size: 13px;
-            border: 1px solid var(--borde-2);
-            border-radius: 8px;
-        }
-
-        .buscador-lateral button {
-            width: 100%;
-            margin-top: 8px;
-            padding: 9px 12px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fff;
-            background: var(--color-primario-degradado, var(--color-primario));
-            border: 1px solid var(--color-primario);
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .buscador-lateral button:hover {
-            filter: brightness(0.85);
-        }
-
-        .resultados-lateral {
-            flex: 1 1 auto;
-            min-height: 0;
-            overflow-y: auto;
-            padding: 14px;
-        }
-
-        .aviso-sin-busqueda {
-            color: var(--texto-2);
-            font-style: italic;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        /* =========================================================
-           Sistema de botones (documentos/sectores) reutilizado dentro
-           del desplegable — mismas clases que sistemaDeBotones.js ya
-           sabe pintar en index.html.
-           ========================================================= */
-        .barra-lateral {
-            width: 100%;
-        }
-
-        .titulo-sector {
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .flecha-sector {
-            display: inline-block;
-            transition: transform 0.2s ease;
-        }
-
-        .titulo-sector.abierto .flecha-sector {
-            transform: rotate(90deg);
-        }
-
-        .contenido-sector {
-            display: none;
-        }
-
-        .contenido-sector.abierto {
-            display: block;
-        }
-
-        .bloque-sector {
-            margin-bottom: 14px;
-            padding-left: 10px;
-            border-left: 3px solid var(--borde);
-        }
-
-        .bloque-sector h3 {
-            margin: 8px 0 6px 0;
-            font-size: 14px;
-        }
-
-        .boton-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            margin: 4px 0;
-            padding: 6px 10px;
-            background: var(--superficie);
-            border: 1px solid var(--borde-2);
-            border-radius: 6px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .boton-checkbox::before {
-            content: '';
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            flex-shrink: 0;
-            border: 1px solid var(--borde-2);
-            border-radius: 3px;
-            background: var(--superficie);
-        }
-
-        .boton-checkbox.activo {
-            background: var(--color-primario-degradado, var(--color-primario));
-            color: #fff;
-            border-color: var(--color-primario);
-        }
-
-        .boton-checkbox.activo::before {
-            content: '✓';
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--superficie);
-            color: var(--color-primario);
-            border-color: #fff;
-        }
-
-        .boton-general {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .boton-sector {
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .boton-documento-sector {
-            margin-left: 12px;
-            width: calc(100% - 12px);
-        }
-
-        /* Tarjetas de resultado (mismas que index.html, ver
-           pintarResultadosBusqueda.js) — aquí van apiladas y angostas,
-           dentro del sidebar. */
-        .tarjeta-articulo {
-            background: var(--superficie);
-            border: 1px solid var(--borde);
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
-
-        .aviso-similares {
-            font-size: 12.5px;
-            font-style: italic;
-            color: var(--texto-2);
-            margin: 0 0 10px 0;
-        }
-
-        .tarjeta-encabezado {
-            margin: 0 0 6px 0;
-            font-weight: bold;
-            font-size: 12.5px;
-            color: var(--color-primario);
-        }
-
-        .tarjeta-cuerpo {
-            margin: 0;
-            font-size: 13px;
-            line-height: 1.5;
-            color: var(--texto);
-        }
-
-        /* =========================================================
-           Área principal (derecha del sidebar): aquí viven la vista de
+           Área principal: aquí viven la vista de
            Cuadernos y la vista de Editor, una a la vez.
            ========================================================= */
         .area-principal {
@@ -1079,11 +830,10 @@
         }
 
         /* En celular, todo pasa a apilarse en una sola columna: ya no
-           alcanza el ancho para sidebar + área principal + notas lado a
+           alcanza el ancho para área principal + notas lado a
            lado. La página entera hace scroll (nada de scroll anidado). */
         @media (max-width: 900px) {
             :root {
-                --ancho-lateral: 100%;
                 --ancho-notas: 100%;
                 /* En pantallas angostas, el margen de 1" completo (96px)
                    dejaría casi sin espacio para escribir — se reduce el
@@ -1103,42 +853,16 @@
                 flex-wrap: wrap;
             }
 
-            .celda-doc-seleccionados {
-                flex-basis: 100%;
-                order: 2;
-            }
-
             .celda-resto-superior {
-                order: 1;
                 flex-wrap: wrap;
             }
 
-            /* El documento va primero; el buscador de leyes embebido
-               baja al final para que en el móvil no ocupe la mitad de
-               arriba de la pantalla. */
             .fila-contenido {
                 flex-direction: column;
                 overflow: visible;
             }
 
             .area-principal {
-                order: 1;
-                overflow: visible;
-            }
-
-            .barra-lateral-busqueda {
-                order: 2;
-                /* Que mida lo que ocupe su contenido (el "flex: 0 0 100%"
-                   base, con --ancho-lateral a 100%, en columna intentaría
-                   ocupar toda la altura). */
-                flex: 0 0 auto;
-                border-right: none;
-                border-top: 2px solid var(--borde-2);
-                max-height: none;
-            }
-
-            .resultados-lateral {
-                max-height: none;
                 overflow: visible;
             }
 
@@ -1428,13 +1152,6 @@
 </head>
 <body>
     <header class="barra-superior">
-        <div class="celda-doc-seleccionados">
-            <button id="botonDocSeleccionados" class="boton-doc-seleccionados" type="button">📄 Documentos seleccionados</button>
-            <div id="panelDocSeleccionados" class="panel-doc-seleccionados">
-                <aside id="contenedorSectoresEditor" class="barra-lateral"></aside>
-            </div>
-        </div>
-
         <div class="celda-resto-superior">
             <div class="marca">
                 <img id="iconoMarca" class="logo-marca" src="imagenes/artonseley-logo-azul.jpg" alt="Ícono ARTONSELEY">
@@ -1486,17 +1203,6 @@
     </div>
 
     <div class="fila-contenido">
-        <!-- ============ Sidebar: buscador + resultados (su propio espacio, siempre visible) ============ -->
-        <aside class="barra-lateral-busqueda">
-            <div class="buscador-lateral">
-                <input type="text" id="campoPalabraEditor" placeholder="Buscar una ley..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-                <button id="botonBuscarEditor" type="button">Buscar</button>
-            </div>
-            <div id="resultadosEditor" class="resultados-lateral">
-                <p class="aviso-sin-busqueda">Busca una palabra o un número de artículo — los resultados aparecen aquí, en el mismo formato que el buscador principal.</p>
-            </div>
-        </aside>
-
         <!-- ============ Área principal: Cuadernos o Editor ============ -->
         <div class="area-principal">
             <!-- ============ Vista de Cuadernos ============ -->

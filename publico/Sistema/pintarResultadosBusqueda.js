@@ -2,10 +2,9 @@
 // -------------------------------------------------------------------
 // Convierte la lista de resultados que regresa POST /api/buscar en
 // tarjetas (.tarjeta-articulo), igual que en el buscador original. Lo
-// usan buscadorPrincipal.js (buscador principal, en index.html) y
-// editorPrincipal.js (buscador embebido en la nueva interfaz de
-// "Cuadernos", en editor.html), para que las dos pantallas pinten los
-// resultados siempre igual sin duplicar esta lógica en cada una.
+// usa buscadorPrincipal.js (buscador.html). Antes también lo usaba el
+// buscador embebido de "Cuadernos" (editor.html), que se quitó porque
+// con Escritorio/Pestañas el Buscador ya se abre al lado.
 //
 // Cada resultado que regresa el servidor tiene esta forma:
 //   [Documento: "Artículo 210" Título] (coincide con: ...) texto del artículo

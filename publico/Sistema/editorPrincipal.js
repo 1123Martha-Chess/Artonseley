@@ -6,27 +6,23 @@
 //
 //   - La misma barra superior, panel de Configuración/Personalización y
 //     notificaciones que index.html (son los mismos módulos).
-//   - El mismo sistemaDeBotones.js de siempre, pero ahora dentro de un
-//     desplegable que abre el botón "Documentos seleccionados", en vez
-//     de vivir fijo en un sidebar.
-//   - Un buscador embebido (mismo /api/buscar y mismas tarjetas que el
-//     buscador principal) para consultar leyes sin salir de esta página.
 //   - La bóveda cifrada (ver manejaBovedaCifrada.js): antes de mostrar
 //     nada, hay que resolver incógnito/configurar la frase/desbloquear.
 //   - La vista de "Cuadernos" (lista) y la vista de "Editor" (escribir),
 //     con notas y exportar/importar (ver manejaCuadernos.js,
 //     manejaNotas.js, manejaHerramientasEdicion.js, formatoTextoPlano.js).
 //
-// Cualquier click fuera de "Documentos seleccionados" o de "Notas"
-// cierra esas dos ventanas (lo maneja este archivo, más abajo).
+// Ya no hay buscador de leyes aquí: con Escritorio/Pestañas se abre el
+// Buscador al lado de Cuadernos.
+//
+// Cualquier click fuera de "Notas" cierra esa columna (lo maneja este
+// archivo, más abajo).
 // -------------------------------------------------------------------
 
-import { inicializarSistemaDeBotones, obtenerDocumentosSeleccionados } from './sistemaDeBotones.js';
 import { inicializarSugerencias } from './manejaSugerencias.js';
 import { inicializarConfiguracion } from './manejaConfiguracion.js';
 import { inicializarBuzonSugerencias } from './manejaBuzonSugerencias.js';
 import { inicializarPersonalizacion } from './manejaPersonalizacion.js';
-import { pintarResultados } from './pintarResultadosBusqueda.js';
 import { inicializarBoveda, exportarRespaldoArton, importarRespaldoArton, olvidarEnEsteDispositivo } from './manejaBovedaCifrada.js';
 import {
   inicializarCuadernos,
@@ -81,7 +77,6 @@ inicializarSugerencias('botonSugerencias', 'panelSugerencias');
 inicializarBuzonSugerencias();
 inicializarPersonalizacion();
 inicializarConfiguracion('botonConfiguracion', 'menuConfiguracion');
-inicializarSistemaDeBotones('contenedorSectoresEditor');
 inicializarHerramientasEdicion('areaEscritura', 'barraHerramientasEdicion');
 
 // "+Notas" ahora es un botón fijo en editor.html (la mitad colapsada de
@@ -135,16 +130,6 @@ async function obtenerCorreoUsuario() {
   return sesion.email;
 }
 
-// ========================= Documentos seleccionados =========================
-
-const botonDocSeleccionados = document.getElementById('botonDocSeleccionados');
-const panelDocSeleccionados = document.getElementById('panelDocSeleccionados');
-
-botonDocSeleccionados.addEventListener('click', (evento) => {
-  evento.stopPropagation();
-  panelDocSeleccionados.classList.toggle('panel-abierto');
-});
-
 // OJO: esto escucha "mousedown", no "click". Crear/editar/borrar/activar
 // una nota vuelve a pintar TODO el panel (panel.innerHTML = ...) dentro
 // de su propio manejador de "click" — para cuando ese click termina de
@@ -155,14 +140,6 @@ botonDocSeleccionados.addEventListener('click', (evento) => {
 // ANTES de que el click dispare el repintado, así que todavía ve el DOM
 // de verdad.
 document.addEventListener('mousedown', (evento) => {
-  if (
-    panelDocSeleccionados.classList.contains('panel-abierto') &&
-    !panelDocSeleccionados.contains(evento.target) &&
-    evento.target !== botonDocSeleccionados
-  ) {
-    panelDocSeleccionados.classList.remove('panel-abierto');
-  }
-
   // La columna de Notas ya no es una ventana flotando encima de todo —
   // tiene su propio espacio en el layout (ver editor.html) — así que
   // "cerrarla" ahora vuelve a mostrar el botón colapsado "(+) Notas" en
@@ -172,63 +149,6 @@ document.addEventListener('mousedown', (evento) => {
     cerrarPanelNotas();
   }
 });
-
-// ========================= Buscador embebido (sidebar) =========================
-// Su propio espacio, siempre visible a la izquierda — ya no es una
-// sección que aparece/desaparece según haya o no resultados.
-
-const campoPalabra = document.getElementById('campoPalabraEditor');
-const botonBuscar = document.getElementById('botonBuscarEditor');
-const contenedorResultados = document.getElementById('resultadosEditor');
-
-botonBuscar.addEventListener('click', () => buscarEnEditor(campoPalabra.value));
-campoPalabra.addEventListener('keydown', (evento) => {
-  if (evento.key === 'Enter') buscarEnEditor(campoPalabra.value);
-});
-
-async function buscarEnEditor(palabraEscrita) {
-  contenedorResultados.innerHTML = '<p class="mensaje-carga">Buscando…</p>';
-  botonBuscar.disabled = true;
-
-  try {
-    const respuesta = await fetch('/api/buscar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ texto: palabraEscrita, documentos: obtenerDocumentosSeleccionados() })
-    });
-
-    if (respuesta.status === 401) {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    if (!respuesta.ok) {
-      const datosError = await respuesta.json().catch(() => ({}));
-      mostrarMensajeBusqueda(datosError.error || 'Ocurrió un error al buscar. Intenta de nuevo.', 'mensaje-error');
-      return;
-    }
-
-    const datos = await respuesta.json();
-    if (datos.tipo === 'mensaje') {
-      mostrarMensajeBusqueda(datos.mensaje);
-    } else {
-      pintarResultados(contenedorResultados, datos.resultados, datos.avisos);
-    }
-  } catch (error) {
-    console.error('editorPrincipal.js: error al buscar:', error);
-    mostrarMensajeBusqueda('No se pudo conectar con el servidor. Intenta de nuevo.', 'mensaje-error');
-  } finally {
-    botonBuscar.disabled = false;
-  }
-}
-
-function mostrarMensajeBusqueda(texto, claseExtra = '') {
-  contenedorResultados.innerHTML = '';
-  const parrafo = document.createElement('p');
-  if (claseExtra) parrafo.classList.add(claseExtra);
-  parrafo.textContent = texto;
-  contenedorResultados.appendChild(parrafo);
-}
 
 // ========================= Vista de Cuadernos =========================
 
