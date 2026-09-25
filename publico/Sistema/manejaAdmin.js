@@ -763,9 +763,9 @@ function celdaSesiones(u) {
 }
 
 // Plan de la cuenta: "Mensual - Despacho" con su detalle ("García ·
-// cuenta #2 de 5"), o "Mensual - Abogad@" con sus encuestas definitivas
-// sin canjear y, si le alcanza, el botón para registrar el beneficio de
-// $39 (Cláusula 6.1). Los Despachos registran el suyo desde su burbuja.
+// cuenta #2 de 5"), o "Mensual - Abogad@" con su avance de encuestas
+// (10 para un mes a $39) y, si ya le alcanza, el botón para registrar el
+// beneficio (Cláusula 6.1). Los Despachos registran el suyo desde su burbuja.
 function celdaPlan(u) {
   const celda = document.createElement('td');
   const nombre = document.createElement('strong');
@@ -777,7 +777,10 @@ function celdaPlan(u) {
   if (u.plan.detalle) {
     detalle.textContent = u.plan.detalle;
   } else if (u.plan.encuestas) {
-    detalle.textContent = `Encuestas sin canjear: ${u.plan.encuestas.disponibles}`;
+    const { disponibles, porBeneficio } = u.plan.encuestas;
+    detalle.textContent = disponibles >= porBeneficio
+      ? `Encuestas: ${disponibles} — ya tiene su mes a $39`
+      : `Encuestas: ${disponibles} de ${porBeneficio} para un mes a $39`;
   }
   celda.appendChild(detalle);
 
@@ -792,7 +795,7 @@ function celdaPlan(u) {
 async function registrarBeneficioCuenta(usuario) {
   const confirmado = await abrirModalConCampos({
     titulo: 'Registrar beneficio de encuesta',
-    mensaje: `Marca como usada 1 encuesta definitiva de "${usuario.email}": su siguiente mes del Plan Mensual - Abogad@ cuesta $39 MXN. Hazlo al momento de cobrarle ese mes, para que no se aplique dos veces.`,
+    mensaje: `Su siguiente mes del Plan Mensual - Abogad@ cuesta $39 MXN. Se marcan como usadas TODAS las encuestas de "${usuario.email}" (${usuario.plan.encuestas.disponibles}), también las que sobrepasan el mínimo: para otro descuento tendrá que contestar 10 nuevas. Hazlo al momento de cobrarle ese mes.`,
     campos: [],
     textoConfirmar: 'Registrar beneficio'
   });
@@ -1373,8 +1376,8 @@ function crearTarjetaDespacho(d) {
   const encuestas = document.createElement('div');
   encuestas.classList.add('detalle-plan');
   encuestas.textContent = beneficiosDisponibles > 0
-    ? `Encuestas: ${disponibles} sin canjear — le alcanza para ${beneficiosDisponibles} mes(es) a $${d.precioBeneficio}.`
-    : `Encuestas: ${disponibles} de ${porBeneficio} para un mes a $${d.precioBeneficio}.`;
+    ? `Encuestas: ${disponibles} — ya tiene su mes a ${d.precioBeneficio}.`
+    : `Encuestas: ${disponibles} de ${porBeneficio} para un mes a ${d.precioBeneficio}.`;
   encuestas.title = `${contestadas} definitivas en total, ${canjeadas} ya canjeadas.`;
   const barra = document.createElement('div');
   barra.classList.add('barra-encuestas');
@@ -1442,7 +1445,7 @@ async function eliminarDespachoAdmin(d) {
 async function registrarBeneficioDespacho(d) {
   const confirmado = await abrirModalConCampos({
     titulo: 'Registrar beneficio de encuestas',
-    mensaje: `Marca como usadas ${d.encuestas.porBeneficio} encuestas definitivas de "${d.nombre}": su siguiente mes del Plan Mensual - Despacho cuesta $${d.precioBeneficio} MXN. Hazlo al momento de cobrarle ese mes, para que no se aplique dos veces.`,
+    mensaje: `Su siguiente mes del Plan Mensual - Despacho cuesta ${d.precioBeneficio} MXN. Se marcan como usadas TODAS las encuestas de "${d.nombre}" (${d.encuestas.disponibles}), también las que sobrepasan el mínimo: para otro descuento tendrá que juntar ${d.encuestas.porBeneficio} nuevas. Hazlo al momento de cobrarle ese mes.`,
     campos: [],
     textoConfirmar: 'Registrar beneficio'
   });
@@ -1451,6 +1454,96 @@ async function registrarBeneficioDespacho(d) {
     await peticionAdmin(`/api/admin/despachos/${d.id}/beneficio`, { method: 'POST' });
     mostrarAviso('Beneficio registrado.', 'exito');
     await cargarDespachos();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+// ---------------------------------------------------------------------
+// Descuentos reclamados: la "notificación interna" que deja cada usuario
+// al pulsar "Reclamar descuento" en encuestas.html. Los pendientes van
+// primero, y su número aparece en el título de la burbuja para verlo
+// sin abrirla.
+// ---------------------------------------------------------------------
+
+async function cargarReclamosDescuento() {
+  const contenedor = document.getElementById('listaReclamosDescuento');
+  const tituloBurbuja = document.querySelector('#seccionReclamosDescuento .texto-burbuja');
+  try {
+    const { reclamos } = await peticionAdmin('/api/admin/reclamos-descuento');
+    const pendientes = reclamos.filter(r => r.estado === 'pendiente').length;
+    if (tituloBurbuja) {
+      tituloBurbuja.textContent = pendientes > 0
+        ? `Descuentos reclamados (${pendientes} pendiente${pendientes === 1 ? '' : 's'})`
+        : 'Descuentos reclamados';
+    }
+
+    pintarTabla(
+      contenedor,
+      ['Estado', 'Cuenta', 'Descuento', 'Encuestas usadas', 'Reclamado', 'Su mes vence'],
+      reclamos.map(r => {
+        const fila = document.createElement('tr');
+        const celdas = [
+          r.estado === 'pendiente' ? 'Pendiente' : `Aplicado el ${new Date(r.aplicadoEn + 'Z').toLocaleDateString('es-MX')}`,
+          r.modalidad === 'despacho' ? `${r.email} (Despacho "${r.despachoNombre ?? '—'}")` : r.email,
+          `Siguiente mes a $${r.precio} (${r.modalidad === 'despacho' ? 'Mensual - Despacho' : 'Mensual - Abogad@'})`,
+          String(r.encuestasUsadas),
+          new Date(r.creadoEn + 'Z').toLocaleString('es-MX'),
+          new Date(r.licenciaVenceEn).toLocaleDateString('es-MX')
+        ].map(texto => {
+          const celda = document.createElement('td');
+          celda.textContent = texto;
+          return celda;
+        });
+        const etiqueta = document.createElement('span');
+        etiqueta.classList.add('etiqueta-estado', r.estado === 'pendiente' ? 'etiqueta-suspendida' : 'etiqueta-activa');
+        etiqueta.textContent = celdas[0].textContent;
+        celdas[0].textContent = '';
+        celdas[0].appendChild(etiqueta);
+
+        const celdaAcciones = document.createElement('td');
+        const botones = document.createElement('div');
+        botones.style.display = 'flex';
+        botones.style.flexWrap = 'wrap';
+        botones.style.gap = '6px';
+        if (r.estado === 'pendiente') {
+          botones.appendChild(pintarBotonAccion('Marcar como aplicado', 'boton-secundario', () => marcarReclamoAplicado(r)));
+        }
+        botones.appendChild(pintarBotonAccion('Borrar aviso', 'boton-peligro', () => borrarReclamo(r)));
+        celdaAcciones.appendChild(botones);
+
+        fila.append(...celdas, celdaAcciones);
+        return fila;
+      })
+    );
+    if (reclamos.length === 0) contenedor.innerHTML = '<p>Nadie ha reclamado un descuento todavía.</p>';
+  } catch (error) {
+    contenedor.innerHTML = `<p class="mensaje-error">${error.message}</p>`;
+  }
+}
+
+async function marcarReclamoAplicado(reclamo) {
+  try {
+    await peticionAdmin(`/api/admin/reclamos-descuento/${reclamo.id}/aplicado`, { method: 'POST' });
+    mostrarAviso('Descuento marcado como aplicado.', 'exito');
+    await cargarReclamosDescuento();
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+async function borrarReclamo(reclamo) {
+  const confirmado = await abrirModalConCampos({
+    titulo: 'Borrar aviso',
+    mensaje: `¿Borrar el aviso de descuento de "${reclamo.email}"? Sus encuestas NO se le devuelven (ya quedaron usadas al reclamarlo); esto solo quita el aviso de esta lista.`,
+    campos: [],
+    textoConfirmar: 'Borrar aviso',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!confirmado) return;
+  try {
+    await peticionAdmin(`/api/admin/reclamos-descuento/${reclamo.id}`, { method: 'DELETE' });
+    await cargarReclamosDescuento();
   } catch (error) {
     mostrarAviso(error.message);
   }
@@ -2537,6 +2630,7 @@ cargarSolicitudesRegistro();
 cargarSugerencias();
 cargarCuentas();
 cargarDespachos();
+cargarReclamosDescuento();
 cargarNotificaciones();
 cargarCanciones();
 cargarIndicesEconomicos();

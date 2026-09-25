@@ -15,12 +15,21 @@ Fecha: 2026-09-24.
   "Despacho" (5 usuarios); nombre completo "Plan - Modalidad". 3.7 aclara que
   "Abogad@" no acredita título/cédula y "Despacho" no exige despacho
   constituido. 2.2 usa los nombres nuevos y numera las cuentas (#1 a #5).
-- **Beneficio de encuestas (6.1):** Abogad@: 1 encuesta = 1 mes a $39.
+- **Beneficio de encuestas (6.1):** Abogad@: 10 encuestas = 1 mes a $39.
   Despacho: 1 mes a $179 con 10 encuestas (Cuenta única compartida) o 20
-  sumando todas sus cuentas (Cuentas independientes). Cada respuesta se usa
-  una sola vez; al cambiar de modalidad no se trasladan.
+  sumando todas sus cuentas (Cuentas independientes). Al aplicar el
+  descuento se "queman" TODAS las encuestas (también las que sobrepasan el
+  mínimo y las pendientes); para otro mes hay que juntar un lote nuevo
+  completo. Al cambiar de modalidad no se trasladan.
 - **Aviso de Privacidad (Sección II):** nuevo dato "Plan, modalidad y conteo de
   encuestas para el beneficio" (solo números, no el contenido).
+
+- **Barra y "Reclamar descuento" (encuestas.html):** las cuentas con Plan
+  Mensual ven su avance ("6 de 10 encuestas"); al completarla aparece un
+  mensaje y el botón "Reclamar descuento", que usa sus encuestas y deja un
+  aviso en la burbuja de admin "Descuentos reclamados" (tabla
+  `reclamos_descuento`). Bloqueado en los últimos 7 días de su mes o si ya
+  venció; podrá reclamarlo al renovar. Cláusula 6.1 y Aviso actualizados.
 
 ## Archivos AGREGADOS
 
@@ -37,6 +46,7 @@ Fecha: 2026-09-24.
 | `servidor.js` | `usuarioAJSON` incluye `plan`; `POST /api/admin/usuarios` acepta `plan`; rutas nuevas de planes, beneficios y despachos. |
 | `servidor/renderizarMarkdownLegal.js` | Soporta sub-listas (un nivel de sangría). |
 | `publico/admin.html` | Burbuja nueva "Despachos"; selector de plan en "Crear usuario"; estilos de las tarjetas de despacho. |
+| `publico/encuestas.html`, `publico/Sistema/encuestasPrincipal.js` | Barra de avance, mensaje de meta cumplida y botón "Reclamar descuento". |
 | `publico/Sistema/manejaAdmin.js` | Columna "Plan" + "Cambiar plan" + "Registrar beneficio ($39)" en usuarios; burbuja de Despachos; "Vitalicia" → "Sin vencimiento" en textos del panel. |
 | `Terminos_y_Condiciones_Artonseley.md`, `Aviso_de_Privacidad_Artonseley.md` | Ver arriba. |
 

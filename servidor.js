@@ -187,7 +187,12 @@ import {
   crearDespacho,
   actualizarDespacho,
   eliminarDespacho,
-  registrarBeneficioDeDespacho
+  registrarBeneficioDeDespacho,
+  progresoDescuentoDeUsuario,
+  reclamarDescuento,
+  listarReclamosDescuento,
+  marcarReclamoAplicado,
+  eliminarReclamoDescuento
 } from './servidor/db/despachos.js';
 import {
   limitadorLogin,
@@ -671,8 +676,22 @@ app.get('/api/encuestas', requiereSesionAPI, (peticion, respuesta) => {
       ...encuesta,
       miRespuesta: respuestasDeUsuario.get(encuesta.id) || null
     })),
-    diasPlazoEdicion: DIAS_PLAZO_EDICION_ENCUESTA
+    diasPlazoEdicion: DIAS_PLAZO_EDICION_ENCUESTA,
+    // Barra de avance hacia el descuento por encuestas (Cláusula 6.1),
+    // solo para Plan Mensual — ver servidor/db/despachos.js.
+    progresoDescuento: progresoDescuentoDeUsuario(buscarUsuarioPorId(peticion.usuario.id))
   });
+});
+
+// "Reclamar descuento": quema las encuestas y deja la notificación
+// interna para el admin (burbuja "Descuentos reclamados").
+app.post('/api/encuestas/reclamar-descuento', requiereSesionAPI, (peticion, respuesta) => {
+  const usuario = buscarUsuarioPorId(peticion.usuario.id);
+  const { error } = reclamarDescuento(usuario);
+  if (error) {
+    return respuesta.status(400).json({ error });
+  }
+  respuesta.json({ ok: true, progresoDescuento: progresoDescuentoDeUsuario(buscarUsuarioPorId(usuario.id)) });
 });
 
 const LARGO_MAXIMO_RESPUESTA_ENCUESTA = 2000;
@@ -1257,6 +1276,21 @@ app.patch('/api/admin/despachos/:id', jsonEstandar, (peticion, respuesta) => {
 
 app.delete('/api/admin/despachos/:id', (peticion, respuesta) => {
   eliminarDespacho(Number(peticion.params.id));
+  respuesta.json({ ok: true });
+});
+
+// Descuentos que los usuarios reclamaron desde encuestas.html.
+app.get('/api/admin/reclamos-descuento', (peticion, respuesta) => {
+  respuesta.json({ reclamos: listarReclamosDescuento() });
+});
+
+app.post('/api/admin/reclamos-descuento/:id/aplicado', (peticion, respuesta) => {
+  marcarReclamoAplicado(Number(peticion.params.id));
+  respuesta.json({ ok: true });
+});
+
+app.delete('/api/admin/reclamos-descuento/:id', (peticion, respuesta) => {
+  eliminarReclamoDescuento(Number(peticion.params.id));
   respuesta.json({ ok: true });
 });
 

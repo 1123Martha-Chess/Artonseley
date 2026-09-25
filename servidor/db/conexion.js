@@ -497,4 +497,22 @@ db.exec(`
     encuestas_canjeadas INTEGER NOT NULL DEFAULT 0,
     creado_en TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  -- Descuentos por encuestas que el propio usuario reclamó desde
+  -- encuestas.html (botón "Reclamar descuento"). Es la "notificación
+  -- interna" que ve el admin en la burbuja "Descuentos reclamados": queda
+  -- 'pendiente' hasta que el admin lo aplica al cobrar ese mes. Para un
+  -- Despacho, despacho_id indica a cuál corresponde (lo reclama cualquiera
+  -- de sus cuentas, usuario_id). Ver servidor/db/despachos.js.
+  CREATE TABLE IF NOT EXISTS reclamos_descuento (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    despacho_id INTEGER,
+    modalidad TEXT NOT NULL CHECK (modalidad IN ('abogado', 'despacho')),
+    precio INTEGER NOT NULL,
+    encuestas_usadas INTEGER NOT NULL,
+    estado TEXT NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'aplicado')),
+    creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+    aplicado_en TEXT
+  );
 `);

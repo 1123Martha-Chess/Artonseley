@@ -15,6 +15,13 @@
 // (dentro del plazo de "diasPlazoEdicion" días desde la primera vez que
 // la contestó) — este archivo solo pinta ese estado y manda el
 // formulario a POST /api/encuestas/:id/respuestas.
+//
+// Arriba de la lista, a las cuentas con Plan Mensual se les muestra una
+// barra con su avance hacia el descuento (Cláusula 6.1 de los Términos:
+// 10 encuestas para Abogad@, 10 o 20 para un Despacho). Al completarla
+// aparece "Reclamar descuento" (POST /api/encuestas/reclamar-descuento),
+// que le avisa al admin; el servidor lo bloquea en los últimos 7 días del
+// mes de la cuenta. Los números los calcula el servidor, aquí solo se pintan.
 // -------------------------------------------------------------------
 
 import { aplicarModoGuardado } from './manejaPersonalizacion.js';
@@ -90,11 +97,15 @@ async function mostrarEncuestas() {
     return;
   }
 
-  pintarEncuestas(datos.encuestas || []);
+  pintarEncuestas(datos.encuestas || [], datos.progresoDescuento);
 }
 
-function pintarEncuestas(encuestas) {
+function pintarEncuestas(encuestas, progresoDescuento) {
   bloqueEncuestas.innerHTML = '';
+
+  if (progresoDescuento?.aplica) {
+    bloqueEncuestas.appendChild(crearTarjetaProgreso(progresoDescuento));
+  }
 
   if (encuestas.length === 0) {
     const p = document.createElement('p');
@@ -113,6 +124,96 @@ function pintarEncuestas(encuestas) {
   botonRetirar.textContent = 'Ya no quiero participar (retirar mi aceptación)';
   botonRetirar.addEventListener('click', retirarConsentimiento);
   bloqueEncuestas.appendChild(botonRetirar);
+}
+
+function crearTarjetaProgreso(progreso) {
+  const tarjeta = document.createElement('div');
+  tarjeta.className = 'bloque enc-progreso';
+
+  const h3 = document.createElement('h3');
+  h3.textContent = 'Tu descuento por contestar encuestas';
+  tarjeta.appendChild(h3);
+
+  if (progreso.reclamoPendiente) {
+    const reclamado = document.createElement('div');
+    reclamado.className = 'enc-reclamado';
+    reclamado.textContent = `✅ Ya reclamaste tu descuento: tu siguiente mes del Plan Mensual costará $${progreso.reclamoPendiente.precio} MXN. Lo aplicaremos al momento de tu renovación. Las encuestas que contestes a partir de ahora ya cuentan para tu próximo descuento.`;
+    tarjeta.appendChild(reclamado);
+  }
+
+  const explicacion = document.createElement('p');
+  explicacion.textContent = `Contesta ${progreso.minimo} encuestas${progreso.textoGrupo ? ` (${progreso.textoGrupo})` : ''} y tu siguiente mes del Plan Mensual costará $${progreso.precio} MXN en lugar de $${progreso.precioNormal}. Cuentan cuando tu respuesta ya es definitiva (pasados sus días de corrección).`;
+  tarjeta.appendChild(explicacion);
+
+  const barra = document.createElement('div');
+  barra.className = 'enc-barra';
+  barra.setAttribute('role', 'progressbar');
+  barra.setAttribute('aria-valuemin', '0');
+  barra.setAttribute('aria-valuemax', String(progreso.minimo));
+  barra.setAttribute('aria-valuenow', String(progreso.contestadas));
+  const relleno = document.createElement('div');
+  relleno.className = 'enc-barra-relleno';
+  relleno.style.width = `${(progreso.contestadas / progreso.minimo) * 100}%`;
+  barra.appendChild(relleno);
+  const textoBarra = document.createElement('div');
+  textoBarra.className = 'enc-barra-texto';
+  textoBarra.textContent = `${progreso.contestadas} de ${progreso.minimo} encuestas`;
+  tarjeta.append(textoBarra, barra);
+
+  if (progreso.pendientes > 0 && !progreso.completado) {
+    const pendientes = document.createElement('p');
+    pendientes.textContent = `Además tienes ${progreso.pendientes} respuesta(s) en su plazo de corrección: se sumarán a la barra en cuanto sean definitivas.`;
+    tarjeta.appendChild(pendientes);
+  }
+
+  if (progreso.completado) {
+    const completado = document.createElement('div');
+    completado.className = 'enc-completado';
+
+    const texto = document.createElement('div');
+    texto.className = 'enc-completado-texto';
+    const titulo = document.createElement('strong');
+    titulo.textContent = '🎉 ¡META CUMPLIDA! Ganaste tu descuento';
+    const detalle = document.createElement('p');
+    detalle.textContent = progreso.motivoBloqueo
+      ? progreso.motivoBloqueo
+      : `Tu siguiente mes costará $${progreso.precio} MXN. Reclámalo primero: las encuestas que contestes de más antes de reclamarlo no cuentan para otro descuento. Después, cada encuesta que contestes nos hace un gran favor y ya suma para tu próximo descuento. ¡Gracias por ayudarnos a mejorar Artonseley!`;
+    texto.append(titulo, detalle);
+
+    const boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'boton-plataforma';
+    boton.textContent = 'Reclamar descuento';
+    boton.disabled = !progreso.puedeReclamar;
+
+    const mensaje = document.createElement('p');
+    mensaje.className = 'mensaje-error';
+    mensaje.style.flexBasis = '100%';
+    mensaje.hidden = true;
+
+    boton.addEventListener('click', async () => {
+      boton.disabled = true;
+      try {
+        const respuesta = await fetch('/api/encuestas/reclamar-descuento', { method: 'POST' });
+        if (respuesta.status === 401) {
+          window.location.href = 'login.html';
+          return;
+        }
+        const datos = await respuesta.json().catch(() => ({}));
+        if (!respuesta.ok) throw new Error(datos.error || 'No se pudo reclamar el descuento.');
+        await mostrarEncuestas();
+      } catch (error) {
+        mensaje.textContent = error.message;
+        mensaje.hidden = false;
+        boton.disabled = false;
+      }
+    });
+
+    completado.append(texto, boton, mensaje);
+    tarjeta.appendChild(completado);
+  }
+
+  return tarjeta;
 }
 
 function crearTarjetaEncuesta(encuesta) {
