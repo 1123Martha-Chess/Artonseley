@@ -478,7 +478,11 @@ const columnasNuevasDePlan = [
   ['plan', 'ALTER TABLE usuarios ADD COLUMN plan TEXT'],
   ['despacho_id', 'ALTER TABLE usuarios ADD COLUMN despacho_id INTEGER'],
   ['despacho_puesto', 'ALTER TABLE usuarios ADD COLUMN despacho_puesto INTEGER'],
-  ['encuestas_canjeadas', 'ALTER TABLE usuarios ADD COLUMN encuestas_canjeadas INTEGER NOT NULL DEFAULT 0']
+  ['encuestas_canjeadas', 'ALTER TABLE usuarios ADD COLUMN encuestas_canjeadas INTEGER NOT NULL DEFAULT 0'],
+  // Desde cuándo la cuenta está en su modalidad actual: si cambia de
+  // modalidad a media mes, solo cuentan para el descuento las encuestas
+  // que conteste desde ese momento. (encuestas_canjeadas ya no se usa.)
+  ['modalidad_desde', 'ALTER TABLE usuarios ADD COLUMN modalidad_desde TEXT']
 ];
 for (const [columna, sentencia] of columnasNuevasDePlan) {
   if (!columnasDeUsuarios.some(c => c.name === columna)) db.exec(sentencia);

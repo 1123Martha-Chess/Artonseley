@@ -17,8 +17,9 @@
 // formulario a POST /api/encuestas/:id/respuestas.
 //
 // Arriba de la lista, a las cuentas con Plan Mensual se les muestra una
-// barra con su avance hacia el descuento (Cláusula 6.1 de los Términos:
-// 10 encuestas para Abogad@, 10 o 20 para un Despacho). Al completarla
+// barra con su avance DEL MES hacia el descuento (Cláusula 6.1 de los
+// Términos: 10 encuestas para Abogad@, 10 o 20 para un Despacho, dentro de
+// un mismo mes del calendario; cada mes empieza en 0). Al completarla
 // aparece "Reclamar descuento" (POST /api/encuestas/reclamar-descuento),
 // que le avisa al admin; el servidor lo bloquea en los últimos 7 días del
 // mes de la cuenta. Los números los calcula el servidor, aquí solo se pintan.
@@ -131,18 +132,23 @@ function crearTarjetaProgreso(progreso) {
   tarjeta.className = 'bloque enc-progreso';
 
   const h3 = document.createElement('h3');
-  h3.textContent = 'Tu descuento por contestar encuestas';
+  h3.textContent = `Tu descuento por contestar encuestas — ${progreso.mesActual}`;
   tarjeta.appendChild(h3);
 
-  if (progreso.reclamoPendiente) {
+  if (progreso.reclamadoEsteMes) {
     const reclamado = document.createElement('div');
     reclamado.className = 'enc-reclamado';
-    reclamado.textContent = `✅ Ya reclamaste tu descuento: tu siguiente mes del Plan Mensual costará $${progreso.reclamoPendiente.precio} MXN. Lo aplicaremos al momento de tu renovación. Si quieres, puedes seguir contestando encuestas; nos ayudas muchísimo a mejorar Artonseley. ¡Gracias!`;
+    reclamado.textContent = `✅ Ya reclamaste tu descuento de ${progreso.mesActual}: tu siguiente mes del Plan Mensual costará $${progreso.precio} MXN. Lo aplicaremos al momento de tu renovación. Tu próxima meta empieza el 1 de ${progreso.mesSiguiente}. Si quieres, puedes seguir contestando encuestas; nos ayudas muchísimo a mejorar Artonseley. ¡Gracias!`;
     tarjeta.appendChild(reclamado);
+  } else if (progreso.reclamoPendiente) {
+    const pendiente = document.createElement('div');
+    pendiente.className = 'enc-reclamado';
+    pendiente.textContent = `✅ Tienes un descuento ya reclamado ($${progreso.reclamoPendiente.precio} MXN) que aplicaremos en tu renovación.`;
+    tarjeta.appendChild(pendiente);
   }
 
   const explicacion = document.createElement('p');
-  explicacion.textContent = `Contesta ${progreso.minimo} encuestas${progreso.textoGrupo ? ` (${progreso.textoGrupo})` : ''} y tu siguiente mes del Plan Mensual costará $${progreso.precio} MXN en lugar de $${progreso.precioNormal}. Cuentan cuando tu respuesta ya es definitiva (pasados sus días de corrección).`;
+  explicacion.textContent = `Contesta ${progreso.minimo} encuestas durante ${progreso.mesActual}${progreso.textoGrupo ? ` (${progreso.textoGrupo})` : ''} y tu siguiente mes del Plan Mensual costará $${progreso.precio} MXN en lugar de $${progreso.precioNormal}. Solo cuentan las que contestes este mes: el 1 de ${progreso.mesSiguiente} tu barra vuelve a empezar en 0.`;
   tarjeta.appendChild(explicacion);
 
   const barra = document.createElement('div');
@@ -159,12 +165,6 @@ function crearTarjetaProgreso(progreso) {
   textoBarra.className = 'enc-barra-texto';
   textoBarra.textContent = `${progreso.contestadas} de ${progreso.minimo} encuestas`;
   tarjeta.append(textoBarra, barra);
-
-  if (progreso.pendientes > 0 && !progreso.completado) {
-    const pendientes = document.createElement('p');
-    pendientes.textContent = `Además tienes ${progreso.pendientes} respuesta(s) en su plazo de corrección: se sumarán a la barra en cuanto sean definitivas.`;
-    tarjeta.appendChild(pendientes);
-  }
 
   if (progreso.completado) {
     const completado = document.createElement('div');

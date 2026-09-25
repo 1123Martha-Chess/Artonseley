@@ -10,22 +10,26 @@
 // - Una cuenta CON despacho_id es parte de ese Despacho: su plan es el
 //   del Despacho, y despacho_puesto es su número (#1 a #5).
 //
-// Beneficio de encuestas (Cláusula 6.1): solo cuentan las respuestas
-// DEFINITIVAS (ya pasaron sus 3 días de corrección). Al juntar el mínimo
-// se gana UN mes con descuento:
-//   - Abogad@: 10 encuestas = 1 mes del Plan Mensual a $39.
-//   - Despacho, Cuenta única compartida: 10 encuestas = 1 mes a $179.
-//   - Despacho, Cuentas independientes: 20 encuestas, SUMANDO las de
-//     todas sus cuentas = 1 mes a $179.
-// Al registrar el beneficio se "queman" TODAS las respuestas que la
-// cuenta/Despacho tenga en ese momento (encuestas_canjeadas = total),
-// incluidas las que sobrepasaron el mínimo y las que todavía estaban en
-// su plazo de corrección: nada de eso cuenta para otro descuento. Para el
-// siguiente hay que juntar otro lote completo de respuestas NUEVAS.
+// Beneficio de encuestas (Cláusula 6.1): la meta se cumple DENTRO de un
+// mes del calendario (hora del centro de México) y cada mes empieza en 0:
+//   - Abogad@: 10 encuestas en el mes = 1 mes del Plan Mensual a $39.
+//   - Despacho, Cuenta única compartida: 10 encuestas en el mes = $179.
+//   - Despacho, Cuentas independientes: 20 encuestas en el mes, SUMANDO
+//     las de todas sus cuentas = $179.
+// Solo cuentan las encuestas contestadas por primera vez en el mes en
+// curso (primera_respuesta_en), así que lo que no se completó en un mes se
+// pierde al empezar el siguiente. Una vez reclamado el descuento en un mes,
+// las demás encuestas de ESE mes ya no cuentan para nada: la siguiente meta
+// se junta con las del mes siguiente. Si la cuenta cambia de modalidad a
+// media mes, solo cuentan las que conteste desde ese momento
+// (usuarios.modalidad_desde).
+//
+// Las columnas encuestas_canjeadas (usuarios y despachos) son de una
+// versión anterior de esta regla y ya no se usan; se conservan por la
+// convención del proyecto de no borrar columnas.
 // -------------------------------------------------------------------
 
 import { db } from './conexion.js';
-import { DIAS_PLAZO_EDICION_ENCUESTA } from './respuestasEncuestas.js';
 
 export const PLANES = {
   fundadores: 'Fundadores',
@@ -49,36 +53,62 @@ export function planValido(plan) {
   return plan === null || Object.hasOwn(PLANES, plan);
 }
 
-// Respuestas definitivas de un grupo de cuentas: archivadas por el
-// barrido, o cuyo plazo de corrección ya pasó aunque el barrido todavía
-// no haya corrido.
-export function contarEncuestasDefinitivas(usuarioIds) {
-  if (usuarioIds.length === 0) return 0;
-  const marcas = usuarioIds.map(() => '?').join(', ');
-  return db.prepare(`
-    SELECT COUNT(*) AS total FROM encuestas_respuestas
-    WHERE usuario_id IN (${marcas})
-      AND (migrada_en IS NOT NULL OR primera_respuesta_en <= datetime('now', ?))
-  `).get(...usuarioIds, `-${DIAS_PLAZO_EDICION_ENCUESTA} days`).total;
+// -------------------------------------------------------------------
+// Mes del calendario en hora del centro de México (UTC-6, sin horario de
+// verano desde 2022). Las fechas de SQLite se guardan en UTC con el
+// formato 'AAAA-MM-DD HH:MM:SS', así que el inicio del mes se devuelve en
+// ese mismo formato para poder compararlo directo en SQL.
+// -------------------------------------------------------------------
+
+const DESFASE_MEXICO_MS = 6 * 60 * 60 * 1000;
+const NOMBRES_MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+  'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+function aFechaSQLite(fecha) {
+  return fecha.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-// TODAS las respuestas (definitivas o no) de una cuenta: lo que se
-// "quema" al registrar un beneficio o al cambiar de modalidad. Las que
-// todavía estaban en su plazo de corrección también cuentan como usadas,
-// para que al volverse definitivas no aparezcan como un lote nuevo.
-function contarTodasLasEncuestas(usuarioId) {
-  return db.prepare('SELECT COUNT(*) AS total FROM encuestas_respuestas WHERE usuario_id = ?').get(usuarioId).total;
+export function mesActualMexico(ahora = new Date()) {
+  const enMexico = new Date(ahora.getTime() - DESFASE_MEXICO_MS);
+  const anio = enMexico.getUTCFullYear();
+  const mes = enMexico.getUTCMonth();
+  return {
+    inicio: aFechaSQLite(new Date(Date.UTC(anio, mes, 1) + DESFASE_MEXICO_MS)),
+    nombre: `${NOMBRES_MESES[mes]} de ${anio}`,
+    nombreCorto: NOMBRES_MESES[mes],
+    nombreSiguiente: NOMBRES_MESES[(mes + 1) % 12]
+  };
 }
 
-function resumenEncuestas(contestadas, canjeadas, porBeneficio) {
-  const disponibles = Math.max(0, contestadas - canjeadas);
+// Encuestas que una cuenta contestó (por primera vez) este mes, desde que
+// está en su modalidad actual.
+function contarEncuestasDelMes(usuario, inicioMes) {
+  const desde = usuario.modalidad_desde && usuario.modalidad_desde > inicioMes
+    ? usuario.modalidad_desde
+    : inicioMes;
+  return db.prepare(
+    'SELECT COUNT(*) AS total FROM encuestas_respuestas WHERE usuario_id = ? AND primera_respuesta_en >= ?'
+  ).get(usuario.id, desde).total;
+}
+
+// Descuento ya reclamado ESTE mes (por la cuenta Abogad@ o por cualquier
+// cuenta del Despacho).
+function reclamoDelMes({ usuarioId, despachoId }, inicioMes) {
+  return despachoId
+    ? db.prepare('SELECT * FROM reclamos_descuento WHERE despacho_id = ? AND creado_en >= ? ORDER BY creado_en DESC').get(despachoId, inicioMes)
+    : db.prepare('SELECT * FROM reclamos_descuento WHERE usuario_id = ? AND despacho_id IS NULL AND creado_en >= ? ORDER BY creado_en DESC').get(usuarioId, inicioMes);
+}
+
+// Resumen para pintar (admin y usuario): cuántas lleva este mes, cuál es
+// la meta y si ya la reclamó.
+function resumenEncuestas(contestadas, porBeneficio, reclamo) {
   return {
     contestadas,
-    canjeadas,
-    disponibles,
     porBeneficio,
-    // Nunca más de 1: lo que sobrepase el mínimo no da otro descuento.
-    beneficiosDisponibles: disponibles >= porBeneficio ? 1 : 0
+    completado: contestadas >= porBeneficio,
+    reclamadoEsteMes: !!reclamo,
+    // Solo se puede reclamar una vez por mes, y solo con la meta cumplida.
+    beneficiosDisponibles: !reclamo && contestadas >= porBeneficio ? 1 : 0
   };
 }
 
@@ -88,32 +118,28 @@ export function buscarDespacho(id) {
 
 function miembrosDe(despachoId) {
   return db.prepare(`
-    SELECT id, email, despacho_puesto, encuestas_canjeadas FROM usuarios
+    SELECT id, email, despacho_puesto, modalidad_desde FROM usuarios
     WHERE despacho_id = ? AND eliminado_en IS NULL
     ORDER BY despacho_puesto
   `).all(despachoId);
 }
 
-// Cuando una cuenta cambia de modalidad (entra a un Despacho, sale de él
-// o pasa a otro), todas sus encuestas hasta ese momento se dan por
-// "usadas" en la modalidad anterior: empieza de cero en la nueva. Así una
-// cuenta no se lleva al salir las encuestas que su Despacho ya canjeó, ni
-// mete a un Despacho las que ya tenía como Abogad@.
-function reiniciarEncuestasDeCuenta(usuarioId) {
-  db.prepare('UPDATE usuarios SET encuestas_canjeadas = ? WHERE id = ?')
-    .run(contarTodasLasEncuestas(usuarioId), usuarioId);
+// Al cambiar de modalidad (entrar a un Despacho, salir de él o pasar a
+// otro), las encuestas de este mes contestadas antes del cambio se quedan
+// en la modalidad anterior: en la nueva solo cuentan las de ahora en
+// adelante.
+function marcarCambioDeModalidad(usuarioId) {
+  db.prepare("UPDATE usuarios SET modalidad_desde = datetime('now') WHERE id = ?").run(usuarioId);
 }
 
-// Encuestas de un Despacho: las de cada cuenta desde que entró.
-function encuestasDelDespacho(miembros) {
-  return miembros.reduce(
-    (total, m) => total + Math.max(0, contarEncuestasDefinitivas([m.id]) - m.encuestas_canjeadas),
-    0
-  );
+function encuestasDelDespachoEsteMes(despacho, inicioMes) {
+  const contestadas = miembrosDe(despacho.id).reduce((total, m) => total + contarEncuestasDelMes(m, inicioMes), 0);
+  return resumenEncuestas(contestadas, ENCUESTAS_POR_BENEFICIO[despacho.tipo], reclamoDelMes({ despachoId: despacho.id }, inicioMes));
 }
 
 function despachoAJSON(despacho) {
   const miembros = miembrosDe(despacho.id);
+  const mes = mesActualMexico();
   return {
     id: despacho.id,
     nombre: despacho.nombre,
@@ -123,11 +149,8 @@ function despachoAJSON(despacho) {
     planTexto: despacho.plan ? PLANES[despacho.plan] : null,
     maximoCuentas: MAXIMO_CUENTAS_POR_TIPO[despacho.tipo],
     miembros: miembros.map(m => ({ id: m.id, email: m.email, puesto: m.despacho_puesto })),
-    encuestas: resumenEncuestas(
-      encuestasDelDespacho(miembros),
-      despacho.encuestas_canjeadas,
-      ENCUESTAS_POR_BENEFICIO[despacho.tipo]
-    ),
+    encuestas: encuestasDelDespachoEsteMes(despacho, mes.inicio),
+    mesActual: mes.nombreCorto,
     precioBeneficio: PRECIO_BENEFICIO.despacho,
     creadoEn: despacho.creado_en
   };
@@ -154,7 +177,7 @@ export function actualizarDespacho(id, { nombre, plan }) {
 export function eliminarDespacho(id) {
   const despacho = buscarDespacho(id);
   if (!despacho) return;
-  miembrosDe(id).forEach(m => reiniciarEncuestasDeCuenta(m.id));
+  miembrosDe(id).forEach(m => marcarCambioDeModalidad(m.id));
   db.prepare(`
     UPDATE usuarios SET plan = ?, despacho_id = NULL, despacho_puesto = NULL,
       limite_sesiones = CASE WHEN limite_sesiones = ? THEN NULL ELSE limite_sesiones END
@@ -170,7 +193,7 @@ export function asignarPlanAUsuario(usuario, { plan, despachoId }) {
   if (!despachoId) {
     const veniaDeCompartida = usuario.despacho_id
       && buscarDespacho(usuario.despacho_id)?.tipo === 'compartida';
-    if (usuario.despacho_id) reiniciarEncuestasDeCuenta(usuario.id);
+    if (usuario.despacho_id) marcarCambioDeModalidad(usuario.id);
     db.prepare(`
       UPDATE usuarios SET plan = ?, despacho_id = NULL, despacho_puesto = NULL,
         limite_sesiones = CASE WHEN ? AND limite_sesiones = ? THEN NULL ELSE limite_sesiones END
@@ -198,7 +221,7 @@ export function asignarPlanAUsuario(usuario, { plan, despachoId }) {
   // La Cuenta única compartida tiene hasta 10 sesiones simultáneas
   // (Cláusulas 2.2 y 2.7). Subir el límite no cierra sesiones.
   const limite = despacho.tipo === 'compartida' ? SESIONES_CUENTA_COMPARTIDA : usuario.limite_sesiones;
-  reiniciarEncuestasDeCuenta(usuario.id);
+  marcarCambioDeModalidad(usuario.id);
   db.prepare(`
     UPDATE usuarios SET plan = NULL, despacho_id = ?, despacho_puesto = ?, limite_sesiones = ? WHERE id = ?
   `).run(despacho.id, puesto, limite, usuario.id);
@@ -226,6 +249,7 @@ export function planDeUsuarioAJSON(usuario) {
       };
     }
   }
+  const mes = mesActualMexico();
   return {
     modalidad: 'abogado',
     plan: usuario.plan,
@@ -233,71 +257,30 @@ export function planDeUsuarioAJSON(usuario) {
     puesto: null,
     nombreCompleto: usuario.plan ? `${PLANES[usuario.plan]} - Abogad@` : 'Sin plan asignado',
     detalle: null,
+    mesActual: mes.nombreCorto,
     encuestas: resumenEncuestas(
-      contarEncuestasDefinitivas([usuario.id]),
-      usuario.encuestas_canjeadas ?? 0,
-      ENCUESTAS_POR_BENEFICIO.abogado
+      contarEncuestasDelMes(usuario, mes.inicio),
+      ENCUESTAS_POR_BENEFICIO.abogado,
+      reclamoDelMes({ usuarioId: usuario.id }, mes.inicio)
     )
   };
 }
 
-// Registra que se aplicó un beneficio: "quema" TODAS las respuestas que
-// la cuenta tenga en este momento (también las que sobrepasaron el mínimo
-// y las que siguen en su plazo de corrección), así que para otro descuento
-// tendrá que juntar un lote completo de respuestas nuevas. Devuelve un
-// texto de error si todavía no le alcanza.
-export function registrarBeneficioDeUsuario(usuario) {
-  if (usuario.despacho_id) return 'Esta cuenta es de un Despacho: el beneficio se registra desde la burbuja "Despachos".';
-  const { beneficiosDisponibles, porBeneficio, disponibles } = planDeUsuarioAJSON(usuario).encuestas;
-  if (beneficiosDisponibles < 1) {
-    return `Todavía no le alcanza: necesita ${porBeneficio} encuestas definitivas nuevas y tiene ${disponibles}.`;
-  }
-  db.prepare('UPDATE usuarios SET encuestas_canjeadas = ? WHERE id = ?')
-    .run(contarTodasLasEncuestas(usuario.id), usuario.id);
-  return null;
-}
-
-export function registrarBeneficioDeDespacho(id) {
-  const despacho = buscarDespacho(id);
-  if (!despacho) return 'Ese Despacho no existe.';
-  const { encuestas } = despachoAJSON(despacho);
-  if (encuestas.beneficiosDisponibles < 1) {
-    return `Todavía no le alcanza: necesita ${encuestas.porBeneficio} encuestas definitivas nuevas y tiene ${encuestas.disponibles}.`;
-  }
-  // Mismo criterio que encuestasDelDespacho, pero con TODAS las respuestas
-  // de cada cuenta desde que entró, para quemarlas todas.
-  const totalDelDespacho = miembrosDe(id).reduce(
-    (total, m) => total + Math.max(0, contarTodasLasEncuestas(m.id) - m.encuestas_canjeadas),
-    0
-  );
-  db.prepare('UPDATE despachos SET encuestas_canjeadas = ? WHERE id = ?').run(totalDelDespacho, id);
-  return null;
-}
-
 // -------------------------------------------------------------------
-// Lado del USUARIO (encuestas.html): barra de avance hacia el descuento y
-// botón "Reclamar descuento". Solo aplica a cuentas con Plan Mensual
-// (Abogad@ o Despacho), porque el descuento es sobre su siguiente mes.
-// Reclamar "quema" las encuestas igual que registrarBeneficio* y deja un
-// registro en reclamos_descuento, que el admin ve como notificación en la
-// burbuja "Descuentos reclamados" hasta marcarlo como aplicado.
+// Lado del USUARIO (encuestas.html): barra de avance del mes hacia el
+// descuento y botón "Reclamar descuento". Solo aplica a cuentas con Plan
+// Mensual (Abogad@ o Despacho), porque el descuento es sobre su siguiente
+// mes. Reclamar deja un registro en reclamos_descuento, que el admin ve
+// como notificación en la burbuja "Descuentos reclamados" hasta marcarlo
+// como aplicado; y hace que el resto de ese mes ya no cuente.
 //
-// El botón se bloquea en los últimos DIAS_BLOQUEO_RECLAMO días del mes
-// de la cuenta (o si ya venció): así el admin tiene al menos una semana
-// para aplicarlo antes de cobrar la renovación. Podrá reclamarlo en
-// cuanto renueve.
+// El botón se bloquea en los últimos DIAS_BLOQUEO_RECLAMO días del
+// periodo de acceso de la cuenta (o si ya venció): así el admin tiene al
+// menos una semana para aplicarlo antes de cobrar la renovación.
 // -------------------------------------------------------------------
 
 export const DIAS_BLOQUEO_RECLAMO = 7;
 export const PRECIO_NORMAL_MENSUAL = { abogado: 49, despacho: 199 };
-
-// Respuestas de una cuenta que todavía están en su plazo de corrección y
-// que no se han "quemado": se sumarán a la barra cuando sean definitivas.
-function pendientesDeCuenta(usuarioId, canjeadas) {
-  const todas = Math.max(0, contarTodasLasEncuestas(usuarioId) - canjeadas);
-  const definitivas = Math.max(0, contarEncuestasDefinitivas([usuarioId]) - canjeadas);
-  return todas - definitivas;
-}
 
 function reclamoPendienteDe({ usuarioId, despachoId }) {
   const fila = despachoId
@@ -310,44 +293,41 @@ export function progresoDescuentoDeUsuario(usuario) {
   const plan = planDeUsuarioAJSON(usuario);
   if (plan.plan !== 'mensual') return { aplica: false };
 
-  let encuestas, pendientes, despachoId = null, textoGrupo = null;
+  const mes = mesActualMexico();
+  let encuestas, despachoId = null, textoGrupo = null;
   if (plan.modalidad === 'despacho') {
-    const despacho = despachoAJSON(buscarDespacho(plan.despachoId));
-    encuestas = despacho.encuestas;
+    const despacho = buscarDespacho(plan.despachoId);
+    encuestas = encuestasDelDespachoEsteMes(despacho, mes.inicio);
     despachoId = despacho.id;
-    pendientes = miembrosDe(despacho.id).reduce(
-      (total, m) => total + pendientesDeCuenta(m.id, m.encuestas_canjeadas), 0
-    );
     textoGrupo = despacho.tipo === 'independientes'
       ? 'sumando las de todas las cuentas de tu Despacho'
       : 'contestadas desde la cuenta de tu Despacho';
   } else {
     encuestas = plan.encuestas;
-    pendientes = pendientesDeCuenta(usuario.id, usuario.encuestas_canjeadas ?? 0);
   }
 
   const diasRestantes = (new Date(usuario.licencia_vence_en) - new Date()) / (24 * 60 * 60 * 1000);
   let motivoBloqueo = null;
   if (diasRestantes <= 0) {
-    motivoBloqueo = 'Tu mes ya terminó: podrás reclamar tu descuento en cuanto renueves.';
+    motivoBloqueo = 'Tu periodo de acceso ya terminó: podrás reclamar tu descuento en cuanto renueves, siempre que sea dentro de este mismo mes.';
   } else if (diasRestantes < DIAS_BLOQUEO_RECLAMO) {
-    motivoBloqueo = `Faltan menos de ${DIAS_BLOQUEO_RECLAMO} días para que termine tu mes: podrás reclamar tu descuento en cuanto renueves.`;
+    motivoBloqueo = `Faltan menos de ${DIAS_BLOQUEO_RECLAMO} días para que termine tu periodo de acceso: podrás reclamar tu descuento en cuanto renueves, siempre que sea dentro de este mismo mes.`;
   }
 
-  const completado = encuestas.beneficiosDisponibles > 0;
   return {
     aplica: true,
     modalidad: plan.modalidad,
     textoGrupo,
-    contestadas: Math.min(encuestas.disponibles, encuestas.porBeneficio),
-    excedente: Math.max(0, encuestas.disponibles - encuestas.porBeneficio),
+    mesActual: mes.nombreCorto,
+    mesSiguiente: mes.nombreSiguiente,
+    contestadas: Math.min(encuestas.contestadas, encuestas.porBeneficio),
     minimo: encuestas.porBeneficio,
-    pendientes,
     precio: PRECIO_BENEFICIO[plan.modalidad],
     precioNormal: PRECIO_NORMAL_MENSUAL[plan.modalidad],
-    completado,
-    puedeReclamar: completado && !motivoBloqueo,
-    motivoBloqueo: completado ? motivoBloqueo : null,
+    completado: encuestas.completado && !encuestas.reclamadoEsteMes,
+    reclamadoEsteMes: encuestas.reclamadoEsteMes,
+    puedeReclamar: encuestas.beneficiosDisponibles > 0 && !motivoBloqueo,
+    motivoBloqueo: encuestas.beneficiosDisponibles > 0 ? motivoBloqueo : null,
     reclamoPendiente: reclamoPendienteDe({ usuarioId: usuario.id, despachoId })
   };
 }
@@ -355,16 +335,11 @@ export function progresoDescuentoDeUsuario(usuario) {
 export function reclamarDescuento(usuario) {
   const progreso = progresoDescuentoDeUsuario(usuario);
   if (!progreso.aplica) return { error: 'El descuento por encuestas aplica al Plan Mensual.' };
+  if (progreso.reclamadoEsteMes) return { error: `Ya se reclamó el descuento de ${progreso.mesActual}.` };
   if (!progreso.completado) {
-    return { error: `Todavía no llegas: llevas ${progreso.contestadas} de ${progreso.minimo} encuestas.` };
+    return { error: `Todavía no llegas: llevas ${progreso.contestadas} de ${progreso.minimo} encuestas este mes.` };
   }
   if (progreso.motivoBloqueo) return { error: progreso.motivoBloqueo };
-
-  const encuestasUsadas = progreso.contestadas + progreso.excedente;
-  const error = progreso.modalidad === 'despacho'
-    ? registrarBeneficioDeDespacho(usuario.despacho_id)
-    : registrarBeneficioDeUsuario(usuario);
-  if (error) return { error };
 
   db.prepare(`
     INSERT INTO reclamos_descuento (usuario_id, despacho_id, modalidad, precio, encuestas_usadas)
@@ -374,7 +349,7 @@ export function reclamarDescuento(usuario) {
     progreso.modalidad === 'despacho' ? usuario.despacho_id : null,
     progreso.modalidad,
     progreso.precio,
-    encuestasUsadas
+    progreso.contestadas
   );
   return { error: null };
 }
@@ -405,6 +380,8 @@ export function marcarReclamoAplicado(id) {
   db.prepare("UPDATE reclamos_descuento SET estado = 'aplicado', aplicado_en = datetime('now') WHERE id = ?").run(id);
 }
 
+// Ojo: borrar un aviso de ESTE mes "libera" el mes, y esa cuenta podría
+// volver a reclamarlo. Por eso el panel lo advierte antes de borrar.
 export function eliminarReclamoDescuento(id) {
   db.prepare('DELETE FROM reclamos_descuento WHERE id = ?').run(id);
 }

@@ -181,13 +181,11 @@ import {
   planValido,
   planDeUsuarioAJSON,
   asignarPlanAUsuario,
-  registrarBeneficioDeUsuario,
   listarDespachos,
   buscarDespacho,
   crearDespacho,
   actualizarDespacho,
   eliminarDespacho,
-  registrarBeneficioDeDespacho,
   progresoDescuentoDeUsuario,
   reclamarDescuento,
   listarReclamosDescuento,
@@ -1197,9 +1195,9 @@ app.post('/api/admin/usuarios/:id/cerrar-sesiones', (peticion, respuesta) => {
 // ---------------------------------------------------------------------
 // Planes y Despachos (ver servidor/db/despachos.js). Cada cuenta es
 // "Abogad@" (con su propio plan) o parte de un "Despacho" (plan de 5
-// usuarios, con su número de cuenta #1 a #5). También lleva la cuenta de
-// las encuestas definitivas que ya se canjearon por el beneficio de la
-// Cláusula 6.1, para que el admin no lo aplique dos veces.
+// usuarios, con su número de cuenta #1 a #5). El descuento por encuestas
+// (Cláusula 6.1) se cuenta por mes del calendario y lo reclama el propio
+// usuario (POST /api/encuestas/reclamar-descuento).
 // ---------------------------------------------------------------------
 
 app.get('/api/admin/planes', (peticion, respuesta) => {
@@ -1219,18 +1217,6 @@ app.post('/api/admin/usuarios/:id/plan', jsonEstandar, (peticion, respuesta) => 
     return respuesta.status(400).json({ error: 'Ese plan no existe.' });
   }
   const error = asignarPlanAUsuario(usuario, { plan, despachoId });
-  if (error) {
-    return respuesta.status(400).json({ error });
-  }
-  respuesta.json({ ok: true, usuario: usuarioAJSON(buscarUsuarioPorId(usuario.id)) });
-});
-
-app.post('/api/admin/usuarios/:id/beneficio', (peticion, respuesta) => {
-  const usuario = buscarUsuarioPorId(Number(peticion.params.id));
-  if (!usuario) {
-    return respuesta.status(404).json({ error: 'Ese usuario no existe.' });
-  }
-  const error = registrarBeneficioDeUsuario(usuario);
   if (error) {
     return respuesta.status(400).json({ error });
   }
@@ -1291,14 +1277,6 @@ app.post('/api/admin/reclamos-descuento/:id/aplicado', (peticion, respuesta) => 
 
 app.delete('/api/admin/reclamos-descuento/:id', (peticion, respuesta) => {
   eliminarReclamoDescuento(Number(peticion.params.id));
-  respuesta.json({ ok: true });
-});
-
-app.post('/api/admin/despachos/:id/beneficio', (peticion, respuesta) => {
-  const error = registrarBeneficioDeDespacho(Number(peticion.params.id));
-  if (error) {
-    return respuesta.status(400).json({ error });
-  }
   respuesta.json({ ok: true });
 });
 

@@ -72,6 +72,19 @@
             color: var(--texto-2);
         }
 
+        .enc-aviso-mes {
+            font-family: Arial, sans-serif;
+            font-size: 13.5px;
+            line-height: 1.6;
+            background: var(--aviso-fondo);
+            border: 1px solid var(--aviso-borde);
+            color: var(--aviso-texto);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 12px 0 14px 0;
+        }
+        .enc-aviso-mes > strong:first-child { display: block; margin-bottom: 4px; font-size: 14.5px; }
+
         /* Barra de avance hacia el descuento por encuestas (solo Plan
            Mensual, ver encuestasPrincipal.js → crearTarjetaProgreso). */
         .enc-progreso h3 { margin: 0 0 4px 0; }
@@ -156,6 +169,17 @@
     <div class="pantalla">
         <a href="index.html" class="volver">← Volver al inicio</a>
         <h1>Encuestas</h1>
+        <!-- Aviso visible sobre cómo se cuenta el descuento por mes del
+             calendario (Cláusula 6.1 de los Términos). -->
+        <div class="enc-aviso-mes" role="note">
+            <strong>📅 Importante: el descuento se gana mes por mes</strong>
+            Si tienes Plan Mensual, contestar encuestas te puede dar un descuento en tu siguiente
+            mes. Para ganarlo debes contestar las encuestas necesarias (10, o 20 si eres un Despacho
+            de cuentas independientes) <strong>dentro de un mismo mes del calendario</strong>, y
+            cada mes tu conteo empieza en 0. Si ya reclamaste tu descuento este mes, las encuestas
+            que contestes el resto del mes <strong>no cuentan</strong> para el del mes siguiente:
+            para ese solo cuentan las que contestes a partir del día 1 del siguiente mes.
+        </div>
         <p class="pantalla-descripcion">
             Encuestas sobre la plataforma y sus funciones que puedes contestar si quieres — es
             completamente opcional.

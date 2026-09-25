@@ -777,36 +777,21 @@ function celdaPlan(u) {
   if (u.plan.detalle) {
     detalle.textContent = u.plan.detalle;
   } else if (u.plan.encuestas) {
-    const { disponibles, porBeneficio } = u.plan.encuestas;
-    detalle.textContent = disponibles >= porBeneficio
-      ? `Encuestas: ${disponibles} — ya tiene su mes a $39`
-      : `Encuestas: ${disponibles} de ${porBeneficio} para un mes a $39`;
+    detalle.textContent = textoEncuestasDelMes(u.plan.encuestas, u.plan.mesActual, 39);
   }
   celda.appendChild(detalle);
-
-  if (u.plan.encuestas?.beneficiosDisponibles > 0) {
-    const boton = pintarBotonAccion('Registrar beneficio ($39)', 'boton-secundario', () => registrarBeneficioCuenta(u));
-    boton.style.marginTop = '6px';
-    celda.appendChild(boton);
-  }
   return celda;
 }
 
-async function registrarBeneficioCuenta(usuario) {
-  const confirmado = await abrirModalConCampos({
-    titulo: 'Registrar beneficio de encuesta',
-    mensaje: `Su siguiente mes del Plan Mensual - Abogad@ cuesta $39 MXN. Se marcan como usadas TODAS las encuestas de "${usuario.email}" (${usuario.plan.encuestas.disponibles}), también las que sobrepasan el mínimo: para otro descuento tendrá que contestar 10 nuevas. Hazlo al momento de cobrarle ese mes.`,
-    campos: [],
-    textoConfirmar: 'Registrar beneficio'
-  });
-  if (!confirmado) return;
-  try {
-    await peticionAdmin(`/api/admin/usuarios/${usuario.id}/beneficio`, { method: 'POST' });
-    mostrarAviso('Beneficio registrado.', 'exito');
-    await cargarCuentas();
-  } catch (error) {
-    mostrarAviso(error.message);
-  }
+// "Encuestas de octubre: 6 de 10" / "Octubre: meta cumplida, falta que
+// la reclame" / "Octubre: descuento ya reclamado". El conteo es por mes
+// del calendario (Cláusula 6.1); lo reclama el propio usuario desde
+// encuestas.html y llega a la burbuja "Descuentos reclamados".
+function textoEncuestasDelMes(encuestas, mes, precio) {
+  const Mes = mes.charAt(0).toUpperCase() + mes.slice(1);
+  if (encuestas.reclamadoEsteMes) return `${Mes}: descuento de $${precio} ya reclamado`;
+  if (encuestas.completado) return `${Mes}: meta cumplida (${encuestas.contestadas}), falta que la reclame`;
+  return `Encuestas de ${mes}: ${encuestas.contestadas} de ${encuestas.porBeneficio}`;
 }
 
 // Un solo selector con todas las opciones: cada plan como Abogad@, o
@@ -1371,27 +1356,20 @@ function crearTarjetaDespacho(d) {
     cuentas.appendChild(item);
   }
 
-  // Avance hacia el siguiente beneficio.
-  const { disponibles, porBeneficio, beneficiosDisponibles, contestadas, canjeadas } = d.encuestas;
+  // Avance del mes hacia el descuento (lo reclaman ellos mismos).
+  const { contestadas, porBeneficio } = d.encuestas;
   const encuestas = document.createElement('div');
   encuestas.classList.add('detalle-plan');
-  encuestas.textContent = beneficiosDisponibles > 0
-    ? `Encuestas: ${disponibles} — ya tiene su mes a ${d.precioBeneficio}.`
-    : `Encuestas: ${disponibles} de ${porBeneficio} para un mes a ${d.precioBeneficio}.`;
-  encuestas.title = `${contestadas} definitivas en total, ${canjeadas} ya canjeadas.`;
+  encuestas.textContent = textoEncuestasDelMes(d.encuestas, d.mesActual, d.precioBeneficio);
   const barra = document.createElement('div');
   barra.classList.add('barra-encuestas');
   const relleno = document.createElement('span');
-  relleno.style.width = `${Math.min(100, (disponibles / porBeneficio) * 100)}%`;
+  relleno.style.width = `${Math.min(100, (contestadas / porBeneficio) * 100)}%`;
   barra.appendChild(relleno);
 
   const botones = document.createElement('div');
   botones.classList.add('botones-despacho');
-  const botonBeneficio = pintarBotonAccion(`Registrar beneficio ($${d.precioBeneficio})`, 'boton-secundario', () => registrarBeneficioDespacho(d));
-  botonBeneficio.disabled = beneficiosDisponibles < 1;
-  if (botonBeneficio.disabled) botonBeneficio.style.opacity = '0.5';
   botones.append(
-    botonBeneficio,
     pintarBotonAccion('Editar', 'boton-secundario', () => editarDespacho(d)),
     pintarBotonAccion('Eliminar', 'boton-peligro', () => eliminarDespachoAdmin(d))
   );
@@ -1427,7 +1405,7 @@ async function editarDespacho(d) {
 async function eliminarDespachoAdmin(d) {
   const confirmado = await abrirModalConCampos({
     titulo: 'Eliminar Despacho',
-    mensaje: `¿Eliminar el Despacho "${d.nombre}"? Sus ${d.miembros.length} cuenta(s) NO se borran: pasan a ser Abogad@ con el mismo plan. Su conteo de encuestas canjeadas se pierde.`,
+    mensaje: `¿Eliminar el Despacho "${d.nombre}"? Sus ${d.miembros.length} cuenta(s) NO se borran: pasan a ser Abogad@ con el mismo plan, y para su descuento de este mes solo contarán las encuestas que contesten desde ahora.`,
     campos: [],
     textoConfirmar: 'Eliminar Despacho',
     claseBotonConfirmar: 'boton-peligro'
@@ -1437,23 +1415,6 @@ async function eliminarDespachoAdmin(d) {
     await peticionAdmin(`/api/admin/despachos/${d.id}`, { method: 'DELETE' });
     mostrarAviso('Despacho eliminado.', 'exito');
     await Promise.all([cargarDespachos(), cargarCuentas()]);
-  } catch (error) {
-    mostrarAviso(error.message);
-  }
-}
-
-async function registrarBeneficioDespacho(d) {
-  const confirmado = await abrirModalConCampos({
-    titulo: 'Registrar beneficio de encuestas',
-    mensaje: `Su siguiente mes del Plan Mensual - Despacho cuesta ${d.precioBeneficio} MXN. Se marcan como usadas TODAS las encuestas de "${d.nombre}" (${d.encuestas.disponibles}), también las que sobrepasan el mínimo: para otro descuento tendrá que juntar ${d.encuestas.porBeneficio} nuevas. Hazlo al momento de cobrarle ese mes.`,
-    campos: [],
-    textoConfirmar: 'Registrar beneficio'
-  });
-  if (!confirmado) return;
-  try {
-    await peticionAdmin(`/api/admin/despachos/${d.id}/beneficio`, { method: 'POST' });
-    mostrarAviso('Beneficio registrado.', 'exito');
-    await cargarDespachos();
   } catch (error) {
     mostrarAviso(error.message);
   }
@@ -1535,7 +1496,7 @@ async function marcarReclamoAplicado(reclamo) {
 async function borrarReclamo(reclamo) {
   const confirmado = await abrirModalConCampos({
     titulo: 'Borrar aviso',
-    mensaje: `¿Borrar el aviso de descuento de "${reclamo.email}"? Sus encuestas NO se le devuelven (ya quedaron usadas al reclamarlo); esto solo quita el aviso de esta lista.`,
+    mensaje: `¿Borrar el aviso de descuento de "${reclamo.email}"? Si el aviso es de este mes, esa cuenta podrá volver a reclamar el descuento de este mes (se libera). Úsalo solo para quitar avisos por error o ya viejos.`,
     campos: [],
     textoConfirmar: 'Borrar aviso',
     claseBotonConfirmar: 'boton-peligro'

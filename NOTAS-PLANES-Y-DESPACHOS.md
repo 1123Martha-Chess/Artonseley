@@ -17,10 +17,10 @@ Fecha: 2026-09-24.
   constituido. 2.2 usa los nombres nuevos y numera las cuentas (#1 a #5).
 - **Beneficio de encuestas (6.1):** Abogad@: 10 encuestas = 1 mes a $39.
   Despacho: 1 mes a $179 con 10 encuestas (Cuenta única compartida) o 20
-  sumando todas sus cuentas (Cuentas independientes). Al aplicar el
-  descuento se "queman" TODAS las encuestas (también las que sobrepasan el
-  mínimo y las pendientes); para otro mes hay que juntar un lote nuevo
-  completo. Al cambiar de modalidad no se trasladan.
+  sumando todas sus cuentas (Cuentas independientes). **Se cuenta por mes del
+  calendario:** cada mes empieza en 0, un solo descuento por mes, y lo que
+  se conteste después de reclamarlo ese mes no cuenta para nada. Aviso visible
+  debajo del título de encuestas.html.
 - **Aviso de Privacidad (Sección II):** nuevo dato "Plan, modalidad y conteo de
   encuestas para el beneficio" (solo números, no el contenido).
 
