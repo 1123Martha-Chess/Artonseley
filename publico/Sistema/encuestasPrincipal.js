@@ -137,7 +137,7 @@ function crearTarjetaProgreso(progreso) {
   if (progreso.reclamoPendiente) {
     const reclamado = document.createElement('div');
     reclamado.className = 'enc-reclamado';
-    reclamado.textContent = `✅ Ya reclamaste tu descuento: tu siguiente mes del Plan Mensual costará $${progreso.reclamoPendiente.precio} MXN. Lo aplicaremos al momento de tu renovación. Las encuestas que contestes a partir de ahora ya cuentan para tu próximo descuento.`;
+    reclamado.textContent = `✅ Ya reclamaste tu descuento: tu siguiente mes del Plan Mensual costará $${progreso.reclamoPendiente.precio} MXN. Lo aplicaremos al momento de tu renovación. Si quieres, puedes seguir contestando encuestas; nos ayudas muchísimo a mejorar Artonseley. ¡Gracias!`;
     tarjeta.appendChild(reclamado);
   }
 
@@ -177,7 +177,7 @@ function crearTarjetaProgreso(progreso) {
     const detalle = document.createElement('p');
     detalle.textContent = progreso.motivoBloqueo
       ? progreso.motivoBloqueo
-      : `Tu siguiente mes costará $${progreso.precio} MXN. Reclámalo primero: las encuestas que contestes de más antes de reclamarlo no cuentan para otro descuento. Después, cada encuesta que contestes nos hace un gran favor y ya suma para tu próximo descuento. ¡Gracias por ayudarnos a mejorar Artonseley!`;
+      : `Tu siguiente mes costará $${progreso.precio} MXN: presiona "Reclamar descuento" para hacerlo válido. Si quieres, puedes seguir contestando encuestas; cada respuesta nos hace un gran favor y nos ayuda a mejorar Artonseley. ¡Muchas gracias!`;
     texto.append(titulo, detalle);
 
     const boton = document.createElement('button');
