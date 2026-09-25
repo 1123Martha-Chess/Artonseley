@@ -186,6 +186,18 @@ export function eliminarDespacho(id) {
   db.prepare('DELETE FROM despachos WHERE id = ?').run(id);
 }
 
+// Texto de error si el Despacho ya no tiene lugar (o no existe), null si
+// sí cabe otra cuenta. Se revisa ANTES de crear una cuenta nueva para el
+// Despacho, para no dejar una cuenta creada que luego no se pudo meter.
+export function errorSiDespachoLleno(despachoId) {
+  const despacho = buscarDespacho(despachoId);
+  if (!despacho) return 'Ese Despacho no existe.';
+  if (miembrosDe(despacho.id).length < MAXIMO_CUENTAS_POR_TIPO[despacho.tipo]) return null;
+  return despacho.tipo === 'compartida'
+    ? `"${despacho.nombre}" es de Cuenta única compartida y ya tiene su cuenta.`
+    : `"${despacho.nombre}" ya tiene sus 5 cuentas.`;
+}
+
 // Asigna el plan de una cuenta. Con despachoId la mete a ese Despacho en
 // el primer número libre (#1 a #5); sin él, la deja como Abogad@ con
 // `plan`. Devuelve un texto de error si no se puede (Despacho lleno).

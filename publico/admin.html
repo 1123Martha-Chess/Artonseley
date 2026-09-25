@@ -439,8 +439,52 @@
 
         .caja-modal {
             background: var(--superficie);
+            border-radius: 14px;
+            padding: 22px 26px;
+            max-width: 460px;
+            max-height: 100%;
+            overflow-y: auto;
             width: 100%;
             box-shadow: 0 8px 24px var(--sombra-2);
+        }
+
+        .caja-modal p.ayuda-campo-modal {
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--texto-2);
+            margin: 4px 0 12px 0;
+        }
+
+        /* Menú "Modificar" de una cuenta: todas sus acciones en una sola
+           ventana, en vez de 7 botones por fila en la tabla. */
+        .menu-modificar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .menu-modificar button {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .menu-modificar .separador-peligro {
+            grid-column: 1 / -1;
+            font-size: 11.5px;
+            color: var(--texto-2);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin: 8px 0 0 0;
+        }
+
+        @media (max-width: 420px) {
+            .menu-modificar { grid-template-columns: 1fr; }
+        }
+
+        .buscador-cuentas {
+            margin-bottom: 10px;
         }
 
         .caja-modal h3 {
@@ -592,6 +636,33 @@
         }
 
         .tarjeta-despacho li.libre { color: var(--texto-2); font-style: italic; }
+
+        .tarjeta-despacho li {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tarjeta-despacho .correo-miembro { flex: 1; min-width: 0; }
+
+        .quitar-miembro {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            font-size: 11px;
+            line-height: 1;
+            color: #d9534f;
+            background: none;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .quitar-miembro:hover,
+        .quitar-miembro:focus-visible { border-color: #d9534f; }
+
+        .tarjeta-despacho .agregar-miembro { align-self: flex-start; }
 
         .barra-encuestas {
             height: 8px;
@@ -750,7 +821,7 @@
                     <option value="mensual">Mensual - Abogad@</option>
                     <option value="prueba">Prueba gratuita - Abogad@</option>
                 </select>
-                <p class="ayuda" style="margin:6px 0 0 0;">Para una cuenta de Despacho, créala aquí y luego usa "Cambiar plan" en "Usuarios y licencias", o agrégala desde la burbuja "Despachos".</p>
+                <p class="ayuda" style="margin:6px 0 0 0;">Para una cuenta de Despacho es más fácil crearla directo desde la burbuja "Despachos" (botón "+ Agregar cuenta" en su tarjeta).</p>
 
                 <label for="campoNuevaVigencia">Vigencia de la licencia</label>
                 <input type="text" id="campoNuevaVigencia" placeholder='Meses (ej. 24), fecha AAAA-MM-DD, o "vitalicia" (Plan Fundador)' value="24">
@@ -773,7 +844,10 @@
         <section class="tarjeta" data-icono="🔑">
             <h2>Usuarios y licencias</h2>
             <p class="ayuda">
-                Cuentas activas registradas en la plataforma. "Licencia" es la fecha contratada.
+                Cuentas activas registradas en la plataforma. Pulsa <strong>"Modificar"</strong> en
+                cualquier cuenta para ver todas sus opciones (plan, licencia, contraseña, sesiones,
+                suspender, eliminar), y usa el buscador para encontrarla rápido. "Licencia" es la
+                fecha contratada.
                 "Renovar licencia" cambia esa fecha (meses desde hoy o una fecha exacta).
                 "Suspender" corta el acceso por el tiempo que definas (o indefinidamente) sin
                 esperar a que venza la licencia; "Eliminar" manda la cuenta a la papelera de abajo,
@@ -784,6 +858,7 @@
                 cerrar sesión en otro dispositivo y por eso ya no puede entrar. Cualquiera de las
                 dos acciones cierra de inmediato TODAS las sesiones activas de esa cuenta.
             </p>
+            <input type="text" id="buscadorCuentas" class="buscador-cuentas" placeholder="🔎 Buscar por correo, plan o Despacho…" autocomplete="off">
             <div id="listaUsuariosActivos"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
@@ -806,9 +881,10 @@
                 Cada plan tiene dos modalidades: <strong>Abogad@</strong> (una persona) y
                 <strong>Despacho</strong> (5 usuarios), así que una cuenta se ve como
                 "Mensual - Abogad@" o "Fundadores - Despacho". Crea aquí el Despacho con la modalidad
-                que eligió al contratar (no se puede cambiar después, Cláusula 2.2) y luego mete sus
-                cuentas con "Cambiar plan" en "Usuarios y licencias": cada una recibe su número
-                (#1 a #5). La <strong>Cuenta única compartida</strong> sube sola a 10 sesiones
+                que eligió al contratar (no se puede cambiar después, Cláusula 2.2) y luego pulsa
+                <strong>"+ Agregar cuenta"</strong> en su tarjeta: escribe el correo de una cuenta que
+                ya exista, o uno nuevo con su contraseña para crearla ahí mismo. Cada una recibe su
+                número (#1 a #5); la ✕ junto a cada correo la saca del Despacho sin borrarla. La <strong>Cuenta única compartida</strong> sube sola a 10 sesiones
                 simultáneas.
             </p>
             <p class="ayuda">
@@ -997,7 +1073,9 @@
                 cada opción en una línea) o de respuesta abierta. Al mandar una respuesta el
                 usuario acepta compartir su correo junto con ella; puede corregirla durante
                 <strong>3 días</strong> desde que la contestó — pasado ese plazo queda definitiva y
-                se archiva sola en la "hoja" de abajo, para poder otorgarle el beneficio ofrecido.
+                se archiva sola en la "hoja" de abajo. Ese plazo solo es para poder corregirla: para
+                el descuento del mes, la encuesta cuenta desde que se envía (ver "Despachos" y
+                "Descuentos reclamados").
             </p>
             <div id="listaEncuestas"><p class="mensaje-carga">Cargando…</p></div>
 
@@ -1027,7 +1105,7 @@
             <p class="ayuda">
                 Respuestas ya <strong>definitivas</strong> (pasaron sus 3 días de corrección), en
                 formato de filas y columnas como una hoja de cálculo — de aquí se revisa quién
-                contestó qué, para otorgar el beneficio ofrecido. No es una integración con Google
+                contestó qué (los descuentos por encuestas se ven en "Descuentos reclamados"). No es una integración con Google
                 Sheets real, solo el mismo formato. Las respuestas todavía corregibles no aparecen
                 aquí; aparecerán solas cuando se congelen.
             </p>

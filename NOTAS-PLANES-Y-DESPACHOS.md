@@ -31,11 +31,20 @@ Fecha: 2026-09-24.
   `reclamos_descuento`). Bloqueado en los últimos 7 días de su mes o si ya
   venció; podrá reclamarlo al renovar. Cláusula 6.1 y Aviso actualizados.
 
+- **Panel más compacto:** en "Usuarios y licencias" cada cuenta tiene un solo
+  botón "Modificar" (abre un menú con todas las acciones) y hay un buscador.
+  En cada tarjeta de Despacho: "+ Agregar cuenta" (correo existente o nuevo)
+  y ✕ para sacar una cuenta. Se restauró el margen/ancho de las ventanas del
+  panel, que se había perdido en un cambio anterior.
+- **Días de corrección:** siguen existiendo para cambiar la respuesta, pero para
+  el descuento cada encuesta cuenta desde que se envía (aclarado en 6.1, Aviso,
+  encuestas.html y admin).
+
 ## Archivos AGREGADOS
 
 | Archivo | Qué es |
 |---|---|
-| `servidor/db/despachos.js` | Planes, Despachos, número de cuenta, conteo de encuestas definitivas y registro de beneficios canjeados. |
+| `servidor/db/despachos.js` | Planes, Despachos, número de cuenta, conteo mensual de encuestas (cuentan desde que se envían) y reclamos de descuento. |
 
 ## Archivos MODIFICADOS
 

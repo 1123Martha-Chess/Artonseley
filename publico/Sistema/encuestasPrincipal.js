@@ -148,7 +148,7 @@ function crearTarjetaProgreso(progreso) {
   }
 
   const explicacion = document.createElement('p');
-  explicacion.textContent = `Contesta ${progreso.minimo} encuestas durante ${progreso.mesActual}${progreso.textoGrupo ? ` (${progreso.textoGrupo})` : ''} y tu siguiente mes del Plan Mensual costará $${progreso.precio} MXN en lugar de $${progreso.precioNormal}. Solo cuentan las que contestes este mes: el 1 de ${progreso.mesSiguiente} tu barra vuelve a empezar en 0.`;
+  explicacion.textContent = `Contesta ${progreso.minimo} encuestas durante ${progreso.mesActual}${progreso.textoGrupo ? ` (${progreso.textoGrupo})` : ''} y tu siguiente mes del Plan Mensual costará $${progreso.precio} MXN en lugar de $${progreso.precioNormal}. Cada encuesta cuenta desde que la envías, y solo cuentan las que contestes este mes: el 1 de ${progreso.mesSiguiente} tu barra vuelve a empezar en 0.`;
   tarjeta.appendChild(explicacion);
 
   const barra = document.createElement('div');

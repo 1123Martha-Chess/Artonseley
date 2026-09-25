@@ -186,6 +186,7 @@ import {
   crearDespacho,
   actualizarDespacho,
   eliminarDespacho,
+  errorSiDespachoLleno,
   progresoDescuentoDeUsuario,
   reclamarDescuento,
   listarReclamosDescuento,
@@ -1258,6 +1259,58 @@ app.patch('/api/admin/despachos/:id', jsonEstandar, (peticion, respuesta) => {
     return respuesta.status(400).json({ error: datos.error });
   }
   respuesta.json({ ok: true, despacho: actualizarDespacho(id, datos) });
+});
+
+// Agregar una cuenta a un Despacho desde su propia tarjeta en el panel.
+// { email, contrasena?, vigencia? }: si ya existe una cuenta con ese
+// correo, solo se mete al Despacho; si no existe, se crea ahí mismo (con
+// la contraseña y vigencia indicadas) y se mete al Despacho.
+app.post('/api/admin/despachos/:id/cuentas', jsonEstandar, (peticion, respuesta) => {
+  const despachoId = Number(peticion.params.id);
+  const errorLleno = errorSiDespachoLleno(despachoId);
+  if (errorLleno) {
+    return respuesta.status(400).json({ error: errorLleno });
+  }
+
+  const { email, contrasena, vigencia } = peticion.body ?? {};
+  const emailLimpio = String(email ?? '').trim().toLowerCase();
+  if (!emailLimpio || emailLimpio.length > 254 || !PATRON_EMAIL.test(emailLimpio)) {
+    return respuesta.status(400).json({ error: 'Escribe un correo electrónico válido.' });
+  }
+
+  let usuario = buscarUsuarioPorEmail(emailLimpio);
+  let creada = false;
+  if (usuario) {
+    if (usuario.eliminado_en) {
+      return respuesta.status(400).json({ error: 'Esa cuenta está en la papelera: reactívala primero.' });
+    }
+  } else {
+    if (String(contrasena ?? '').length < MINIMO_CONTRASENA_REGISTRO || String(contrasena ?? '').length > 200) {
+      return respuesta.status(400).json({
+        error: `Esa cuenta todavía no existe: para crearla escribe una contraseña de ${MINIMO_CONTRASENA_REGISTRO} a 200 caracteres.`
+      });
+    }
+    let licenciaVenceEn, licenciaVitalicia;
+    try {
+      ({ licenciaVenceEn, vitalicia: licenciaVitalicia } = resolverVigencia(vigencia, { porDefectoMeses: 1 }));
+    } catch (error) {
+      return respuesta.status(400).json({ error: error.message });
+    }
+    usuario = crearUsuario({
+      email: emailLimpio,
+      hashContrasena: hashContrasena(String(contrasena)),
+      rol: 'abogado',
+      licenciaVenceEn,
+      licenciaVitalicia
+    });
+    creada = true;
+  }
+
+  const error = asignarPlanAUsuario(usuario, { plan: null, despachoId });
+  if (error) {
+    return respuesta.status(400).json({ error });
+  }
+  respuesta.json({ ok: true, creada, usuario: usuarioAJSON(buscarUsuarioPorId(usuario.id)) });
 });
 
 app.delete('/api/admin/despachos/:id', (peticion, respuesta) => {

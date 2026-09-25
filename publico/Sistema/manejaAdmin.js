@@ -669,9 +669,28 @@ function abrirModalConCampos({ titulo, mensaje, campos, textoConfirmar, claseBot
         control = document.createElement('input');
         control.type = 'text';
         if (campo.placeholder) control.placeholder = campo.placeholder;
+        // Lista de sugerencias (ej. correos de cuentas ya existentes)
+        // que el navegador ofrece mientras se escribe.
+        if (campo.sugerencias?.length) {
+          const lista = document.createElement('datalist');
+          lista.id = `sugerencias-${campo.nombre}-${Date.now()}`;
+          campo.sugerencias.forEach(texto => {
+            const opcion = document.createElement('option');
+            opcion.value = texto;
+            lista.appendChild(opcion);
+          });
+          control.setAttribute('list', lista.id);
+          caja.appendChild(lista);
+        }
       }
       if (campo.valor !== undefined) control.value = campo.valor;
       caja.appendChild(control);
+      if (campo.ayuda) {
+        const ayuda = document.createElement('p');
+        ayuda.className = 'ayuda-campo-modal';
+        ayuda.textContent = campo.ayuda;
+        caja.appendChild(ayuda);
+      }
       controles[campo.nombre] = control;
     });
 
@@ -794,6 +813,74 @@ function textoEncuestasDelMes(encuestas, mes, precio) {
   return `Encuestas de ${mes}: ${encuestas.contestadas} de ${encuestas.porBeneficio}`;
 }
 
+// Menú "Modificar": todas las acciones de una cuenta activa en una sola
+// ventana. Al elegir una, el menú se cierra y se abre su ventana de
+// siempre (la misma de antes, con su confirmación).
+function abrirMenuModificar(usuario) {
+  const fondo = document.createElement('div');
+  fondo.classList.add('fondo-modal');
+  const caja = document.createElement('div');
+  caja.classList.add('caja-modal');
+
+  const encabezado = document.createElement('h3');
+  encabezado.textContent = 'Modificar cuenta';
+  const resumen = document.createElement('p');
+  resumen.classList.add('mensaje-modal');
+  resumen.textContent = `${usuario.email} · ${usuario.plan.nombreCompleto}${usuario.plan.detalle ? ` (${usuario.plan.detalle})` : ''}`;
+
+  const menu = document.createElement('div');
+  menu.classList.add('menu-modificar');
+
+  function cerrar() {
+    fondo.remove();
+    document.removeEventListener('keydown', alPresionarTecla);
+  }
+  function alPresionarTecla(evento) {
+    if (evento.key === 'Escape') cerrar();
+  }
+  const opcion = (texto, clase, accion) => pintarBotonAccion(texto, clase, () => {
+    cerrar();
+    accion(usuario);
+  });
+
+  const separador = document.createElement('p');
+  separador.classList.add('separador-peligro');
+  separador.textContent = 'Acciones que cortan el acceso';
+
+  menu.append(
+    opcion('📋 Cambiar plan', 'boton-secundario', cambiarPlanCuenta),
+    opcion('📅 Renovar licencia', 'boton-secundario', renovarLicencia),
+    opcion('🔑 Cambiar contraseña', 'boton-secundario', cambiarContrasenaCuenta),
+    opcion('💻 Cambiar límite de sesiones', 'boton-secundario', cambiarLimiteSesiones),
+    separador,
+    opcion('🚪 Cerrar sesiones', 'boton-peligro', cerrarSesionesCuenta),
+    opcion('⏸️ Suspender', 'boton-peligro', suspenderCuenta),
+    opcion('🗑️ Eliminar', 'boton-peligro', eliminarCuenta)
+  );
+
+  const filaBotones = document.createElement('div');
+  filaBotones.classList.add('fila-botones-modal');
+  filaBotones.appendChild(pintarBotonAccion('Cancelar', 'boton-secundario', cerrar));
+
+  caja.append(encabezado, resumen, menu, filaBotones);
+  fondo.appendChild(caja);
+  fondo.addEventListener('click', evento => {
+    if (evento.target === fondo) cerrar();
+  });
+  document.addEventListener('keydown', alPresionarTecla);
+  document.body.appendChild(fondo);
+  menu.querySelector('button').focus();
+}
+
+// Filtra las filas de "Usuarios y licencias" por correo, plan o Despacho.
+function aplicarBusquedaDeCuentas() {
+  const texto = document.getElementById('buscadorCuentas')?.value.trim().toLowerCase() ?? '';
+  document.querySelectorAll('#listaUsuariosActivos tbody tr').forEach(fila => {
+    fila.hidden = !!texto && !fila.dataset.busqueda?.includes(texto);
+  });
+}
+document.getElementById('buscadorCuentas')?.addEventListener('input', aplicarBusquedaDeCuentas);
+
 // Un solo selector con todas las opciones: cada plan como Abogad@, o
 // entrar a un Despacho ya creado (toma su plan y el primer número libre).
 async function cambiarPlanCuenta(usuario) {
@@ -875,26 +962,17 @@ async function cargarCuentas() {
         const celdaRegistrado = document.createElement('td');
         celdaRegistrado.textContent = new Date(u.creadoEn).toLocaleDateString('es-MX');
 
+        // Un solo botón por fila: con decenas o cientos de cuentas, 7
+        // botones por fila hacían la tabla larguísima.
         const celdaAcciones = document.createElement('td');
-        const contenedorBotones = document.createElement('div');
-        contenedorBotones.style.display = 'flex';
-        contenedorBotones.style.flexWrap = 'wrap';
-        contenedorBotones.style.gap = '6px';
-        contenedorBotones.append(
-          pintarBotonAccion('Cambiar plan', 'boton-secundario', () => cambiarPlanCuenta(u)),
-          pintarBotonAccion('Renovar licencia', 'boton-secundario', () => renovarLicencia(u)),
-          pintarBotonAccion('Cambiar contraseña', 'boton-secundario', () => cambiarContrasenaCuenta(u)),
-          pintarBotonAccion('Cambiar límite', 'boton-secundario', () => cambiarLimiteSesiones(u)),
-          pintarBotonAccion('Cerrar sesiones', 'boton-peligro', () => cerrarSesionesCuenta(u)),
-          pintarBotonAccion('Suspender', 'boton-peligro', () => suspenderCuenta(u)),
-          pintarBotonAccion('Eliminar', 'boton-peligro', () => eliminarCuenta(u))
-        );
-        celdaAcciones.appendChild(contenedorBotones);
+        celdaAcciones.appendChild(pintarBotonAccion('Modificar', 'boton-secundario', () => abrirMenuModificar(u)));
+        fila.dataset.busqueda = `${u.email} ${u.plan.nombreCompleto} ${u.plan.detalle ?? ''}`.toLowerCase();
 
         fila.append(celdaCorreo, celdaPlan(u), celdaRol, celdaRegistrado, celdaLicencia(u), celdaSesiones(u), celdaAcciones);
         return fila;
       })
     );
+    aplicarBusquedaDeCuentas();
 
     pintarTabla(
       contenedorSuspendidas,
@@ -1348,12 +1426,29 @@ function crearTarjetaDespacho(d) {
     numero.textContent = d.tipo === 'compartida' ? '●' : `#${n}`;
     item.appendChild(numero);
     if (miembro) {
-      item.append(miembro.email);
+      const correo = document.createElement('span');
+      correo.classList.add('correo-miembro');
+      correo.textContent = miembro.email;
+      const quitar = document.createElement('button');
+      quitar.type = 'button';
+      quitar.classList.add('quitar-miembro');
+      quitar.textContent = '✕';
+      quitar.title = `Quitar ${miembro.email} de este Despacho`;
+      quitar.setAttribute('aria-label', quitar.title);
+      quitar.addEventListener('click', () => quitarCuentaDeDespacho(d, miembro));
+      item.append(correo, quitar);
     } else {
       item.classList.add('libre');
       item.append('libre');
     }
     cuentas.appendChild(item);
+  }
+
+  // Agregar una cuenta (ya existente o nueva) sin salir de la tarjeta.
+  let botonAgregar = null;
+  if (d.miembros.length < d.maximoCuentas) {
+    botonAgregar = pintarBotonAccion('+ Agregar cuenta', 'boton-secundario', () => agregarCuentaADespacho(d));
+    botonAgregar.classList.add('agregar-miembro');
   }
 
   // Avance del mes hacia el descuento (lo reclaman ellos mismos).
@@ -1374,8 +1469,97 @@ function crearTarjetaDespacho(d) {
     pintarBotonAccion('Eliminar', 'boton-peligro', () => eliminarDespachoAdmin(d))
   );
 
-  tarjeta.append(titulo, plan, tipo, cuentas, encuestas, barra, botones);
+  tarjeta.append(titulo, plan, tipo, cuentas);
+  if (botonAgregar) tarjeta.appendChild(botonAgregar);
+  tarjeta.append(encuestas, barra, botones);
   return tarjeta;
+}
+
+// Un solo campo de correo: si ya hay una cuenta con ese correo se mete al
+// Despacho; si no existe, se crea ahí mismo con la contraseña y vigencia
+// que se escriban. El campo sugiere los correos de las cuentas que todavía
+// no son de ningún Despacho.
+async function agregarCuentaADespacho(d) {
+  let sugerencias = [];
+  try {
+    const { activos, suspendidos } = await peticionAdmin('/api/admin/usuarios');
+    sugerencias = [...activos, ...suspendidos]
+      .filter(u => u.plan.modalidad !== 'despacho')
+      .map(u => u.email)
+      .sort();
+  } catch {
+    // Sin sugerencias igual se puede escribir el correo a mano.
+  }
+
+  const valores = await abrirModalConCampos({
+    titulo: `Agregar cuenta a "${d.nombre}"`,
+    mensaje: d.tipo === 'compartida'
+      ? 'Es de Cuenta única compartida: esta será su única cuenta (sube sola a 10 sesiones simultáneas).'
+      : `Tendrá el siguiente número libre (lleva ${d.miembros.length} de 5).`,
+    campos: [
+      {
+        nombre: 'email',
+        etiqueta: 'Correo de la cuenta',
+        tipo: 'text',
+        placeholder: 'correo@ejemplo.com',
+        sugerencias,
+        ayuda: 'Si la cuenta ya existe, solo se agrega al Despacho y no se toca su contraseña ni su licencia.'
+      },
+      {
+        nombre: 'contrasena',
+        etiqueta: 'Contraseña (solo si la cuenta es nueva)',
+        tipo: 'text',
+        placeholder: 'Mínimo 8 caracteres'
+      },
+      {
+        nombre: 'vigencia',
+        etiqueta: 'Vigencia de la licencia (solo si la cuenta es nueva)',
+        tipo: 'text',
+        valor: '1',
+        placeholder: 'Meses (ej. 1), fecha AAAA-MM-DD, o "vitalicia"'
+      }
+    ],
+    textoConfirmar: 'Agregar al Despacho',
+    validar: valores => (valores.email ? null : 'Escribe el correo de la cuenta.')
+  });
+  if (!valores) return;
+
+  try {
+    const datos = await peticionAdmin(`/api/admin/despachos/${d.id}/cuentas`, {
+      method: 'POST',
+      body: JSON.stringify(valores)
+    });
+    mostrarAviso(
+      `${datos.creada ? 'Cuenta creada y agregada' : 'Cuenta agregada'}: ${datos.usuario.email} (${datos.usuario.plan.detalle}).${datos.creada ? ' Ya puede iniciar sesión; compártele su contraseña por un medio seguro.' : ''}`,
+      'exito'
+    );
+    await Promise.all([cargarDespachos(), cargarCuentas()]);
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
+}
+
+// Sacar una cuenta del Despacho: queda como Abogad@ con el mismo plan
+// del Despacho (no se borra ni se toca su licencia).
+async function quitarCuentaDeDespacho(d, miembro) {
+  const confirmado = await abrirModalConCampos({
+    titulo: 'Quitar del Despacho',
+    mensaje: `¿Quitar "${miembro.email}" de "${d.nombre}"? La cuenta no se borra: queda como ${d.planTexto ? `${d.planTexto} - Abogad@` : 'Abogad@ sin plan'}, con su misma licencia, y su número (#${miembro.puesto}) queda libre.`,
+    campos: [],
+    textoConfirmar: 'Quitar del Despacho',
+    claseBotonConfirmar: 'boton-peligro'
+  });
+  if (!confirmado) return;
+  try {
+    await peticionAdmin(`/api/admin/usuarios/${miembro.id}/plan`, {
+      method: 'POST',
+      body: JSON.stringify({ plan: d.plan })
+    });
+    mostrarAviso(`"${miembro.email}" ya no es parte de "${d.nombre}".`, 'exito');
+    await Promise.all([cargarDespachos(), cargarCuentas()]);
+  } catch (error) {
+    mostrarAviso(error.message);
+  }
 }
 
 async function editarDespacho(d) {
@@ -1525,7 +1709,7 @@ document.getElementById('formularioDespacho').addEventListener('submit', async (
     resultado.innerHTML = '';
     const exito = document.createElement('p');
     exito.classList.add('mensaje-exito');
-    exito.textContent = `Despacho "${despacho.nombre}" creado. Ahora mete sus cuentas con "Cambiar plan" en "Usuarios y licencias".`;
+    exito.textContent = `Despacho "${despacho.nombre}" creado. Ahora pulsa "+ Agregar cuenta" en su tarjeta para meterle sus cuentas.`;
     resultado.appendChild(exito);
     evento.target.reset();
     await cargarDespachos();
