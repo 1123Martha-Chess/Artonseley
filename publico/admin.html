@@ -55,23 +55,127 @@
             margin-left: 16px;
         }
 
-        main {
-            max-width: 900px;
+        /* Rejilla de "burbujas" (ver Sistema/burbujasAdmin.js): cada
+           apartado es un rectángulo redondeado que solo muestra su ícono y
+           su título. Al tocarlo se extiende AHÍ MISMO (2 columnas y las
+           filas que necesite) y las demás burbujas se acomodan alrededor
+           gracias a grid-auto-flow: dense. Las filas tienen altura fija
+           para que el JS pueda calcular cuántas abarca la abierta. */
+        main.rejilla-burbujas {
+            --alto-fila-burbujas: 110px;
+            max-width: 1180px;
             margin: 0 auto;
             padding: 24px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-auto-rows: var(--alto-fila-burbujas);
+            grid-auto-flow: row dense;
+            gap: 18px;
         }
 
         section.tarjeta {
+            position: relative;
+            min-width: 0;
             background: var(--superficie);
-            border-radius: 10px;
+            background-image: var(--velo-vidrio, none);
+            border: 2px solid var(--color-primario);
+            border-radius: 22px;
             box-shadow: 0 2px 8px var(--sombra);
-            padding: 22px 26px;
-            margin-bottom: 24px;
+            padding: 0;
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        section.tarjeta:not(.abierta):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--sombra);
+        }
+
+        section.tarjeta.abierta {
+            grid-column: span 2;
+            border-radius: 28px;
+            padding: 0 26px 22px 26px;
+            box-shadow: 0 6px 20px var(--sombra);
         }
 
         section.tarjeta h2 {
             font-size: 16px;
-            margin: 0 0 4px 0;
+            margin: 0;
+        }
+
+        /* El título es un botón que ocupa toda la burbuja cerrada. */
+        .cabecera-burbuja {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            height: 100%;
+            min-height: calc(var(--alto-fila-burbujas) - 4px);
+            padding: 12px 18px;
+            font: inherit;
+            font-weight: bold;
+            text-align: left;
+            color: var(--texto);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        section.tarjeta:not(.abierta) h2 { height: 100%; }
+
+        .cabecera-burbuja:focus-visible {
+            outline: 2px solid var(--color-primario);
+            outline-offset: -6px;
+            border-radius: 18px;
+        }
+
+        .icono-burbuja { font-size: 26px; flex-shrink: 0; }
+
+        .cerrar-burbuja {
+            display: none;
+            margin-left: auto;
+            font-size: 16px;
+            color: var(--texto-2);
+        }
+
+        /* Abierta: el título queda arriba a la izquierda, con una línea
+           que lo separa del apartado (como en el boceto). */
+        section.tarjeta.abierta .cabecera-burbuja {
+            justify-content: flex-start;
+            min-height: 0;
+            height: auto;
+            padding: 18px 0 14px 0;
+            font-size: 20px;
+            color: var(--color-primario);
+            border-bottom: 2px solid var(--color-primario);
+            margin-bottom: 14px;
+        }
+
+        section.tarjeta.abierta .cerrar-burbuja { display: inline; }
+
+        .cuerpo-burbuja { display: none; }
+
+        section.tarjeta.abierta .cuerpo-burbuja {
+            display: flow-root;
+            animation: aparecer-burbuja 0.2s ease-out;
+        }
+
+        @keyframes aparecer-burbuja {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        @media (max-width: 900px) {
+            main.rejilla-burbujas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 560px) {
+            main.rejilla-burbujas {
+                --alto-fila-burbujas: 84px;
+                grid-template-columns: minmax(0, 1fr);
+            }
+            section.tarjeta.abierta { grid-column: span 1; }
         }
 
         section.tarjeta p.ayuda {
@@ -228,12 +332,13 @@
         }
 
         @media (max-width: 600px) {
-            main {
+            main.rejilla-burbujas {
                 padding: 14px;
+                gap: 12px;
             }
 
-            section.tarjeta {
-                padding: 16px 18px;
+            section.tarjeta.abierta {
+                padding: 0 18px 16px 18px;
             }
         }
 
@@ -466,8 +571,8 @@
         </div>
     </header>
 
-    <main>
-        <section class="tarjeta">
+    <main class="rejilla-burbujas">
+        <section class="tarjeta" data-icono="🗂️">
             <h2>Sectores</h2>
             <p class="ayuda">
                 Un sector agrupa documentos relacionados (ej. "Sector Fiscal", "Sector Civil") y así
@@ -483,7 +588,7 @@
             </form>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📤">
             <h2>Cargar o reemplazar un documento legal</h2>
             <p class="ayuda">
                 Pega o sube el JSON de "artículos" (id, documento, numero, titulo, palabrasClave)
@@ -523,13 +628,13 @@
             <div id="resultadoCargaDocumento"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📚">
             <h2>Documentos legales cargados</h2>
             <p class="ayuda">Reemplazar precarga el formulario de arriba con el nombre de este documento.</p>
             <div id="listaDocumentos"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📝">
             <h2>Solicitudes de cuenta nuevas</h2>
             <p class="ayuda">
                 Vienen del formulario público "Crear Cuenta". Verifica que el correo sea el mismo
@@ -541,7 +646,7 @@
             <div id="listaSolicitudesRegistro"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="👤">
             <h2>Crear usuario manualmente</h2>
             <p class="ayuda">
                 Para dar de alta a alguien sin pasar por el formulario público (un cliente que ya
@@ -569,7 +674,7 @@
             <div id="resultadoCrearUsuario"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="💬">
             <h2>Bandeja de sugerencias</h2>
             <p class="ayuda">
                 El buzón es <strong>anónimo</strong>: no se guarda ni se muestra qué cuenta mandó
@@ -579,7 +684,7 @@
             <div id="listaSugerencias"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="🔑">
             <h2>Usuarios y licencias</h2>
             <p class="ayuda">
                 Cuentas activas registradas en la plataforma. "Licencia" es la fecha contratada.
@@ -596,7 +701,7 @@
             <div id="listaUsuariosActivos"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="⏸️">
             <h2>Cuentas suspendidas</h2>
             <p class="ayuda">
                 Cuentas con el acceso cortado temporalmente. No se reactivan solas al cumplirse el
@@ -605,7 +710,7 @@
             <div id="listaUsuariosSuspendidos"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="🗑️">
             <h2>Cuentas eliminadas (papelera)</h2>
             <p class="ayuda">
                 Cuentas que ya no pueden iniciar sesión. Se conservan aquí, con su mismo correo e
@@ -615,7 +720,7 @@
             <div id="listaUsuariosEliminados"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📈">
             <h2>Índices económicos (calculadora)</h2>
             <p class="ayuda">
                 Valores que usa la <strong>Calculadora Jurídica Financiera</strong> para el tope de
@@ -642,7 +747,7 @@
             <div id="resultadoIndices"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="🏛️">
             <h2>Información oficial</h2>
             <p class="ayuda">
                 Contenido de la página pública <strong>informacion-oficial.html</strong>: un texto de
@@ -683,7 +788,7 @@
             <div id="resultadoFuenteOficial"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="🎵">
             <h2>Música</h2>
             <p class="ayuda">
                 Canciones del apartado "Música". Sube el audio (obligatorio) y, si quieres, una
@@ -707,7 +812,7 @@
             <div id="resultadoCancion"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📄">
             <h2>Plantillas de documentos</h2>
             <p class="ayuda">
                 Biblioteca de machotes del <strong>Generador de Plantillas</strong>. Escribe el texto
@@ -738,7 +843,7 @@
             <div id="resultadoPlantilla"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📋">
             <h2>Encuestas</h2>
             <p class="ayuda">
                 Formularios opcionales que el usuario contesta desde la burbuja "Encuestas". Cada
@@ -771,7 +876,7 @@
             <div id="resultadoEncuesta"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📊">
             <h2>Respuestas de encuestas (hoja)</h2>
             <p class="ayuda">
                 Respuestas ya <strong>definitivas</strong> (pasaron sus 3 días de corrección), en
@@ -791,7 +896,7 @@
             <div id="listaHojaEncuestas"><p class="mensaje-carga">Cargando…</p></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="📰">
             <h2>Noticias Jurídicas</h2>
             <p class="ayuda">
                 Cuadros para la burbuja "Noticias Jurídicas" (¿Qué pasó en el DOF la semana
@@ -827,7 +932,7 @@
             <div id="resultadoNoticiaJuridica"></div>
         </section>
 
-        <section class="tarjeta">
+        <section class="tarjeta" data-icono="🔔">
             <h2>Notificaciones (panel 🔔 del buscador)</h2>
             <div id="listaNotificaciones"><p class="mensaje-carga">Cargando…</p></div>
 

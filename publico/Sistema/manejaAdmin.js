@@ -8,6 +8,8 @@
 // la redirección a login si de plano no hay sesión.
 // -------------------------------------------------------------------
 
+import { abrirBurbujaQueContiene } from './burbujasAdmin.js';
+
 // Helper compartido por todas las llamadas de este archivo: hace el
 // fetch, manda a login si la sesión ya no es válida, y si la respuesta
 // no es "ok" lanza un error con el mensaje que mandó el servidor (o la
@@ -220,6 +222,7 @@ function pintarListaDocumentos(contenedor, documentos) {
       campoJSONArticulos.value = '';
       campoJSONTextos.value = '';
       resultadoCargaDocumento.innerHTML = '';
+      abrirBurbujaQueContiene(formularioDocumento);
       formularioDocumento.scrollIntoView({ behavior: 'smooth' });
     });
 
@@ -1695,6 +1698,7 @@ function editarPlantilla(plantilla) {
   botonGuardarPlantilla.textContent = `Guardar cambios (v${plantilla.version} → v${plantilla.version + 1})`;
   botonCancelarPlantilla.style.display = '';
   actualizarMarcadoresDetectados();
+  abrirBurbujaQueContiene(formularioPlantilla);
   formularioPlantilla.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1889,6 +1893,7 @@ function editarEncuesta(encuesta) {
 
   botonGuardarEncuesta.textContent = 'Guardar cambios';
   botonCancelarEncuesta.style.display = '';
+  abrirBurbujaQueContiene(formularioEncuesta);
   formularioEncuesta.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -2183,6 +2188,7 @@ function editarNoticiaJuridica(noticia) {
     `Ya tiene ${totalFotos} foto${totalFotos === 1 ? '' : 's'}. Elige fotos nuevas solo si quieres reemplazarlas TODAS.`;
   botonGuardarNoticiaJuridica.textContent = 'Guardar cambios';
   botonCancelarNoticiaJuridica.style.display = '';
+  abrirBurbujaQueContiene(formularioNoticiaJuridica);
   formularioNoticiaJuridica.scrollIntoView({ behavior: 'smooth' });
 }
 
